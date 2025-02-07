@@ -1,27 +1,87 @@
-# Next.js Hybrid Starter
+# 🏃‍♂️ Scott Makes You Move - Frontend
 
-[Azure Static Web Apps](https://docs.microsoft.com/azure/static-web-apps/overview) allows you to easily deploy [Next.js](https://nextjs.org/) apps in minutes. Use this repo with the [Azure Static Web Apps Hybrid Next.js tutorial](https://learn.microsoft.com/en-us/azure/static-web-apps/deploy-nextjs-hybrid) to build and customize a new Next.js site.
+This is the **frontend** for _Scott Makes You Move_, a movement and vitality tracking web app designed to encourage daily activity, track progress, and engage users through gamification.
 
-## Running locally
+🚀 **Built with:**
 
-To run locally, start by installing the Node dependencies. 
+- **Next.js** (Hybrid Mode - App Router)
+- **Tailwind CSS** (Utility-first styling)
+- **Deployed on:** **Azure Static Web Apps (SWA)**
 
-```bash
+## 📦 Installation & Setup
+
+### 1️⃣ Clone the Repository
+
+```sh
+git clone git@github.com:Scott-Makes-You-Move/frontend.git
+
+cd frontend
+```
+
+### 2️⃣ Install Dependencies
+
+```sh
 npm install
 ```
 
-Start the development server with the following command:
+### 3️⃣ Run the Development Server
 
-```bash
+```sh
 npm run dev
 ```
 
-Next, open [http://localhost:3000](http://localhost:3000) in your browser to see the result.
+## 📂 Project Structure
 
-For richer local development experience, refer to [Set up local development for Azure Static Web Apps](https://docs.microsoft.com/azure/static-web-apps/local-development).
+```bash
+/frontend/
+│── /app/                # Next.js App Router
+│   │── layout.tsx       # Global layout
+│   │── page.tsx         # Landing Page
+│   │── /progress/       # Progress Tracking
+│   │── /leaderboard/    # Leaderboard Page
+│   │── /sessions/       # Daily Movement Tracking
+│   │── /workouts/       # Embedded Workouts Page
+│   │── /auth/           # Authentication
+│
+│── /components/         # Reusable UI Components
+│── /lib/                # API Calls & Utility Functions
+│   │── api.ts           # Handles API requests
+│
+│── /public/             # Static Assets (logos, images)
+│── /styles/             # Tailwind CSS styles
+│── next.config.js       # Next.js Config
+│── tailwind.config.js   # Tailwind Config
+│── package.json         # Dependencies
+```
 
-## How it works
+## 👥 Contribution Guidelines
 
-This starter application uses Next.js and React Server Components. By default, all Next.js components are React Server Components, and as such, are handled by Azure Static Web Apps-managed backend functions. Read more about [Next.js support for Azure Static Web Apps](https://learn.microsoft.com/en-us/azure/static-web-apps/nextjs). 
+### Branching Strategy
 
-> **Note:** If you use the [Azure Static Web Apps CLI](https://docs.microsoft.com/azure/static-web-apps/local-development), copy the *staticwebapp.config.json* file to the *out* folder, and start the CLI from the *out* folder.
+- `main` → Stable production branch
+- `dev` → Active development branch
+- `feature/{feature-name}` → Feature-specific branches
+- `fix/{issue-name}` → Bug fixes
+
+### Commit Message Format
+
+- 🆕 `feat`: Added leaderboard UI
+- 🔧 `fix`: Resolved API fetch issue
+- 📦 `chore`: Updated dependencies
+
+### Pull Request Guidelines
+
+- **PR Title:** Include a concise title
+- **Description:** Briefly describe the changes made
+- **Reviewers:** Assign at least one reviewer
+- **Labels:** Add appropriate labels
+- **Checklist:** Ensure all items are checked
+- **Screenshots:** Include relevant screenshots
+- **Demo Link:** If applicable
+- **Issue Link:** Reference the issue being addressed
+- **Dependencies:** List any new dependencies
+- **Testing Instructions:** Provide steps to test the changes
+- **Environment Variables:** List any new environment variables
+- **Database Changes:** If applicable
+- **Security Implications:** If applicable
+- **Performance Implications:** If applicable
