@@ -1,5 +1,4 @@
 import QuoteCard from "@/components/QuoteCard";
-import CTAButton from "@/components/CTAButton";
 
 export default function Home() {
   return (
@@ -17,10 +16,7 @@ export default function Home() {
             "We are what we repeatedly do. Excellence is not an act, but a habit."
           }
         />
-
-        {/* CTA Button */}
-        <CTAButton text={"Start Moving 🚀"} />
-      </section>{" "}
+      </section>
     </main>
   );
 }
