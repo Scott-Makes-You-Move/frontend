@@ -1,4 +1,6 @@
 import QuoteCard from "@/components/QuoteCard";
+import EmbeddedVideo from "@/components/EmbeddedVideo";
+import TimeDisplay from "@/components/TimeDisplay";
 
 export default function Home() {
   return (
@@ -16,6 +18,10 @@ export default function Home() {
             "We are what we repeatedly do. Excellence is not an act, but a habit."
           }
         />
+
+        <EmbeddedVideo videoUrl="https://www.youtube.com/embed/4Xuddq77lRM" />
+
+        <TimeDisplay nextBreak="1:30 PM" />
       </section>
     </main>
   );
