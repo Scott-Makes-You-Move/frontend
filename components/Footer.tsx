@@ -6,12 +6,7 @@ const Footer: React.FC = () => (
 "
   >
     <nav className="flex justify-center gap-6 text-gray-700">
-      <a href="/about" className="hover:underline">
-        About Us
-      </a>
-      <a href="/contact" className="hover:underline">
-        Contact
-      </a>
+      <p className="text-2xl font-bold">Scott Makes You Move</p>
     </nav>
   </footer>
 );

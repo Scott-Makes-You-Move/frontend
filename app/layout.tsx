@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en" className="antialiased">
       <body suppressHydrationWarning className="flex flex-col min-h-screen">
         <Navbar />
-        <main className="flex-1 w-full bg-gray-100 px-4 text-center border-2 border-red-500 border-b-8">
+        <main className="flex-1 w-full bg-gray-100 px-4 text-center">
           {children}
         </main>
         <Footer />
