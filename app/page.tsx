@@ -4,8 +4,8 @@ import TimeDisplay from "@/components/TimeDisplay";
 
 export default function Home() {
   return (
-    <section className="w-full p-4">
-      <div className="flex flex-col  gap-4 md:grid md:grid-rows-[auto_1fr_auto]">
+    <section className="w-full p-4 md:min-h-screen">
+      <div className="flex flex-col gap-4 md:grid md:grid-rows-[auto_1fr_auto]">
         <div className="flex justify-start">
           <TimeDisplay nextBreak="1:30 PM" />
         </div>
