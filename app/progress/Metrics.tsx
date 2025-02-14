@@ -50,11 +50,9 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
 
   const currentMetrics = data[data.length - 1].metrics;
 
-  // Updated renderCustomDot to never return null
   const renderCustomDot = (props: CustomDotProps) => {
     const { cx, cy, index } = props;
 
-    // Early return with empty SVG element if props are invalid
     if (
       typeof cx !== "number" ||
       typeof cy !== "number" ||
@@ -77,37 +75,38 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
   };
 
   return (
-    <div className="space-y-6">
-      {/* Section Title */}
-      <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
+    <div className="border-2 border-red-500 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+      <div className="border-2 border-blue-500 flex flex-col justify-around">
+        <h2 className="text-2xl font-semibold text-gray-800">{title}</h2>
 
-      {/* Current Metrics Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
-        {metrics.map(({ key, label, suffix }) => (
-          <div key={key} className="space-y-1">
-            <p className="text-4xl font-bold text-gray-900">
-              {currentMetrics[key]}
-              {suffix}
-            </p>
-            <p className="text-sm text-gray-600">{label}</p>
-          </div>
-        ))}
+        {/* Current Metrics Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-8 ">
+          {metrics.map(({ key, label, suffix }) => (
+            <div key={key} className="space-y-1">
+              <p className="text-lg font-bold text-gray-900">
+                {currentMetrics[key]}
+                {suffix}
+              </p>
+              <p className="text-xs text-gray-600">{label}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Selected Point Details */}
       {selectedPoint && (
-        <div className="animate-fade-in mt-6">
-          <h3 className="text-sm font-medium text-gray-600 mb-4">
-            Historical Data - {selectedPoint.date}
+        <div className="animate-fade-in border-2 border-green-500 flex flex-col justify-around">
+          <h3 className="text-xl font-bold text-gray-900">
+            Historical ({selectedPoint.date})
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
             {metrics.map(({ key, label, suffix }) => (
               <div key={key} className="space-y-1">
-                <p className="text-4xl font-bold text-gray-900">
+                <p className="text-lg font-bold text-gray-900">
                   {selectedPoint.metrics[key]}
                   {suffix}
                 </p>
-                <p className="text-sm text-gray-600">{label}</p>
+                <p className="text-xs text-gray-600">{label}</p>
               </div>
             ))}
           </div>
@@ -115,7 +114,7 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
       )}
 
       {/* Progress Graph */}
-      <div className="h-[200px] w-full mt-8">
+      <div className="h-[200px] w-full border-2 border-purple-500">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
