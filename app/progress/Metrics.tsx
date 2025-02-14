@@ -10,7 +10,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-// Types
 type DataPoint = {
   date: string;
   average: number;
@@ -27,7 +26,6 @@ interface MetricsSectionProps {
   }>;
 }
 
-// Updated CustomDot props to match Recharts expectations
 interface CustomDotProps {
   cx: number;
   cy: number;
@@ -50,7 +48,6 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
 
   const currentMetrics = data[data.length - 1].metrics;
 
-  // Updated renderCustomDot with key prop
   const renderCustomDot = (props: CustomDotProps) => {
     const { cx, cy, index } = props;
     if (
@@ -66,7 +63,7 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
         key={`dot-${index}`}
         cx={cx}
         cy={cy}
-        r={selectedPoint?.date === data[index]?.date ? 6 : 4}
+        r={selectedPoint?.date === data[index]?.date ? 10 : 8}
         fill={selectedPoint?.date === data[index]?.date ? "#2563eb" : "#3b82f6"}
         className="cursor-pointer"
         onClick={() => data[index] && handleClick(data[index])}

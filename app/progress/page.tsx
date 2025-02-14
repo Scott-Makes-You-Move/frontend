@@ -77,8 +77,6 @@ const mobilityMetrics = [
 export default function ProgressPage() {
   return (
     <main className="max-w-5xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-12">Progress</h1>
-
       <div className="space-y-16">
         <MetricsSection
           title="Biometrics"
