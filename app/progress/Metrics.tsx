@@ -6,7 +6,6 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
   ResponsiveContainer,
 } from "recharts";
 
@@ -24,9 +23,9 @@ interface MetricsSectionProps {
     label: string;
     suffix?: string;
   }>;
+  color: string;
 }
 
-// Updated CustomDotProps to match Recharts expectations
 interface CustomDotProps {
   cx: number;
   cy: number;
@@ -41,6 +40,7 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
   title,
   data,
   metrics,
+  color,
 }) => {
   const [selectedPoint, setSelectedPoint] = useState<DataPoint | null>(null);
 
@@ -67,7 +67,7 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
         cx={cx}
         cy={cy}
         r={selectedPoint?.date === data[index]?.date ? 10 : 8}
-        fill={selectedPoint?.date === data[index]?.date ? "#2563eb" : "#3b82f6"}
+        fill={selectedPoint?.date === data[index]?.date ? "#6b7280" : color}
         className="cursor-pointer"
         onClick={() => data[index] && handleClick(data[index])}
       />
@@ -75,12 +75,14 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
   };
 
   return (
-    <div className="border-2 border-red-500 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-      <div className="border-2 border-blue-500 flex flex-col justify-around">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+      <div
+        className={`flex flex-col justify-around border-2 md:border-4 border-${color}-500 rounded-lg`}
+      >
         <h2 className="text-2xl font-semibold text-gray-800">{title}</h2>
 
         {/* Current Metrics Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-8 ">
+        <div className="grid grid-cols-3 gap-8">
           {metrics.map(({ key, label, suffix }) => (
             <div key={key} className="space-y-1">
               <p className="text-lg font-bold text-gray-900">
@@ -95,11 +97,23 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
 
       {/* Selected Point Details */}
       {selectedPoint && (
-        <div className="animate-fade-in border-2 border-green-500 flex flex-col justify-around">
-          <h3 className="text-xl font-bold text-gray-900">
+        <div className="animate-fade-in flex flex-col justify-around relative border-2 md:border-4 border-gray-500 rounded-lg">
+          <button
+            onClick={() => setSelectedPoint(null)}
+            className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+            aria-label="Close historical data"
+          >
+            <span
+              className="text-gray-500 font-medium leading-none select-none"
+              aria-hidden="true"
+            >
+              ×
+            </span>
+          </button>
+          <h3 className="text-xl font-bold text-gray-900 pr-8">
             Historical ({selectedPoint.date})
           </h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-3 gap-8">
             {metrics.map(({ key, label, suffix }) => (
               <div key={key} className="space-y-1">
                 <p className="text-lg font-bold text-gray-900">
@@ -114,7 +128,9 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
       )}
 
       {/* Progress Graph */}
-      <div className="h-[200px] w-full border-2 border-purple-500">
+      <div
+        className={`h-[200px] w-full ${!selectedPoint ? "md:col-span-2" : ""}`}
+      >
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
@@ -131,18 +147,10 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
               axisLine={false}
               domain={["dataMin - 1", "dataMax + 1"]}
             />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "white",
-                border: "1px solid #e5e7eb",
-                borderRadius: "6px",
-                padding: "8px",
-              }}
-            />
             <Line
               type="monotone"
               dataKey="average"
-              stroke="#3b82f6"
+              stroke={color}
               strokeWidth={2}
               dot={renderCustomDot}
             />

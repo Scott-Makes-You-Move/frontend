@@ -82,12 +82,14 @@ export default function ProgressPage() {
           title="Biometrics"
           data={biometricsData}
           metrics={biometricsMetrics}
+          color="blue"
         />
 
         <MetricsSection
           title="Mobility"
           data={mobilityData}
           metrics={mobilityMetrics}
+          color="green"
         />
       </div>
     </section>
