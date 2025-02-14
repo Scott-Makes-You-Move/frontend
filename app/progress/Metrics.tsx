@@ -26,6 +26,7 @@ interface MetricsSectionProps {
   }>;
 }
 
+// Updated CustomDotProps to match Recharts expectations
 interface CustomDotProps {
   cx: number;
   cy: number;
@@ -33,6 +34,7 @@ interface CustomDotProps {
   stroke: string;
   dataKey?: string;
   payload?: DataPoint;
+  value?: number;
 }
 
 const MetricsSection: React.FC<MetricsSectionProps> = ({
@@ -48,14 +50,17 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
 
   const currentMetrics = data[data.length - 1].metrics;
 
+  // Updated renderCustomDot to never return null
   const renderCustomDot = (props: CustomDotProps) => {
     const { cx, cy, index } = props;
+
+    // Early return with empty SVG element if props are invalid
     if (
       typeof cx !== "number" ||
       typeof cy !== "number" ||
       typeof index !== "number"
     ) {
-      return null;
+      return <circle cx={0} cy={0} r={0} fill="none" />;
     }
 
     return (
