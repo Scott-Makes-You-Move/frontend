@@ -100,7 +100,7 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
         <div className="animate-fade-in flex flex-col justify-around relative border-2 md:border-4 border-gray-500 rounded-lg">
           <button
             onClick={() => setSelectedPoint(null)}
-            className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+            className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
             aria-label="Close historical data"
           >
             <span
