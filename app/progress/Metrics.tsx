@@ -27,13 +27,14 @@ interface MetricsSectionProps {
   }>;
 }
 
-// Type for CustomDot props based on Recharts dot props
+// Updated CustomDot props to match Recharts expectations
 interface CustomDotProps {
   cx: number;
   cy: number;
   index: number;
   stroke: string;
-  dataKey?: string; // Make dataKey optional since we won't use it
+  dataKey?: string;
+  payload?: DataPoint;
 }
 
 const MetricsSection: React.FC<MetricsSectionProps> = ({
@@ -49,16 +50,26 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
 
   const currentMetrics = data[data.length - 1].metrics;
 
-  // Updated CustomDot component with proper typing
-  const CustomDot: React.FC<CustomDotProps> = ({ cx, cy, index, stroke }) => {
+  // Updated renderCustomDot with key prop
+  const renderCustomDot = (props: CustomDotProps) => {
+    const { cx, cy, index } = props;
+    if (
+      typeof cx !== "number" ||
+      typeof cy !== "number" ||
+      typeof index !== "number"
+    ) {
+      return null;
+    }
+
     return (
       <circle
+        key={`dot-${index}`}
         cx={cx}
         cy={cy}
         r={selectedPoint?.date === data[index]?.date ? 6 : 4}
         fill={selectedPoint?.date === data[index]?.date ? "#2563eb" : "#3b82f6"}
         className="cursor-pointer"
-        onClick={() => handleClick(data[index])}
+        onClick={() => data[index] && handleClick(data[index])}
       />
     );
   };
@@ -132,7 +143,7 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
               dataKey="average"
               stroke="#3b82f6"
               strokeWidth={2}
-              dot={CustomDot}
+              dot={renderCustomDot}
             />
           </LineChart>
         </ResponsiveContainer>
