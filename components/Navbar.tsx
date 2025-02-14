@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Link from "next/link";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -44,12 +45,12 @@ const Navbar: React.FC = () => {
               >
                 Sessions
               </a>
-              <a
+              <Link
                 href="/progress"
                 className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
               >
                 Progress
-              </a>
+              </Link>
               <a
                 href="/leaderboard"
                 className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
