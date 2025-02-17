@@ -38,7 +38,7 @@ const ContactPage = () => {
   };
 
   return (
-    <main className="max-w-4xl mx-auto px-4 py-12 font-body animate-fade-in">
+    <section className="max-w-4xl mx-auto px-4 py-12 font-body animate-fade-in">
       <h1 className="text-4xl font-title font-bold text-primary mb-8">
         Contact Us
       </h1>
@@ -133,7 +133,7 @@ const ContactPage = () => {
           </div> */}
         </CardContent>
       </Card>
-    </main>
+    </secti>
   );
 };
 

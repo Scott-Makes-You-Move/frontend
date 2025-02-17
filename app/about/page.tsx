@@ -17,7 +17,7 @@ const FeatureCard = ({ title, description }: FeatureCardProps) => {
 
 const AboutPage = () => {
   return (
-    <main className="max-w-4xl mx-auto px-4 py-12 font-body">
+    <section className="max-w-4xl mx-auto px-4 py-12 font-body">
       <section className="mb-16 animate-fade-in">
         <h1 className="text-4xl font-title font-bold text-primary mb-8">
           About Us
@@ -59,7 +59,7 @@ const AboutPage = () => {
           </CardContent>
         </Card>
       </section>
-    </main>
+    </section>
   );
 };
 
