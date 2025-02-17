@@ -133,7 +133,7 @@ const ContactPage = () => {
           </div> */}
         </CardContent>
       </Card>
-    </secti>
+    </section>
   );
 };
 
