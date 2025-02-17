@@ -8,6 +8,20 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      colors: {
+        primary: "#145da0", // For text, bars, and buttons
+        secondary: "#00a650", // Hover effect and secondary accents
+        accent: "#ffd202", // Additional secondary color
+        background: "#ffffff", // For background and text on buttons and bars
+      },
+      fontFamily: {
+        title: ["Open Sans", "sans-serif"],
+        body: ["Poppins", "sans-serif"],
+        alternative: ["Raleway", "Montserrat", "sans-serif"],
+      },
+      borderRadius: {
+        button: "0.375rem", // Rounded corners for buttons
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
@@ -26,4 +40,5 @@ const config: Config = {
   },
   plugins: [],
 };
+
 export default config;

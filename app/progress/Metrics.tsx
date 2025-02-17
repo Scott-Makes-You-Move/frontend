@@ -67,7 +67,7 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
         cx={cx}
         cy={cy}
         r={selectedPoint?.date === data[index]?.date ? 10 : 8}
-        fill={selectedPoint?.date === data[index]?.date ? "#6b7280" : color}
+        fill={selectedPoint?.date === data[index]?.date ? "#145da0" : color}
         className="cursor-pointer"
         onClick={() => data[index] && handleClick(data[index])}
       />
