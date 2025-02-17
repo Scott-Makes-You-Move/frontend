@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
+import Logo from "./Logo";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,9 +12,7 @@ const Navbar: React.FC = () => {
 
   return (
     <header className="w-full flex justify-between items-center p-4  shadow-md z-10 border-b-2 border-primary bg-primary">
-      <h1 className="text-2xl font-title text-background">
-        Scott Makes You Move
-      </h1>
+      <Logo variant="white" size="md" showText={true} />
 
       <nav className="flex justify-center gap-6 text-background font-body font-bold">
         <Link
