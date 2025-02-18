@@ -1,6 +1,6 @@
-import QuoteCard from "@/components/QuoteCard";
-import EmbeddedVideo from "@/components/EmbeddedVideo";
-import TimeDisplay from "@/components/TimeDisplay";
+import QuoteCard from "@/src/components/QuoteCard";
+import EmbeddedVideo from "@/src/components/EmbeddedVideo";
+import TimeDisplay from "@/src/components/TimeDisplay";
 
 export default function Home() {
   return (

@@ -1,5 +1,10 @@
 // app/about/page.tsx
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/Card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/src/components/Card";
 
 interface FeatureCardProps {
   title: string;
