@@ -1,33 +1,47 @@
-import {
-  type GenerateMetadataFnOptions,
-  generateMetadataFn,
-} from "../generateMetadataFn";
-import {
-  type GeneratePageComponentOptions,
-  generatePageComponent,
-} from "./generatePageComponent";
+import type { TadaDocumentNode } from 'gql.tada';
+import type { ComponentType } from 'react';
+import { type EnabledQueryListenerOptions, useQuerySubscription } from 'react-datocms';
+import type { ContentComponentType } from './generatePageComponent';
 
 /**
- * A simple wrapper that reduces the code to be written for each route. It takes
- * care of generating both the page component and the `generateMetadata()`
- * function from a common set of options.
+ * Generates a Client Component that subscribes to DatoCMS's Real-time Updates
+ * API using the `useQuerySubscription` hook. The generated component receives
+ * updates on content changes, and re-renders the `contentComponent`.
  */
-export function generatePageComponentAndMetadataFn<
-  PageProps,
-  Result,
-  Variables
->(
-  options: GeneratePageComponentOptions<PageProps, Result, Variables> &
-    Partial<GenerateMetadataFnOptions<PageProps, Result, Variables>>
-) {
-  const Page = generatePageComponent(options);
+export function generateRealtimeComponent<PageProps, Result, Variables>({
+  query,
+  contentComponent: ContentComponent,
+}: GenerateRealtimeComponentOptions<PageProps, Result, Variables>) {
+  const RealtimeComponent: RealtimeComponentType<PageProps, Result, Variables> = ({
+    pageProps,
+    ...subscriptionOptions
+  }) => {
+    const { data, error } = useQuerySubscription(subscriptionOptions);
 
-  const metadataFn = options.pickSeoMetaTags
-    ? generateMetadataFn({
-        ...options,
-        pickSeoMetaTags: options.pickSeoMetaTags,
-      })
-    : undefined;
+    // Feel free to customize your way of rendering the error
+    if (error) {
+      return (
+        <div>
+          <pre>{error.code}</pre>: {error.message}
+        </div>
+      );
+    }
 
-  return { Page, generateMetadataFn: metadataFn };
+    if (!data) return null;
+
+    return <ContentComponent {...pageProps} data={data} />;
+  };
+
+  return RealtimeComponent;
 }
+
+type GenerateRealtimeComponentOptions<PageProps, Result, Variables> = {
+  query: TadaDocumentNode<Result, Variables>;
+  contentComponent: ContentComponentType<PageProps, Result>;
+};
+
+export type RealtimeComponentType<PageProps, Result, Variables> = ComponentType<
+  EnabledQueryListenerOptions<Result, Variables> & {
+    pageProps: PageProps;
+  }
+>;
