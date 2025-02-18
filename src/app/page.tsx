@@ -23,19 +23,3 @@ export default function Home() {
     </section>
   );
 }
-
-{
-  /* <section className="w-full ">
-      <div className="flex flex-col items-center justify-start gap-4 md:grid md:grid-cols-2 md:place-items-center p-4">
-        <TimeDisplay nextBreak="1:30 PM" />
-
-        <div className="md:col-span-2 w-full max-w-4xl">
-          <EmbeddedVideo videoUrl="https://www.youtube.com/embed/4Xuddq77lRM" />
-        </div>
-      </div>
-
-      <div className="fixed bottom-4 right-4">
-        <QuoteCard quote="We are what we repeatedly do. Excellence is not an act, but a habit." />
-      </div>
-    </section> */
-}
