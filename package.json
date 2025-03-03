@@ -47,6 +47,6 @@
     "pre-commit": "npm run format"
   },
   "engines": {
-    "node": "21.1.0"
+    "node": "20.11"
   }
 }
