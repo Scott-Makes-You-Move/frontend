@@ -18,6 +18,7 @@
     "datocms-structured-text-to-plain-text": "^4.0.2",
     "datocms-structured-text-utils": "^4.0.1",
     "gql.tada": "^1.8.10",
+    "graphql-tag": "^2.12.6",
     "highlight.js": "^11.11.1",
     "jsdom": "^26.0.0",
     "lucide-react": "^0.475.0",

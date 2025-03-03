@@ -20,8 +20,8 @@ export async function executeQuery<Result, Variables>(
     excludeInvalid: true,
     includeDrafts: options?.includeDrafts,
     token: options?.includeDrafts
-      ? process.env.DATOCMS_DRAFT_CONTENT_CDA_TOKEN!
-      : process.env.DATOCMS_PUBLISHED_CONTENT_CDA_TOKEN!,
+      ? process.env.NEXT_DATOCMS_DRAFT_CONTENT_CDA_TOKEN!
+      : process.env.NEXT_DATOCMS_PUBLISHED_CONTENT_CDA_TOKEN!,
     requestInitOptions: {
       cache: "force-cache",
       /*
