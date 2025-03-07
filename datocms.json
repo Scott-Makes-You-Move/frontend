@@ -6,19 +6,19 @@
   "deploymentType": "static",
   "buildCommand": "npm run build",
   "environmentVariables": {
-    "DATOCMS_PUBLISHED_CONTENT_CDA_TOKEN": {
+    "NEXT_DATOCMS_PUBLISHED_CONTENT_CDA_TOKEN": {
       "type": "datocmsAccessToken",
       "tokenName": "CDA Only (Published)"
     },
-    "DATOCMS_DRAFT_CONTENT_CDA_TOKEN": {
+    "NEXT_DATOCMS_DRAFT_CONTENT_CDA_TOKEN": {
       "type": "datocmsAccessToken",
       "tokenName": "CDA Only (Draft)"
     },
-    "DATOCMS_CMA_TOKEN": {
+    "NEXT_DATOCMS_CMA_TOKEN": {
       "type": "datocmsAccessToken",
       "tokenName": "CMA Only (Admin)"
     },
-    "SECRET_API_TOKEN": {
+    "NEXT_SECRET_API_TOKEN": {
       "type": "string",
       "value": "secretTokenProtectingWebhookEndpointsFromBeingCalledByAnyone"
     }
