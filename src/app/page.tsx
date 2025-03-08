@@ -20,7 +20,7 @@ type HomePageQueryResult = {
   };
 };
 
-const query = graphql<any, any>(/* GraphQL */ `
+const query = graphql<string, never>(/* GraphQL */ `
   query HomePageQuery {
     movementBreak {
       nextBreakTime
@@ -40,7 +40,7 @@ const query = graphql<any, any>(/* GraphQL */ `
 export default async function Home() {
   const { isEnabled: isDraftModeEnabled } = await draftMode();
 
-  const { movementBreak, exerciseVideo, quote } = await executeQuery<HomePageQueryResult, any>(
+  const { movementBreak, exerciseVideo, quote } = await executeQuery<HomePageQueryResult, never>(
     query,
     {
       includeDrafts: isDraftModeEnabled,
