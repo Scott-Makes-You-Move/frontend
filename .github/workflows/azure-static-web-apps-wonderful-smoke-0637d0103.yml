@@ -45,6 +45,11 @@ jobs:
           output_location: '' # Built app content directory - optional
           github_id_token: ${{ steps.idtoken.outputs.result }}
           ###### End of Repository/Build Configurations ######
+        env:
+          NEXT_DATOCMS_PUBLISHED_CONTENT_CDA_TOKEN: ${{ secrets.NEXT_DATOCMS_PUBLISHED_CONTENT_CDA_TOKEN }}
+          NEXT_DATOCMS_DRAFT_CONTENT_CDA_TOKEN: ${{ secrets.NEXT_DATOCMS_DRAFT_CONTENT_CDA_TOKEN }}
+          NEXT_DATOCMS_CMA_TOKEN: ${{ secrets.NEXT_DATOCMS_CMA_TOKEN }}
+          NEXT_SECRET_API_TOKEN: ${{ secrets.NEXT_SECRET_API_TOKEN }}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
