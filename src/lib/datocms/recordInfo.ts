@@ -1,4 +1,4 @@
-import type { SchemaTypes } from "@datocms/cma-client";
+import type { SchemaTypes } from '@datocms/cma-client';
 
 /*
  * Both the "Web Previews" and "SEO/Readability Analysis" plugins from DatoCMS
@@ -14,13 +14,13 @@ import type { SchemaTypes } from "@datocms/cma-client";
 export async function recordToWebsiteRoute(
   item: SchemaTypes.Item,
   itemTypeApiKey: string,
-  locale: string
+  locale: string,
 ): Promise<string | null> {
   switch (itemTypeApiKey) {
-    case "page": {
-      return "/real-time-updates";
+    case 'page': {
+      return '/real-time-updates';
     }
-    case "article": {
+    case 'article': {
       return `/blog/${await recordToSlug(item, itemTypeApiKey, locale)}`;
     }
     default:
@@ -31,10 +31,10 @@ export async function recordToWebsiteRoute(
 export async function recordToSlug(
   item: SchemaTypes.Item,
   itemTypeApiKey: string,
-  locale: string
+  locale: string,
 ): Promise<string | null> {
   switch (itemTypeApiKey) {
-    case "article": {
+    case 'article': {
       return item.attributes.slug as string;
     }
     default:

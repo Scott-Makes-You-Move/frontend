@@ -1,13 +1,6 @@
-"use client";
-import React, { useState } from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  ResponsiveContainer,
-} from "recharts";
+'use client';
+import React, { useState } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 
 type DataPoint = {
   date: string;
@@ -36,12 +29,7 @@ interface CustomDotProps {
   value?: number;
 }
 
-const MetricsSection: React.FC<MetricsSectionProps> = ({
-  title,
-  data,
-  metrics,
-  color,
-}) => {
+const MetricsSection: React.FC<MetricsSectionProps> = ({ title, data, metrics, color }) => {
   const [selectedPoint, setSelectedPoint] = useState<DataPoint | null>(null);
 
   const handleClick = (point: DataPoint) => {
@@ -53,11 +41,7 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
   const renderCustomDot = (props: CustomDotProps) => {
     const { cx, cy, index } = props;
 
-    if (
-      typeof cx !== "number" ||
-      typeof cy !== "number" ||
-      typeof index !== "number"
-    ) {
+    if (typeof cx !== 'number' || typeof cy !== 'number' || typeof index !== 'number') {
       return <circle cx={0} cy={0} r={0} fill="none" />;
     }
 
@@ -67,7 +51,7 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
         cx={cx}
         cy={cy}
         r={selectedPoint?.date === data[index]?.date ? 10 : 8}
-        fill={selectedPoint?.date === data[index]?.date ? "#145da0" : color}
+        fill={selectedPoint?.date === data[index]?.date ? '#145da0' : color}
         className="cursor-pointer"
         onClick={() => data[index] && handleClick(data[index])}
       />
@@ -103,10 +87,7 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
             className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
             aria-label="Close historical data"
           >
-            <span
-              className="text-gray-500 font-medium leading-none select-none"
-              aria-hidden="true"
-            >
+            <span className="text-gray-500 font-medium leading-none select-none" aria-hidden="true">
               ×
             </span>
           </button>
@@ -128,24 +109,17 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
       )}
 
       {/* Progress Graph */}
-      <div
-        className={`h-[200px] w-full ${!selectedPoint ? "md:col-span-2" : ""}`}
-      >
+      <div className={`h-[200px] w-full ${!selectedPoint ? 'md:col-span-2' : ''}`}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-            <XAxis
-              dataKey="date"
-              stroke="#888888"
-              fontSize={12}
-              tickLine={false}
-            />
+            <XAxis dataKey="date" stroke="#888888" fontSize={12} tickLine={false} />
             <YAxis
               stroke="#888888"
               fontSize={12}
               tickLine={false}
               axisLine={false}
-              domain={["dataMin - 1", "dataMax + 1"]}
+              domain={['dataMin - 1', 'dataMax + 1']}
             />
             <Line
               type="monotone"

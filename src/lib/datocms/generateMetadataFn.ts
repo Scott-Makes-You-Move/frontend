@@ -1,12 +1,8 @@
-import type { TadaDocumentNode } from "gql.tada";
-import type { Metadata, ResolvingMetadata } from "next";
-import { draftMode } from "next/headers";
-import {
-  type SeoOrFaviconTag,
-  type TitleMetaLinkTag,
-  toNextMetadata,
-} from "react-datocms/seo";
-import { executeQuery } from "./executeQuery";
+import type { TadaDocumentNode } from 'gql.tada';
+import type { Metadata, ResolvingMetadata } from 'next';
+import { draftMode } from 'next/headers';
+import { type SeoOrFaviconTag, type TitleMetaLinkTag, toNextMetadata } from 'react-datocms/seo';
+import { executeQuery } from './executeQuery';
 
 /**
  * Generates a function that fits the Next.js `generateMetadata()` format. This
@@ -14,16 +10,15 @@ import { executeQuery } from "./executeQuery";
  * DatoCMS GraphQL query.
  */
 export function generateMetadataFn<PageProps, Result, Variables>(
-  options: GenerateMetadataFnOptions<PageProps, Result, Variables>
+  options: GenerateMetadataFnOptions<PageProps, Result, Variables>,
 ) {
   return async function generateMetadata(
     pageProps: PageProps,
-    parent: ResolvingMetadata
+    parent: ResolvingMetadata,
   ): Promise<Metadata> {
     const { isEnabled: isDraftModeEnabled } = draftMode();
 
-    const variables =
-      options.buildQueryVariables?.(pageProps) || ({} as Variables);
+    const variables = options.buildQueryVariables?.(pageProps) || ({} as Variables);
 
     const [parentMetadata, data] = await Promise.all([
       parent,
@@ -43,9 +38,7 @@ export function generateMetadataFn<PageProps, Result, Variables>(
   };
 }
 
-export type BuildQueryVariablesFn<PageProps, Variables> = (
-  context: PageProps
-) => Variables;
+export type BuildQueryVariablesFn<PageProps, Variables> = (context: PageProps) => Variables;
 
 export type GenerateMetadataFnOptions<PageProps, Result, Variables> = {
   /** The GraphQL query that will be used to generate metadata. */
@@ -56,7 +49,5 @@ export type GenerateMetadataFnOptions<PageProps, Result, Variables> = {
   buildQueryVariables?: BuildQueryVariablesFn<PageProps, Variables>;
 
   /** A callback that picks the SEO meta tags from the result of the query. */
-  pickSeoMetaTags: (
-    data: Result
-  ) => TitleMetaLinkTag[] | SeoOrFaviconTag[] | undefined;
+  pickSeoMetaTags: (data: Result) => TitleMetaLinkTag[] | SeoOrFaviconTag[] | undefined;
 };

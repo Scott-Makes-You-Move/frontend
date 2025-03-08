@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface EmbeddedVideoProps {
   videoUrl: string;
@@ -11,7 +11,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({ videoUrl, title }) => {
       <iframe
         className="w-full aspect-video rounded-lg shadow-md"
         src={videoUrl}
-        title={title || "Embedded Video"}
+        title={title || 'Embedded Video'}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
       ></iframe>

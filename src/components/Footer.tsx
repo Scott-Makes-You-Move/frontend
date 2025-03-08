@@ -1,5 +1,5 @@
-import React from "react";
-import Logo from "./Logo";
+import React from 'react';
+import Logo from './Logo';
 
 const Footer: React.FC = () => (
   <footer className="w-full text-center p-4 bg-primary shadow-md mt-auto border-t-2 border-primary">

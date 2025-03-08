@@ -1,10 +1,7 @@
-import {
-  buildRequestInit,
-  executeQuery as libExecuteQuery,
-} from "@datocms/cda-client";
-import type { TadaDocumentNode } from "gql.tada";
+import { buildRequestInit, executeQuery as libExecuteQuery } from '@datocms/cda-client';
+import type { TadaDocumentNode } from 'gql.tada';
 
-export const cacheTag = "datocms";
+export const cacheTag = 'datocms';
 
 /**
  * Executes a GraphQL query using the DatoCMS Content Delivery API, and caches
@@ -12,7 +9,7 @@ export const cacheTag = "datocms";
  */
 export async function executeQuery<Result, Variables>(
   query: TadaDocumentNode<Result, Variables>,
-  options?: ExecuteQueryOptions<Variables>
+  options?: ExecuteQueryOptions<Variables>,
 ) {
   buildRequestInit;
   const result = await libExecuteQuery(query, {
@@ -23,7 +20,7 @@ export async function executeQuery<Result, Variables>(
       ? process.env.NEXT_DATOCMS_DRAFT_CONTENT_CDA_TOKEN!
       : process.env.NEXT_DATOCMS_PUBLISHED_CONTENT_CDA_TOKEN!,
     requestInitOptions: {
-      cache: "force-cache",
+      cache: 'force-cache',
       /*
        * This project utilizes an extremely basic cache invalidation
        * technique: by using the `next.tags` option, all requests to DatoCMS

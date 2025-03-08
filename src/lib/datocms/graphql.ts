@@ -7,8 +7,8 @@
  * - https://gql-tada.0no.co/
  */
 
-import { initGraphQLTada } from "gql.tada";
-import type { introspection } from "./graphql-env.js";
+import { initGraphQLTada } from 'gql.tada';
+import type { introspection } from './graphql-env.js';
 
 /**
  * The Content Delivery API exposes a number of custom GraphQL scalar types. For
@@ -33,6 +33,6 @@ export const graphql = initGraphQLTada<{
   };
 }>();
 
-export { readFragment } from "gql.tada";
+export { readFragment } from 'gql.tada';
 
-export type { FragmentOf, ResultOf, VariablesOf } from "gql.tada";
+export type { FragmentOf, ResultOf, VariablesOf } from 'gql.tada';
