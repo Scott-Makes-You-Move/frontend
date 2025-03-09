@@ -13,7 +13,7 @@ const WinnerDisplay: React.FC<WinnerDisplayProps> = ({ name, isMobile }) => (
       aria-label="Trophy icon representing the last month's winner"
     />
     <p className="text-sm text-gray-600 font-body" aria-live="polite">
-      Last month's winner
+      {"Last month's winner"}
     </p>
     <p className={`${isMobile ? 'text-lg' : 'text-xl'} font-medium font-title`}>{name}</p>
   </div>
