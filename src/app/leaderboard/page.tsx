@@ -1,7 +1,14 @@
 import { Trophy } from 'lucide-react';
 
+type LeaderboardUser = {
+  id: number;
+  name: string;
+  rank: number;
+  streak: number;
+};
+
 const LeaderboardPage = () => {
-  const leaderboardData = [
+  const leaderboardData: LeaderboardUser[] = [
     { id: 1, name: 'Philip Roberts', rank: 1, streak: 96 },
     { id: 2, name: 'Lucia Morales', rank: 2, streak: 94 },
     { id: 3, name: 'Jeroen Verhoeven', rank: 3, streak: 89 },
@@ -11,7 +18,7 @@ const LeaderboardPage = () => {
 
   const lastMonthWinner = 'Tessa Liem';
 
-  const renderRank = (rank) => (
+  const renderRank = (rank: number) => (
     <div className="flex items-center justify-center">
       <span
         className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold ${
