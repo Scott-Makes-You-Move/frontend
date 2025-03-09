@@ -1,10 +1,10 @@
-import React from "react";
-import MetricsSection from "./Metrics";
+import React from 'react';
+import MetricsSection from './Metrics';
 
 // Sample data structure remains the same as before
 const biometricsData = [
   {
-    date: "Jan 2025",
+    date: 'Jan 2025',
     average: 85,
     metrics: {
       weight: 85,
@@ -13,7 +13,7 @@ const biometricsData = [
     },
   },
   {
-    date: "Feb 2025",
+    date: 'Feb 2025',
     average: 83,
     metrics: {
       weight: 83,
@@ -22,7 +22,7 @@ const biometricsData = [
     },
   },
   {
-    date: "Mar 2025",
+    date: 'Mar 2025',
     average: 82,
     metrics: {
       weight: 82,
@@ -34,7 +34,7 @@ const biometricsData = [
 
 const mobilityData = [
   {
-    date: "Jan 2025",
+    date: 'Jan 2025',
     average: 1.3,
     metrics: {
       hips: 1,
@@ -43,7 +43,7 @@ const mobilityData = [
     },
   },
   {
-    date: "Feb 2025",
+    date: 'Feb 2025',
     average: 1.7,
     metrics: {
       hips: 2,
@@ -52,7 +52,7 @@ const mobilityData = [
     },
   },
   {
-    date: "Mar 2025",
+    date: 'Mar 2025',
     average: 2,
     metrics: {
       hips: 2,
@@ -63,15 +63,15 @@ const mobilityData = [
 ];
 
 const biometricsMetrics = [
-  { key: "weight", label: "Weight", suffix: "kg" },
-  { key: "fatPercentage", label: "Fat %", suffix: "%" },
-  { key: "visceralFat", label: "Visceral Fat" },
+  { key: 'weight', label: 'Weight', suffix: 'kg' },
+  { key: 'fatPercentage', label: 'Fat %', suffix: '%' },
+  { key: 'visceralFat', label: 'Visceral Fat' },
 ];
 
 const mobilityMetrics = [
-  { key: "hips", label: "Hips" },
-  { key: "shoulder", label: "Shoulder" },
-  { key: "back", label: "Back" },
+  { key: 'hips', label: 'Hips' },
+  { key: 'shoulder', label: 'Shoulder' },
+  { key: 'back', label: 'Back' },
 ];
 
 export default function ProgressPage() {

@@ -1,7 +1,7 @@
-"use client";
-import React, { useState } from "react";
-import Link from "next/link";
-import Logo from "./Logo";
+'use client';
+import React, { useState } from 'react';
+import Link from 'next/link';
+import Logo from './Logo';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,16 +15,10 @@ const Navbar: React.FC = () => {
       <Logo variant="white" size="md" showText={true} />
 
       <nav className="flex justify-center gap-6 text-background font-body font-bold">
-        <Link
-          href="/about"
-          className="hidden md:block hover:text-accent transition-colors"
-        >
+        <Link href="/about" className="hidden md:block hover:text-accent transition-colors">
           About Us
         </Link>
-        <Link
-          href="/contact"
-          className="hidden md:block hover:text-accent transition-colors"
-        >
+        <Link href="/contact" className="hidden md:block hover:text-accent transition-colors">
           Contact
         </Link>
         <div className="relative">
