@@ -14,23 +14,27 @@ const LeaderboardPage = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-4">
+      <a href="#leaderboard" className="sr-only focus:not-sr-only">
+        Skip to leaderboard
+      </a>
+
       {/* Mobile layout */}
-      <div className="block md:hidden">
+      <section className="block md:hidden">
         <div className="mb-8">
           <LeaderboardTable data={leaderboardData} />
         </div>
         <WinnerDisplay name={lastMonthWinner} isMobile={true} />
-      </div>
+      </section>
 
       {/* Desktop layout */}
-      <div className="hidden md:grid md:grid-cols-2 md:gap-8">
-        <div>
+      <section className="hidden md:grid md:grid-cols-2 md:gap-8">
+        <div id="leaderboard">
           <LeaderboardTable data={leaderboardData} />
         </div>
         <div className="flex flex-col items-center justify-center">
           <WinnerDisplay name={lastMonthWinner} isMobile={false} />
         </div>
-      </div>
+      </section>
     </div>
   );
 };
