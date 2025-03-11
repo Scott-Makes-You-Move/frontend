@@ -1,21 +1,21 @@
-"use client";
-import React, { useState } from "react";
-import Link from "next/link";
-import { useSession, signOut } from "next-auth/react";
-import Logo from "./Logo";
-import Logout from "@/components/Logout";
+'use client';
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { useSession, signOut } from 'next-auth/react';
+import Logo from './Logo';
+import Logout from '@/components/Logout';
 
 const Navbar: React.FC = () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const { data: session } = useSession();
+  const [isOpen, setIsOpen] = useState(false);
+  const { data: session } = useSession();
 
-    const toggleMenu = () => {
-        setIsOpen(!isOpen);
-    };
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
 
-    return (
-        <header className="w-full flex justify-between items-center p-4  shadow-md z-10 border-b-2 border-primary bg-primary">
-            <Logo variant="white" size="md" showText={true} />
+  return (
+    <header className="w-full flex justify-between items-center p-4  shadow-md z-10 border-b-2 border-primary bg-primary">
+      <Logo variant="white" size="md" showText={true} />
 
       <nav className="flex justify-center gap-6 text-background font-body font-bold">
         <Link href="/about" className="hidden md:block hover:text-accent transition-colors">

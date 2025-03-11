@@ -42,7 +42,7 @@ const query = graphql<string, never>(/* GraphQL */ `
 
 export default async function Home() {
   const { isEnabled: isDraftModeEnabled } = await draftMode();
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
   const { movementBreak, exerciseVideo, quote } = await executeQuery<HomePageQueryResult, never>(
     query,
     {
@@ -51,7 +51,7 @@ export default async function Home() {
   );
 
   if (!session) {
-    redirect("/api/auth/signin?callbackUrl=/")
+    redirect('/api/auth/signin?callbackUrl=/');
   }
 
   return (

@@ -1,8 +1,8 @@
-import React from "react";
-import MetricsSection from "./Metrics";
-import {getServerSession} from "next-auth";
-import {authOptions} from "@/app/api/auth/[...nextauth]/route";
-import {redirect} from "next/navigation";
+import React from 'react';
+import MetricsSection from './Metrics';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { redirect } from 'next/navigation';
 
 // Sample data structure remains the same as before
 const biometricsData = [
@@ -78,27 +78,27 @@ const mobilityMetrics = [
 ];
 
 export default async function ProgressPage() {
-    const session = await getServerSession(authOptions)
-    if (!session) {
-        redirect("/api/auth/signin?callbackUrl=/progress")
-    }
-    return (
-        <section className="max-w-5xl w-full mx-auto p-6">
-            <div className="space-y-16">
-                <MetricsSection
-                    title="Biometrics"
-                    data={biometricsData}
-                    metrics={biometricsMetrics}
-                    color="blue"
-                />
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    redirect('/api/auth/signin?callbackUrl=/progress');
+  }
+  return (
+    <section className="max-w-5xl w-full mx-auto p-6">
+      <div className="space-y-16">
+        <MetricsSection
+          title="Biometrics"
+          data={biometricsData}
+          metrics={biometricsMetrics}
+          color="blue"
+        />
 
-                <MetricsSection
-                    title="Mobility"
-                    data={mobilityData}
-                    metrics={mobilityMetrics}
-                    color="green"
-                />
-            </div>
-        </section>
-    );
+        <MetricsSection
+          title="Mobility"
+          data={mobilityData}
+          metrics={mobilityMetrics}
+          color="green"
+        />
+      </div>
+    </section>
+  );
 }

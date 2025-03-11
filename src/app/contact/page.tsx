@@ -1,19 +1,19 @@
 // app/contact/page.tsx
-"use client";
+'use client';
 
-import {useState} from "react";
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/Card";
-import {Input} from "@/components/Input";
-import {Textarea} from "@/components/Textarea";
-import {Button} from "@/components/Button";
-import {Mail, Phone} from "lucide-react";
-import {useSession} from "next-auth/react";
-import {redirect} from "next/navigation";
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/Card';
+import { Input } from '@/components/Input';
+import { Textarea } from '@/components/Textarea';
+import { Button } from '@/components/Button';
+import { Mail, Phone } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
 
 interface ContactFormData {
-    name: string;
-    email: string;
-    message: string;
+  name: string;
+  email: string;
+  message: string;
 }
 
 const ContactPage = () => {
@@ -37,39 +37,34 @@ const ContactPage = () => {
     }));
   };
 
-    const {data: session, status} = useSession();
-    if (status === "unauthenticated") {
-        redirect("/api/auth/signin?callbackUrl=/contact")
-    }
-    return (
-        <section className="max-w-4xl mx-auto px-4 py-12 font-body animate-fade-in">
-            <h1 className="text-4xl font-title font-bold text-primary mb-8">
-                Contact Us
-            </h1>
-            <Card className="border-primary/10">
-                <CardHeader>
-                    <CardTitle className="font-title text-primary">
-                        Send us a Message (NOT FUNCTIONAL)
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div>
-                            <label
-                                htmlFor="name"
-                                className="block text-sm font-medium text-primary mb-1"
-                            >
-                                Name
-                            </label>
-                            <Input
-                                id="name"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleChange}
-                                className="border-primary/20 focus:border-secondary focus:ring-secondary"
-                                required
-                            />
-                        </div>
+  const { data: session, status } = useSession();
+  if (status === 'unauthenticated') {
+    redirect('/api/auth/signin?callbackUrl=/contact');
+  }
+  return (
+    <section className="max-w-4xl mx-auto px-4 py-12 font-body animate-fade-in">
+      <h1 className="text-4xl font-title font-bold text-primary mb-8">Contact Us</h1>
+      <Card className="border-primary/10">
+        <CardHeader>
+          <CardTitle className="font-title text-primary">
+            Send us a Message (NOT FUNCTIONAL)
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-primary mb-1">
+                Name
+              </label>
+              <Input
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="border-primary/20 focus:border-secondary focus:ring-secondary"
+                required
+              />
+            </div>
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-primary mb-1">
