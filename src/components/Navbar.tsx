@@ -24,6 +24,7 @@ const Navbar: React.FC = () => {
         <Link href="/contact" className="hidden md:block hover:text-accent transition-colors">
           Contact
         </Link>
+        <Logout />
         <div className="relative">
           <button className="block focus:outline-none" onClick={toggleMenu}>
             <svg
