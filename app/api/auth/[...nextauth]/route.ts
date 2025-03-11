@@ -3,12 +3,17 @@ import { JWT } from "next-auth/jwt";
 import NextAuth from "next-auth/next";
 import KeycloakProvider from "next-auth/providers/keycloak"
 
+const KEYCLOAK_ISSUER = process.env.KEYCLOAK_ISSUER ?? "http://localhost:8080/realms/myrealm";
+const KEYCLOAK_CLIENT_ID = process.env.KEYCLOAK_CLIENT_ID ?? "myclient";
+const KEYCLOAK_CLIENT_SECRET = process.env.KEYCLOAK_CLIENT_SECRET ?? "myclientsecret";
+const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET ?? "somesecret";
+
 function requestRefreshOfAccessToken(token: JWT) {
-    return fetch(`${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/token`, {
+    return fetch(`${KEYCLOAK_ISSUER}/protocol/openid-connect/token`, {
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({
-            client_id: process.env.KEYCLOAK_CLIENT_ID,
-            client_secret: process.env.KEYCLOAK_CLIENT_SECRET,
+            client_id: KEYCLOAK_CLIENT_ID,
+            client_secret: KEYCLOAK_CLIENT_SECRET,
             grant_type: "refresh_token",
             refresh_token: token.refreshToken!,
         }),
@@ -18,11 +23,12 @@ function requestRefreshOfAccessToken(token: JWT) {
 }
 
 export const authOptions: AuthOptions = {
+    secret: NEXTAUTH_SECRET,
     providers: [
         KeycloakProvider({
-            clientId: `${process.env.KEYCLOAK_CLIENT_ID}`,
-            clientSecret: `${process.env.KEYCLOAK_CLIENT_SECRET}`,
-            issuer: `${process.env.KEYCLOAK_ISSUER}`,
+            clientId: KEYCLOAK_CLIENT_ID,
+            clientSecret: KEYCLOAK_CLIENT_SECRET,
+            issuer: KEYCLOAK_ISSUER,
         })
     ],
     session: {

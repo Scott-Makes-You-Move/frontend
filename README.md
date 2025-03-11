@@ -24,7 +24,13 @@ cd frontend
 npm install
 ```
 
-### 3️⃣ Run the Development Server
+### 3️⃣ Running Keycloak Locally with Docker Compose
+
+```sh
+docker-compose up
+```
+
+### 4️⃣ Run the Development Server
 
 ```sh
 npm run dev
