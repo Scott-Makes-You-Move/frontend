@@ -1,10 +1,13 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useSession, signOut } from 'next-auth/react';
 import Logo from './Logo';
+import Logout from '@/components/Logout';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { data: session } = useSession();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -21,6 +24,7 @@ const Navbar: React.FC = () => {
         <Link href="/contact" className="hidden md:block hover:text-accent transition-colors">
           Contact
         </Link>
+        <Logout />
         <div className="relative">
           <button className="block focus:outline-none" onClick={toggleMenu}>
             <svg
