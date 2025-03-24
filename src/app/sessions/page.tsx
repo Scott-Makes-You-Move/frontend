@@ -54,7 +54,6 @@ const SessionsPage: React.FC = () => {
           </table>
         </div>
         <div>
-       
           <Calendar onChange={onDateChange} value={date} />
         </div>
       </div>
