@@ -1,13 +1,12 @@
 'use client';
+
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useSession, signOut } from 'next-auth/react';
 import Logo from './Logo';
 import Logout from '@/components/Logout';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { data: session } = useSession();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);

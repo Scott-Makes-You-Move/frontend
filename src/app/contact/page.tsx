@@ -1,4 +1,3 @@
-// app/contact/page.tsx
 'use client';
 
 import { useState } from 'react';
@@ -6,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/Card';
 import { Input } from '@/components/Input';
 import { Textarea } from '@/components/Textarea';
 import { Button } from '@/components/Button';
-import { Mail, Phone } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 
@@ -37,7 +35,7 @@ const ContactPage = () => {
     }));
   };
 
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   if (status === 'unauthenticated') {
     redirect('/api/auth/signin?callbackUrl=/contact');
   }
