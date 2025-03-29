@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import Image from 'next/image';
 
 const WorkoutPage: React.FC = () => {
   return (
@@ -8,10 +8,12 @@ const WorkoutPage: React.FC = () => {
       <div className="max-w-4xl mx-auto">
         <div className="mb-12 flex flex-col md:flex-row">
           <div className="relative w-full md:w-64 h-48 md:h-36 md:mr-6 flex-shrink-0 mb-4 md:mb-0">
-            <img
+            <Image
               src="https://fakeimg.pl/64x48"
               alt="Core workout"
               className="w-full h-full object-cover rounded"
+              width={64}
+              height={48}
             />
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center">
@@ -44,10 +46,12 @@ const WorkoutPage: React.FC = () => {
         {/* Workout 2 */}
         <div className="mb-12 flex flex-col md:flex-row">
           <div className="relative w-full md:w-64 h-48 md:h-36 md:mr-6 flex-shrink-0 mb-4 md:mb-0">
-            <img
+            <Image
               src="https://fakeimg.pl/64x48"
               alt="Strength workout"
               className="w-full h-full object-cover rounded"
+              width={64}
+              height={48}
             />
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center">
@@ -81,10 +85,12 @@ const WorkoutPage: React.FC = () => {
         {/* Workout 3 */}
         <div className="mb-12 flex flex-col md:flex-row">
           <div className="relative w-full md:w-64 h-48 md:h-36 md:mr-6 flex-shrink-0 mb-4 md:mb-0">
-            <img
+            <Image
               src="https://fakeimg.pl/64x48"
               alt="Mobility workout"
               className="w-full h-full object-cover rounded"
+              width={64}
+              height={48}
             />
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center">
