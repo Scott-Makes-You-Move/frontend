@@ -11,7 +11,7 @@ type SessionItem = {
 };
 
 const SessionsPage: React.FC = () => {
-  const [date, setDate] = useState<Date>(new Date());
+  const [date, setDate] = useState<any>(new Date());
 
   const sessionItems: SessionItem[] = [
     { time: '10:00 AM', session: 'Hip', status: 'completed' },
@@ -19,44 +19,63 @@ const SessionsPage: React.FC = () => {
     { time: '3:00 PM', session: 'Back', status: 'completed' },
   ];
 
-  const onDateChange = (newDate: Date) => {
+  const onDateChange = (newDate: any) => {
     setDate(newDate);
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="grid md:grid-cols-2 gap-8">
-        <div>
-          <h2 className="text-2xl font-bold mb-4">Tasks Completed Today</h2>
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left py-2">Time</th>
-                <th className="text-left py-2">Session</th>
-                <th className="text-right py-2">Done</th>
+    <div className="p-4 max-w-4xl mx-auto space-y-8 flex flex-col justify-between items-center md:flex-row">
+      <section aria-labelledby="tasks-heading">
+        <h2 id="tasks-heading" className="text-xl font-semibold mb-4">
+          Tasks Completed Today
+        </h2>
+
+        <div className="overflow-x-auto rounded border border-gray-200">
+          <table className="min-w-full text-sm text-left">
+            <thead className="bg-gray-100 text-gray-700">
+              <tr>
+                <th scope="col" className="px-4 py-2 font-medium">
+                  Time
+                </th>
+                <th scope="col" className="px-4 py-2 font-medium">
+                  Session
+                </th>
+                <th scope="col" className="px-4 py-2 font-medium">
+                  Done
+                </th>
               </tr>
             </thead>
             <tbody>
               {sessionItems.map((item, index) => (
-                <tr key={index} className="border-b">
-                  <td className="py-2">{item.time}</td>
-                  <td className="py-2">{item.session}</td>
-                  <td className="py-2 text-right">
-                    {item.status === 'completed' ? (
-                      <span className="text-green-500">✓</span>
-                    ) : (
-                      <span className="text-red-500">✗</span>
-                    )}
+                <tr key={index} className="border-t">
+                  <td className="px-4 py-2 whitespace-nowrap">{item.time}</td>
+                  <td className="px-4 py-2 whitespace-nowrap">{item.session}</td>
+                  <td className="px-4 py-2">
+                    <span
+                      role="img"
+                      aria-label={item.status === 'completed' ? 'Completed' : 'Not completed'}
+                      className={item.status === 'completed' ? 'text-green-600' : 'text-red-600'}
+                    >
+                      {item.status === 'completed' ? '✓' : '✗'}
+                    </span>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        <div>
-          <Calendar onChange={onDateChange} value={date} />
+      </section>
+
+      <section aria-label="Calendar Section">
+        <div className="max-w-md">
+          <Calendar
+            onChange={onDateChange}
+            value={date}
+            aria-label="Select date"
+            className="w-full"
+          />
         </div>
-      </div>
+      </section>
     </div>
   );
 };

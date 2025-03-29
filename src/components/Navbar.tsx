@@ -43,7 +43,7 @@ const Navbar: React.FC = () => {
                 href="/sessions"
                 className="block px-4 py-2 text-background hover:bg-accent hover:text-background transition"
               >
-                Sessions (X)
+                Sessions
               </Link>
 
               <Link

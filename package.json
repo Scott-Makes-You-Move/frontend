@@ -46,7 +46,7 @@
     "typescript": "^5"
   },
   "simple-git-hooks": {
-    "pre-commit": "npm run format"
+    "pre-commit": "npm run format && npm run lint"
   },
   "engines": {
     "node": "20.11"
