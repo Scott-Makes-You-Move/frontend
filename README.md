@@ -26,7 +26,11 @@ npm install
 
 ### 3️⃣ Running Keycloak Locally with Docker Compose
 
+Clone the keycloak repository
+
 ```sh
+git clone https://github.com/Scott-Makes-You-Move/keycloak-service
+cd keycloak-service/
 docker-compose up
 ```
 
