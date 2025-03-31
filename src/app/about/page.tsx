@@ -1,4 +1,8 @@
+// app/about/page.tsx
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/Card';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { redirect } from 'next/navigation';
 
 interface FeatureCardProps {
   title: string;
@@ -14,7 +18,13 @@ const FeatureCard = ({ title, description }: FeatureCardProps) => {
   );
 };
 
-const AboutPage = () => {
+const AboutPage = async () => {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    redirect('/api/auth/signin?callbackUrl=/about');
+  }
+
   return (
     <section className="max-w-4xl mx-auto px-4 py-12 font-body">
       <section className="mb-16 animate-fade-in">

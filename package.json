@@ -23,6 +23,7 @@
     "lucide-react": "^0.475.0",
     "motion": "^12.4.1",
     "next": "15.1.6",
+    "next-auth": "^4.24.11",
     "react": "^19",
     "react-calendar": "^5.1.0",
     "react-datocms": "^7.1.0",
