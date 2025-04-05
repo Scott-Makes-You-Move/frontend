@@ -32,8 +32,6 @@ jobs:
             const coredemo = require('@actions/core')
             return await coredemo.getIDToken()
           result-encoding: string
-      - name: Debug standalone folder
-        run: ls -al .next/standalone && tree .next/standalone # Sanity check to see exactly what Azure will try to deploy
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
