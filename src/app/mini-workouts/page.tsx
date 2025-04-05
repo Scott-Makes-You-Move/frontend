@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+import EmbeddedVideo from '@/components/EmbeddedVideo';
 
 const WorkoutPage: React.FC = () => {
   return (
@@ -8,30 +8,10 @@ const WorkoutPage: React.FC = () => {
       <div className="max-w-4xl mx-auto">
         <div className="mb-12 flex flex-col md:flex-row">
           <div className="relative w-full md:w-64 h-48 md:h-36 md:mr-6 flex-shrink-0 mb-4 md:mb-0">
-            <Image
-              src="https://fakeimg.pl/64x48"
-              alt="Core workout"
-              className="w-full h-full object-cover rounded"
-              width={64}
-              height={48}
+            <EmbeddedVideo
+              videoUrl="https://www.youtube.com/embed/bTWomPwoUj4?si=-5-25LgnvfmFM0b6"
+              title="Core Workout"
             />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                </svg>
-              </div>
-            </div>
           </div>
           <div className="text-left">
             <h1 className="text-3xl md:text-4xl font-bold mb-2">Move Your Core</h1>
@@ -46,30 +26,10 @@ const WorkoutPage: React.FC = () => {
         {/* Workout 2 */}
         <div className="mb-12 flex flex-col md:flex-row">
           <div className="relative w-full md:w-64 h-48 md:h-36 md:mr-6 flex-shrink-0 mb-4 md:mb-0">
-            <Image
-              src="https://fakeimg.pl/64x48"
-              alt="Strength workout"
-              className="w-full h-full object-cover rounded"
-              width={64}
-              height={48}
+            <EmbeddedVideo
+              videoUrl="https://www.youtube.com/embed/5XcVLz6BPTw?si=3moUElINIhyBq2eN"
+              title="Strength Moves"
             />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                </svg>
-              </div>
-            </div>
           </div>
           <div className="text-left">
             <h1 className="text-3xl md:text-4xl font-bold mb-2">Strength Moves</h1>
@@ -85,30 +45,10 @@ const WorkoutPage: React.FC = () => {
         {/* Workout 3 */}
         <div className="mb-12 flex flex-col md:flex-row">
           <div className="relative w-full md:w-64 h-48 md:h-36 md:mr-6 flex-shrink-0 mb-4 md:mb-0">
-            <Image
-              src="https://fakeimg.pl/64x48"
-              alt="Mobility workout"
-              className="w-full h-full object-cover rounded"
-              width={64}
-              height={48}
+            <EmbeddedVideo
+              videoUrl="https://www.youtube.com/embed/5NTn9c0LIXQ?si=_U3jd5oe2ebiDkdF"
+              title="Primal Moves"
             />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                </svg>
-              </div>
-            </div>
           </div>
           <div className="text-left">
             <h1 className="text-3xl md:text-4xl font-bold mb-2">Primal Moves</h1>
