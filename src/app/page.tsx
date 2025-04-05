@@ -5,7 +5,7 @@ import TimeDisplay from '@/components/TimeDisplay';
 import { executeQuery } from '@/lib/datocms/executeQuery';
 import { graphql } from '@/lib/datocms/graphql';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/next-auth/authOptions';
 import { redirect } from 'next/navigation';
 
 type HomePageQueryResult = {

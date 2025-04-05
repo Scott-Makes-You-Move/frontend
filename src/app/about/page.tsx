@@ -1,7 +1,6 @@
-// app/about/page.tsx
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/Card';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/next-auth/authOptions';
 import { redirect } from 'next/navigation';
 
 interface FeatureCardProps {
