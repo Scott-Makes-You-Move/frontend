@@ -1,5 +1,8 @@
 import React from 'react';
 import MetricsSection from './Metrics';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/next-auth/authOptions';
+import { redirect } from 'next/navigation';
 
 // Sample data structure remains the same as before
 const biometricsData = [
@@ -74,7 +77,11 @@ const mobilityMetrics = [
   { key: 'back', label: 'Back' },
 ];
 
-export default function ProgressPage() {
+export default async function ProgressPage() {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    redirect('/api/auth/signin?callbackUrl=/progress');
+  }
   return (
     <section className="max-w-5xl w-full mx-auto p-6">
       <div className="space-y-16">
