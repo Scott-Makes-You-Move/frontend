@@ -1,5 +1,3 @@
-'use client';
-
 import EmbeddedVideo from '@/components/EmbeddedVideo';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/next-auth/authOptions';
