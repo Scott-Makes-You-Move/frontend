@@ -62,16 +62,10 @@ const Navbar: React.FC = () => {
                 Leaderboard
               </Link>
               <Link
-                href="/posture-check"
-                className="block px-4 py-2 text-background hover:bg-accent hover:text-background transition"
-              >
-                Posture Check (X)
-              </Link>
-              <Link
                 href="/mini-workouts"
                 className="block px-4 py-2 text-background hover:bg-accent hover:text-background transition"
               >
-                Mini Workouts (X)
+                Mini Workouts
               </Link>
             </div>
           )}
