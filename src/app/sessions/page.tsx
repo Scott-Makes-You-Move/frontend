@@ -3,6 +3,9 @@
 import React, { useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/next-auth/authOptions';
+import { redirect } from 'next/navigation';
 
 type SessionItem = {
   time: string;
@@ -10,18 +13,23 @@ type SessionItem = {
   status: 'completed' | 'not-completed';
 };
 
-const SessionsPage: React.FC = () => {
-  const [date, setDate] = useState<any>(new Date());
+const sessionItems: SessionItem[] = [
+  { time: '10:00 AM', session: 'Hip', status: 'completed' },
+  { time: '1:30 PM', session: 'Shoulder', status: 'not-completed' },
+  { time: '3:00 PM', session: 'Back', status: 'completed' },
+];
 
-  const sessionItems: SessionItem[] = [
-    { time: '10:00 AM', session: 'Hip', status: 'completed' },
-    { time: '1:30 PM', session: 'Shoulder', status: 'not-completed' },
-    { time: '3:00 PM', session: 'Back', status: 'completed' },
-  ];
+const SessionsPage: React.FC = async () => {
+  const [date, setDate] = useState<any>(new Date());
+  const session = await getServerSession(authOptions);
 
   const onDateChange = (newDate: any) => {
     setDate(newDate);
   };
+
+  if (!session) {
+    redirect('/api/auth/signin?callbackUrl=/about');
+  }
 
   return (
     <div className="p-4 max-w-4xl mx-auto space-y-8 flex flex-col justify-between items-center md:flex-row">
