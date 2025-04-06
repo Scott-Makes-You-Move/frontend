@@ -28,7 +28,7 @@ const SessionsPage: React.FC = async () => {
   };
 
   if (!session) {
-    redirect('/api/auth/signin?callbackUrl=/about');
+    redirect('/api/auth/signin?callbackUrl=/sessions');
   }
 
   return (
