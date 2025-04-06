@@ -1,8 +1,17 @@
 'use client';
 
 import EmbeddedVideo from '@/components/EmbeddedVideo';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/next-auth/authOptions';
+import { redirect } from 'next/navigation';
 
-const WorkoutPage: React.FC = () => {
+const WorkoutPage: React.FC = async () => {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    redirect('/api/auth/signin?callbackUrl=/mini-workouts');
+  }
+
   return (
     <div className="p-6">
       <div className="max-w-4xl mx-auto">
