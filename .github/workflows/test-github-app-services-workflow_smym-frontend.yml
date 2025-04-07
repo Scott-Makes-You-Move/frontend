@@ -15,6 +15,12 @@ jobs:
     permissions:
       contents: read #This is required for actions/checkout
 
+    env: #environment variables for the app
+        NEXT_DATOCMS_PUBLISHED_CONTENT_CDA_TOKEN: ${{ secrets.NEXT_DATOCMS_PUBLISHED_CONTENT_CDA_TOKEN }}
+        NEXT_DATOCMS_DRAFT_CONTENT_CDA_TOKEN: ${{ secrets.NEXT_DATOCMS_DRAFT_CONTENT_CDA_TOKEN }}
+        NEXT_DATOCMS_CMA_TOKEN: ${{ secrets.NEXT_DATOCMS_CMA_TOKEN }}
+        NEXT_SECRET_API_TOKEN: ${{ secrets.NEXT_SECRET_API_TOKEN }}
+        
     steps:
       - uses: actions/checkout@v4
 
@@ -62,8 +68,4 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_94F67CD6448E4F40BAA7FD03A4CE6429 }}
-        env: #environment variables for the app
-          NEXT_DATOCMS_PUBLISHED_CONTENT_CDA_TOKEN: ${{ secrets.NEXT_DATOCMS_PUBLISHED_CONTENT_CDA_TOKEN }}
-          NEXT_DATOCMS_DRAFT_CONTENT_CDA_TOKEN: ${{ secrets.NEXT_DATOCMS_DRAFT_CONTENT_CDA_TOKEN }}
-          NEXT_DATOCMS_CMA_TOKEN: ${{ secrets.NEXT_DATOCMS_CMA_TOKEN }}
-          NEXT_SECRET_API_TOKEN: ${{ secrets.NEXT_SECRET_API_TOKEN }}
+        
