@@ -72,7 +72,9 @@ const Button = <C extends React.ElementType = 'button'>(
 };
 
 const ForwardedButton = React.forwardRef(Button) as React.NamedExoticComponent<
-  <C extends React.ElementType = 'button'>(props: ButtonProps<C> & { ref?: React.Ref<any> }) => React.ReactElement
+  <C extends React.ElementType = 'button'>(
+    props: ButtonProps<C> & { ref?: React.Ref<any> },
+  ) => React.ReactElement
 >;
 
 ForwardedButton.displayName = 'Button';
