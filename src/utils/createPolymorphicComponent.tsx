@@ -8,11 +8,14 @@ type PropsToOmit<C extends React.ElementType, P> = keyof (AsProp<C> & P);
 
 export type PolymorphicComponentProp<
   C extends React.ElementType,
-  Props = {},
+  Props = unknown,
 > = React.PropsWithChildren<Props & AsProp<C>> &
   Omit<React.ComponentPropsWithoutRef<C>, PropsToOmit<C, Props>>;
 
-export function createPolymorphicComponent<DefaultElement extends React.ElementType, OwnProps = {}>(
+export function createPolymorphicComponent<
+  DefaultElement extends React.ElementType,
+  OwnProps = unknown,
+>(
   render: (
     props: PolymorphicComponentProp<DefaultElement, OwnProps>,
     ref: React.Ref<any>,
