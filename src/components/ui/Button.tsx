@@ -1,5 +1,10 @@
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
+import {
+  createPolymorphicComponent,
+  PolymorphicComponentProp,
+} from '@/utils/createPolymorphicComponent';
+import Spinner from './Spinner';
 
 const buttonVariants = cva(
   `
@@ -34,49 +39,69 @@ const buttonVariants = cva(
     },
   },
 );
-
-// --- 🔧 Polymorphic Types ---
-type AsProp<C extends React.ElementType> = {
-  as?: C;
-};
-
-type PropsToOmit<C extends React.ElementType, P> = keyof (AsProp<C> & P);
-
-type PolymorphicComponentProp<C extends React.ElementType, Props = {}> = React.PropsWithChildren<
-  Props & AsProp<C>
-> &
-  Omit<React.ComponentPropsWithoutRef<C>, PropsToOmit<C, Props>>;
-
+// ---- Props ----
 type ButtonOwnProps = VariantProps<typeof buttonVariants> & {
   className?: string;
+  loading?: boolean;
 };
 
 type ButtonProps<C extends React.ElementType> = PolymorphicComponentProp<C, ButtonOwnProps>;
 
-// --- ✅ Component ---
+// ---- Component ----
 const Button = <C extends React.ElementType = 'button'>(
-  { as, variant, size, className = '', type, ...props }: ButtonProps<C>,
+  {
+    as,
+    variant,
+    size,
+    className = '',
+    loading = false,
+    disabled,
+    children,
+    type,
+    ...props
+  }: ButtonProps<C>,
   ref: React.Ref<any>,
 ) => {
   const Component = as || 'button';
   const isButton = Component === 'button';
+  const isDisabled = disabled || loading;
+
+  // --- Dev-only ARIA check ---
+  if (
+    process.env.NODE_ENV === 'development' &&
+    size === 'icon' &&
+    typeof children === 'object' &&
+    !('aria-label' in props) &&
+    !('aria-labelledby' in props) &&
+    !('title' in props)
+  ) {
+    console.warn(
+      '[Accessibility Warning] Icon-only button is missing accessible label (aria-label, title, or aria-labelledby).',
+    );
+  }
 
   return (
     <Component
       ref={ref}
       className={`${buttonVariants({ variant, size })} ${className}`}
+      disabled={isDisabled}
+      aria-disabled={isDisabled}
       {...(isButton ? { type: type ?? 'button' } : {})}
       {...props}
-    />
+    >
+      {loading && (
+        <span className="mr-2 flex items-center">
+          <Spinner className="h-4 w-4 animate-spin" />
+        </span>
+      )}
+      <span className={loading ? 'opacity-0' : ''}>{children}</span>
+    </Component>
   );
 };
 
-const ForwardedButton = React.forwardRef(Button) as React.NamedExoticComponent<
-  <C extends React.ElementType = 'button'>(
-    props: ButtonProps<C> & { ref?: React.Ref<any> },
-  ) => React.ReactElement
->;
+const _Button = createPolymorphicComponent<'button', ButtonOwnProps>(Button);
 
-ForwardedButton.displayName = 'Button';
+// assign displayName via type assertion
+(_Button as React.ForwardRefExoticComponent<any>).displayName = 'Button';
 
-export { ForwardedButton as Button, buttonVariants };
+export { _Button as Button, buttonVariants };
