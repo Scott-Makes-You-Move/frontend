@@ -5,6 +5,16 @@ import Link from 'next/link';
 import Logo from './Logo';
 import Logout from '@/components/Logout';
 
+type NavLink = {
+  href: string;
+  label: string;
+};
+
+const navLinksData: NavLink[] = [
+  { href: '/about', label: 'About Us' },
+  { href: '/contact', label: 'Contact' },
+];
+
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -13,16 +23,19 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <header className="w-full flex justify-between items-center p-4  shadow-md z-10 border-b-2 border-primary bg-primary">
+    <header className="w-full flex justify-between items-center p-4 shadow-md z-10 border-b-2 border-primary bg-primary ">
       <Logo variant="white" size="md" showText={true} />
 
       <nav className="flex justify-center gap-6 text-background font-body font-bold">
-        <Link href="/about" className="hidden md:block hover:text-accent transition-colors">
-          About Us
-        </Link>
-        <Link href="/contact" className="hidden md:block hover:text-accent transition-colors">
-          Contact
-        </Link>
+        {navLinksData.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className="hidden md:flex md:items-center md:justify-center hover:text-accent transition-colors border border-red-500 "
+          >
+            {link.label}
+          </Link>
+        ))}
         <Logout />
         <div className="relative">
           <button className="block focus:outline-none" onClick={toggleMenu}>

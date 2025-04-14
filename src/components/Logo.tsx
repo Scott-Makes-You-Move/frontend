@@ -75,7 +75,7 @@ const Logo: React.FC<LogoProps> = ({
                 : 'text-primary'
           }`}
         >
-          Scott Makes You Move
+          OptiFit
         </span>
       )}
     </div>
