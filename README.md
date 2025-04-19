@@ -55,30 +55,39 @@ We have a local plugin located in:
 It includes a rule that prevents you from using inline Tailwind classes on the Button component - instead, use the variant, size, and other design system props.
 
 ### 🧪 When You Might See an Error
+
 ```tsx
 <Button className="bg-primary px-4 py-2 rounded">Click</Button> // ❌ Not allowed
 ```
+
 Instead, do this:
+
 ```tsx
-<Button variant="default" size="lg">Click</Button> // ✅
+<Button variant="default" size="lg">
+  Click
+</Button> // ✅
 ```
 
 ### ⚙️ If ESLint Doesn’t Work in Your IDE
+
 If you get errors about the plugin not being found, try the following:
 
 **VSCode Setup**
 
 1. Make sure you have the **ESLint** extension installed.
 2. Add this to your workspace settings (if not already):
+
 ```json
 // .vscode/settings.json
 {
   "eslint.workingDirectories": ["./"]
 }
 ```
+
 3. Restart your VSCode window after cloning.
 
 **CLI Fix (if ESLint fails to find the plugin)**
+
 ```sh
 npx eslint . --resolve-plugins-relative-to .
 ```
