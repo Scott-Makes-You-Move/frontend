@@ -93,11 +93,7 @@ const ContactPage = () => {
                 required
               />
             </div>
-
-            <Button
-              type="submit"
-              className="w-full bg-primary hover:bg-secondary text-background font-title transition-colors rounded-button"
-            >
+            <Button type="submit" variant="default" className="w-full">
               Send Message
             </Button>
           </form>
