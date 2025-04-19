@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Button } from '@/components/ui/Button';
 
 interface ProgressFormProps {
   type: 'biometrics' | 'mobility';
@@ -86,12 +87,9 @@ const ProgressForm: React.FC<ProgressFormProps> = ({ type, accountId, accessToke
           />
         ))}
 
-      <button
-        type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-      >
+      <Button type="submit" variant="default" size="default">
         Submit
-      </button>
+      </Button>
 
       {status === 'success' && <p className="text-green-600">Entry saved successfully.</p>}
       {status === 'error' && <p className="text-red-600">Something went wrong. Try again.</p>}
