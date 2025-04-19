@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { Button } from '@/components/ui/Button';
 
 type DataPoint = {
   date: string;
@@ -82,15 +83,18 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({ title, data, metrics, c
       {/* Selected Point Details */}
       {selectedPoint && (
         <div className="animate-fade-in flex flex-col justify-around relative border-2 md:border-4 border-gray-500 rounded-lg">
-          <button
+          <Button
             onClick={() => setSelectedPoint(null)}
-            className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+            size="icon"
+            variant="ghost"
             aria-label="Close historical data"
+            className="absolute top-1 right-1 bg-gray-100 hover:bg-gray-200"
           >
             <span className="text-gray-500 font-medium leading-none select-none" aria-hidden="true">
               ×
             </span>
-          </button>
+          </Button>
+
           <h3 className="text-xl font-bold text-gray-900 pr-8">
             Historical ({selectedPoint.date})
           </h3>
