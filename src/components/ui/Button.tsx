@@ -4,7 +4,8 @@ import {
   createPolymorphicComponent,
   PolymorphicComponentProp,
 } from '@/utils/createPolymorphicComponent';
-import Spinner from './Spinner';
+import { cn } from '@/utils/cn';
+import Spinner from '@/components/ui/Spinner';
 
 const buttonVariants = cva(
   `
@@ -39,7 +40,10 @@ const buttonVariants = cva(
     },
   },
 );
-// ---- Props ----
+
+// -----------------------------
+// 🔧 Button Props
+// -----------------------------
 type ButtonOwnProps = VariantProps<typeof buttonVariants> & {
   className?: string;
   loading?: boolean;
@@ -47,8 +51,10 @@ type ButtonOwnProps = VariantProps<typeof buttonVariants> & {
 
 type ButtonProps<C extends React.ElementType> = PolymorphicComponentProp<C, ButtonOwnProps>;
 
-// ---- Component ----
-const Button = <C extends React.ElementType = 'button'>(
+// -----------------------------
+// ✅ Button Component
+// -----------------------------
+const ButtonBase = <C extends React.ElementType = 'button'>(
   {
     as,
     variant,
@@ -66,24 +72,24 @@ const Button = <C extends React.ElementType = 'button'>(
   const isButton = Component === 'button';
   const isDisabled = disabled || loading;
 
-  // --- Dev-only ARIA check ---
+  // 🔒 Dev-time warning for icon-only buttons without label
   if (
     process.env.NODE_ENV === 'development' &&
     size === 'icon' &&
     typeof children === 'object' &&
     !('aria-label' in props) &&
-    !('aria-labelledby' in props) &&
-    !('title' in props)
+    !('title' in props) &&
+    !('aria-labelledby' in props)
   ) {
     console.warn(
-      '[Accessibility Warning] Icon-only button is missing accessible label (aria-label, title, or aria-labelledby).',
+      '[Accessibility] Icon-only buttons should have an accessible label via `aria-label`, `title`, or `aria-labelledby`.',
     );
   }
 
   return (
     <Component
       ref={ref}
-      className={`${buttonVariants({ variant, size })} ${className}`}
+      className={cn(buttonVariants({ variant, size }), className)}
       disabled={isDisabled}
       aria-disabled={isDisabled}
       {...(isButton ? { type: type ?? 'button' } : {})}
@@ -99,9 +105,7 @@ const Button = <C extends React.ElementType = 'button'>(
   );
 };
 
-const _Button = createPolymorphicComponent<'button', ButtonOwnProps>(Button);
+const Button = createPolymorphicComponent<'button', ButtonOwnProps>(ButtonBase);
+Button.displayName = 'Button';
 
-// assign displayName via type assertion
-(_Button as React.ForwardRefExoticComponent<any>).displayName = 'Button';
-
-export { _Button as Button, buttonVariants };
+export { Button, buttonVariants };
