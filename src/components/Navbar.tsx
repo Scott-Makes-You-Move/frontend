@@ -1,9 +1,9 @@
 'use client';
-
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Logo from './Logo';
 import Logout from '@/components/Logout';
+import { Button } from '@/components/ui/Button';
 
 type NavLink = {
   href: string;
@@ -31,14 +31,14 @@ const Navbar: React.FC = () => {
           <Link
             key={link.href}
             href={link.href}
-            className="hidden md:flex md:items-center md:justify-center hover:text-accent transition-colors border border-red-500 "
+            className="hidden md:flex md:items-center md:justify-center hover:text-accent transition-colors"
           >
             {link.label}
           </Link>
         ))}
         <Logout />
         <div className="relative">
-          <button className="block focus:outline-none" onClick={toggleMenu}>
+          <Button onClick={toggleMenu} size="icon" variant="ghost" aria-label="Toggle menu">
             <svg
               className="w-6 h-6 text-background"
               fill="none"
@@ -50,9 +50,10 @@ const Navbar: React.FC = () => {
                 strokeLinejoin="round"
                 strokeWidth="2"
                 d="M4 6h16M4 12h16m-7 6h7"
-              ></path>
+              />
             </svg>
-          </button>
+          </Button>
+
           {isOpen && (
             <div className="absolute -right-3 top-10 mt-2 w-48 bg-primary border border-primary rounded shadow-lg">
               <Link
