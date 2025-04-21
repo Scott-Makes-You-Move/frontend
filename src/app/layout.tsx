@@ -37,7 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <SessionGuard>
             <Navbar ref={navbarRef} />
             <main
-              className="flex-1 w-full bg-gray-100 px-4 text-center"
+              className="flex-1 w-full bg-gray-100 text-center"
               style={{ paddingTop: navHeight, paddingBottom: 'var(--footer-height)' }}
             >
               {children}
