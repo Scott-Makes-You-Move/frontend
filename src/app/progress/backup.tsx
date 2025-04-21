@@ -1,12 +1,5 @@
-// This is a backup of the original code for the ProgressPage component. TODO: Remove this if all works well.
-import React from 'react';
-import MetricsSection from './Metrics';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/next-auth/authOptions';
-import { redirect } from 'next/navigation';
-
 // Sample data structure remains the same as before
-const biometricsData = [
+export const biometricsDummyData = [
   {
     date: 'Jan 2025',
     average: 85,
@@ -36,7 +29,7 @@ const biometricsData = [
   },
 ];
 
-const mobilityData = [
+export const mobilityDummyData = [
   {
     date: 'Jan 2025',
     average: 1.3,
@@ -65,7 +58,7 @@ const mobilityData = [
     },
   },
 ];
-
+/* 
 const biometricsMetrics = [
   { key: 'weight', label: 'Weight', suffix: 'kg' },
   { key: 'fatPercentage', label: 'Fat %', suffix: '%' },
@@ -103,3 +96,4 @@ export default async function ProgressPage() {
     </section>
   );
 }
+ */
