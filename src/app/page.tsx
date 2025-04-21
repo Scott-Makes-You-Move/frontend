@@ -1,12 +1,13 @@
 import { draftMode } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth';
 import QuoteCard from '@/components/QuoteCard';
 import EmbeddedVideo from '@/components/EmbeddedVideo';
 import TimeDisplay from '@/components/TimeDisplay';
 import { executeQuery } from '@/lib/datocms/executeQuery';
 import { graphql } from '@/lib/datocms/graphql';
-import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/next-auth/authOptions';
-import { redirect } from 'next/navigation';
+import { getWeeklyQuote } from '@/utils/getWeeklyQuote';
 
 type HomePageQueryResult = {
   movementBreak: {
@@ -56,6 +57,8 @@ export default async function Home() {
     redirect('/api/auth/signin?callbackUrl=/');
   }
 
+  const weeklyQuote = getWeeklyQuote(quote.quotelist);
+
   return (
     <section className="w-full p-4">
       <div className="flex flex-col gap-4 md:grid md:grid-rows-[auto_1fr_auto]">
@@ -73,7 +76,7 @@ export default async function Home() {
         </div>
 
         <div className="flex justify-center md:justify-end">
-          <QuoteCard title={quote.title} quote={quote.text} />
+          <QuoteCard title={quote.title} quote={weeklyQuote.text} author={weeklyQuote.author} />
         </div>
       </div>
     </section>
