@@ -8,11 +8,11 @@ import Footer from '@/components/Footer';
 import { Providers } from './Providers';
 import SessionGuard from '@/components/SessionGuard';
 
-/* const metadata: Metadata = {
+export const metadata: Metadata = {
   title: 'Scott Will Make You Move',
   description:
     'A movement and vitality tracking web app designed to encourage daily activity, track progress, and engage users through gamification.',
-}; */
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const navbarRef = useRef<NavbarHandle>(null);

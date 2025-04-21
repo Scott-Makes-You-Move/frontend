@@ -124,4 +124,5 @@ const Navbar = forwardRef<NavbarHandle>((_, ref) => {
   );
 });
 
+Navbar.displayName = 'Navbar';
 export default Navbar;
