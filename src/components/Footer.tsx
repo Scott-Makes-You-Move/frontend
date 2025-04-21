@@ -71,18 +71,13 @@ const Footer: React.FC = () => {
             <h4 className="font-semibold mb-2">Product</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/ai-coach" className="hover:underline">
-                  AI Coach
-                </Link>
-              </li>
-              <li>
                 <Link href="/faqs" className="hover:underline">
-                  FAQs
+                  FAQs (NOT FUNCTIONAL)
                 </Link>
               </li>
               <li>
                 <Link href="/book" className="hover:underline">
-                  Book a demo
+                  Book a demo (NOT FUNCTIONAL)
                 </Link>
               </li>
             </ul>
@@ -95,11 +90,6 @@ const Footer: React.FC = () => {
               <li>
                 <Link href="/about" className="hover:underline">
                   About Optifit
-                </Link>
-              </li>
-              <li>
-                <Link href="/resources" className="hover:underline">
-                  Resources
                 </Link>
               </li>
               <li>
