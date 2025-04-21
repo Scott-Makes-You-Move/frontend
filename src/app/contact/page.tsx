@@ -5,8 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/Card';
 import { Input } from '@/components/Input';
 import { Textarea } from '@/components/Textarea';
 import { Button } from '@/components/ui/Button';
-import { useSession } from 'next-auth/react';
-import { redirect } from 'next/navigation';
 import requireAuth from '@/lib/auth/requireAuth';
 
 interface ContactFormData {
