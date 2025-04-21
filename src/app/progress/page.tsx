@@ -1,9 +1,6 @@
-/* import React from 'react';
+import React from 'react';
 import MetricsSection from './Metrics';
-import ProgressForm from './ProgressForm';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/next-auth/authOptions';
-import { redirect } from 'next/navigation';
+import requireAuth from '@/lib/auth/requireAuth';
 
 const biometricsMetrics = [
   { key: 'weight', label: 'Weight', suffix: 'kg' },
@@ -18,14 +15,8 @@ const mobilityMetrics = [
 ];
 
 export default async function ProgressPage() {
-  const session = await getServerSession(authOptions);
-
-  if (!session) {
-    redirect('/api/auth/signin?callbackUrl=/progress');
-  }
-
-  const accountId = session.user.accountId;
-  const accessToken = session.accessToken;
+  const session = await requireAuth({ callbackUrl: '/progress' });
+  const { accountId, accessToken } = session;
 
   const headers = {
     Authorization: `Bearer ${accessToken}`,
@@ -48,7 +39,9 @@ export default async function ProgressPage() {
   }
 
   const biometricsRaw = await biometricsRes.json();
+  console.log('🚀 ~ ProgressPage ~ biometricsRaw:', biometricsRaw);
   const mobilityRaw = await mobilityRes.json();
+  console.log('🚀 ~ ProgressPage ~ mobilityRaw:', mobilityRaw);
 
   const biometricsData = biometricsRaw.content.map((entry: any) => ({
     date: entry.measuredOn,
@@ -79,113 +72,9 @@ export default async function ProgressPage() {
           metrics={biometricsMetrics}
           color="blue"
         />
-        <ProgressForm type="biometrics" accountId={accountId} accessToken={accessToken} />
       </div>
 
       <div>
-        <MetricsSection
-          title="Mobility"
-          data={mobilityData}
-          metrics={mobilityMetrics}
-          color="green"
-        />
-        <ProgressForm type="mobility" accountId={accountId} accessToken={accessToken} />
-      </div>
-    </section>
-  );
-}
- */
-
-import React from 'react';
-import MetricsSection from './Metrics';
-import requireAuth from '@/lib/auth/requireAuth';
-
-// Sample data structure remains the same as before
-const biometricsData = [
-  {
-    date: 'Jan 2025',
-    average: 85,
-    metrics: {
-      weight: 85,
-      fatPercentage: 15,
-      visceralFat: 8,
-    },
-  },
-  {
-    date: 'Feb 2025',
-    average: 83,
-    metrics: {
-      weight: 83,
-      fatPercentage: 14.5,
-      visceralFat: 7.5,
-    },
-  },
-  {
-    date: 'Mar 2025',
-    average: 82,
-    metrics: {
-      weight: 82,
-      fatPercentage: 14,
-      visceralFat: 7,
-    },
-  },
-];
-
-const mobilityData = [
-  {
-    date: 'Jan 2025',
-    average: 1.3,
-    metrics: {
-      hips: 1,
-      shoulder: 1,
-      back: 2,
-    },
-  },
-  {
-    date: 'Feb 2025',
-    average: 1.7,
-    metrics: {
-      hips: 2,
-      shoulder: 1,
-      back: 2,
-    },
-  },
-  {
-    date: 'Mar 2025',
-    average: 2,
-    metrics: {
-      hips: 2,
-      shoulder: 1,
-      back: 2,
-    },
-  },
-];
-
-const biometricsMetrics = [
-  { key: 'weight', label: 'Weight', suffix: 'kg' },
-  { key: 'fatPercentage', label: 'Fat %', suffix: '%' },
-  { key: 'visceralFat', label: 'Visceral Fat' },
-];
-
-const mobilityMetrics = [
-  { key: 'hips', label: 'Hips' },
-  { key: 'shoulder', label: 'Shoulder' },
-  { key: 'back', label: 'Back' },
-];
-
-export default async function ProgressPage() {
-  await requireAuth({ callbackUrl: '/progress' });
-
-  return (
-    <section className="max-w-5xl w-full mx-auto p-6">
-      <div className="space-y-16">
-        <MetricsSection
-          title="Biometrics"
-          data={biometricsData}
-          metrics={biometricsMetrics}
-          color="blue"
-        />
-
         <MetricsSection
           title="Mobility"
           data={mobilityData}
