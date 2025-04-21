@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/next-auth/authOptions';
 import { redirect } from 'next/navigation';
-import ProgressForm from './ProgressForm';
+import ProgressFormSection from './ProgressFormSection';
 
 export default async function ProgressFormPage() {
   const session = await getServerSession(authOptions);
@@ -11,9 +11,9 @@ export default async function ProgressFormPage() {
   }
 
   return (
-    <div className="max-w-screen-sm mx-auto pt-20 px-4">
-      <ProgressForm accessToken={session.accessToken} accountId="1234" type="biometrics" />
-      <ProgressForm accessToken={session.accessToken} accountId="1234" type="mobility" />
+    <div className="max-w-screen pt-20 ">
+      <ProgressFormSection accessToken={session.accessToken} accountId="1234" type="biometrics" />
+      <ProgressFormSection accessToken={session.accessToken} accountId="1234" type="mobility" />
     </div>
   );
 }

@@ -2,7 +2,7 @@
 const nextConfig = {
   output: 'standalone',
   images: {
-    domains: ['fakeimg.pl'],
+    domains: ['fakeimg.pl', 'placehold.co'],
   },
 };
 
