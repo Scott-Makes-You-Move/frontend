@@ -1,14 +1,8 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/next-auth/authOptions';
-import { redirect } from 'next/navigation';
+import requireAuth from '@/lib/auth/requireAuth';
 import ProgressFormSection from './ProgressFormSection';
 
 export default async function ProgressFormPage() {
-  const session = await getServerSession(authOptions);
-
-  if (!session) {
-    redirect('/api/auth/signin?callbackUrl=/progress-form');
-  }
+  const session = await requireAuth({ callbackUrl: '/progress-form' });
 
   return (
     <div className="max-w-screen pt-20 ">

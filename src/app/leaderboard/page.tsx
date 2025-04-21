@@ -1,15 +1,9 @@
 import LeaderboardTable, { LeaderboardUser } from './LeaderboardTable';
 import WinnerDisplay from './WinnerDisplay';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/next-auth/authOptions';
-import { redirect } from 'next/navigation';
+import requireAuth from '@/lib/auth/requireAuth';
 
 const LeaderboardPage = async () => {
-  const session = await getServerSession(authOptions);
-
-  if (!session) {
-    redirect('/api/auth/signin?callbackUrl=/leaderboard');
-  }
+  const session = await requireAuth({ callbackUrl: '/leaderboard' });
 
   const res = await fetch(
     'https://smym-backend-service.azurewebsites.net/api/v1/leaderboard?page=0&size=10&direction=desc&sortBy=completionRate',

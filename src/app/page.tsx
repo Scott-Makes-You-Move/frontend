@@ -1,12 +1,10 @@
 import { draftMode } from 'next/headers';
-import { redirect } from 'next/navigation';
-import { getServerSession } from 'next-auth';
 import QuoteCard from '@/components/QuoteCard';
 import EmbeddedVideo from '@/components/EmbeddedVideo';
 import TimeDisplay from '@/components/TimeDisplay';
 import { executeQuery } from '@/lib/datocms/executeQuery';
 import { graphql } from '@/lib/datocms/graphql';
-import { authOptions } from '@/lib/next-auth/authOptions';
+import requireAuth from '@/lib/auth/requireAuth';
 import { getWeeklyQuote } from '@/utils/getWeeklyQuote';
 
 type HomePageQueryResult = {
@@ -44,19 +42,14 @@ const query = graphql<string, never>(/* GraphQL */ `
 `);
 
 export default async function Home() {
+  await requireAuth({ callbackUrl: '/' });
   const { isEnabled: isDraftModeEnabled } = await draftMode();
-  const session = await getServerSession(authOptions);
   const { movementBreak, exerciseVideo, quote } = await executeQuery<HomePageQueryResult, never>(
     query,
     {
       includeDrafts: isDraftModeEnabled,
     },
   );
-
-  if (!session) {
-    redirect('/api/auth/signin?callbackUrl=/');
-  }
-
   const weeklyQuote = getWeeklyQuote(quote.quotelist);
 
   return (

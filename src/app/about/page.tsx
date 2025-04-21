@@ -1,7 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/Card';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/next-auth/authOptions';
-import { redirect } from 'next/navigation';
+import requireAuth from '@/lib/auth/requireAuth';
 
 interface FeatureCardProps {
   title: string;
@@ -18,11 +16,7 @@ const FeatureCard = ({ title, description }: FeatureCardProps) => {
 };
 
 const AboutPage = async () => {
-  const session = await getServerSession(authOptions);
-
-  if (!session) {
-    redirect('/api/auth/signin?callbackUrl=/about');
-  }
+  await requireAuth({ callbackUrl: '/about' });
 
   return (
     <section className="max-w-4xl mx-auto px-4 py-12 font-body">

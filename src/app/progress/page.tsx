@@ -96,12 +96,9 @@ export default async function ProgressPage() {
 }
  */
 
-// This is a backup of the original code for the ProgressPage component. TODO: Remove this if all works well.
 import React from 'react';
 import MetricsSection from './Metrics';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/next-auth/authOptions';
-import { redirect } from 'next/navigation';
+import requireAuth from '@/lib/auth/requireAuth';
 
 // Sample data structure remains the same as before
 const biometricsData = [
@@ -177,10 +174,8 @@ const mobilityMetrics = [
 ];
 
 export default async function ProgressPage() {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    redirect('/api/auth/signin?callbackUrl=/progress');
-  }
+  await requireAuth({ callbackUrl: '/progress' });
+
   return (
     <section className="max-w-5xl w-full mx-auto p-6">
       <div className="space-y-16">
