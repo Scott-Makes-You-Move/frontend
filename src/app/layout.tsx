@@ -38,7 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Navbar ref={navbarRef} />
             <main
               className="flex-1 w-full bg-gray-100 px-4 text-center"
-              style={{ paddingTop: navHeight }}
+              style={{ paddingTop: navHeight, paddingBottom: 'var(--footer-height)' }}
             >
               {children}
             </main>

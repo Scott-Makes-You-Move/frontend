@@ -2,7 +2,10 @@ import React from 'react';
 import Logo from './Logo';
 
 const Footer: React.FC = () => (
-  <footer className="w-full text-center p-4 bg-primary shadow-md mt-auto border-t-2 border-primary">
+  <footer
+    className="w-full text-center p-4 py-6 md:py-4 bg-primary shadow-md mt-auto border-t-2 border-primary"
+    style={{ height: 'var(--footer-height)' }}
+  >
     <nav className="flex justify-center gap-6 text-background font-body">
       <Logo variant="white" size="md" />
     </nav>
