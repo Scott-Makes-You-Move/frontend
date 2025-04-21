@@ -102,7 +102,6 @@ import MetricsSection from './Metrics';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/next-auth/authOptions';
 import { redirect } from 'next/navigation';
-import ProgressForm from './ProgressForm';
 
 // Sample data structure remains the same as before
 const biometricsData = [
@@ -184,7 +183,6 @@ export default async function ProgressPage() {
   }
   return (
     <section className="max-w-5xl w-full mx-auto p-6">
-      <ProgressForm type="biometrics" accountId="123456" accessToken="09876" />
       <div className="space-y-16">
         <MetricsSection
           title="Biometrics"

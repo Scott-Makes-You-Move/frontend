@@ -1,15 +1,17 @@
 'use client';
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 
-interface ProgressFormProps {
-  type: 'biometrics' | 'mobility';
+type Props = {
+  accessToken: any;
   accountId: string;
-  accessToken: string;
-}
+  type: 'biometrics' | 'mobility';
+};
 
-const ProgressForm: React.FC<ProgressFormProps> = ({ type, accountId, accessToken }) => {
+const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
   const isBiometric = type === 'biometrics';
+
   const initialState = isBiometric
     ? { measuredOn: '', weight: '', fat: '', visceralFat: '' }
     : { measuredOn: '', hips: '', shoulder: '', back: '' };
@@ -36,7 +38,6 @@ const ProgressForm: React.FC<ProgressFormProps> = ({ type, accountId, accessToke
         },
         body: JSON.stringify({
           ...formData,
-          // parse floats just in case the backend expects it
           ...Object.fromEntries(
             Object.entries(formData).map(([k, v]) => [
               k,
