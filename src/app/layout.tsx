@@ -1,24 +1,47 @@
+'use client';
+
 import type { Metadata } from 'next';
 import './globals.css';
-import Navbar from '@/components/Navbar';
+import React, { useEffect, useRef, useState } from 'react';
+import Navbar, { NavbarHandle } from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Providers } from './Providers';
 import SessionGuard from '@/components/SessionGuard';
 
-export const metadata: Metadata = {
+/* const metadata: Metadata = {
   title: 'Scott Will Make You Move',
   description:
     'A movement and vitality tracking web app designed to encourage daily activity, track progress, and engage users through gamification.',
-};
+}; */
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const navbarRef = useRef<NavbarHandle>(null);
+  const [navHeight, setNavHeight] = useState(80);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (navbarRef.current) {
+        setNavHeight(navbarRef.current.getHeight());
+      }
+    };
+
+    handleResize(); // initial
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <html lang="en">
       <body className="antialiased flex min-h-screen flex-col">
         <Providers>
           <SessionGuard>
-            <Navbar />
-            <main className="flex-1 w-full bg-gray-100 pt-20 px-4 text-center">{children}</main>
+            <Navbar ref={navbarRef} />
+            <main
+              className="flex-1 w-full bg-gray-100 px-4 text-center"
+              style={{ paddingTop: navHeight }}
+            >
+              {children}
+            </main>
             <Footer />
           </SessionGuard>
         </Providers>

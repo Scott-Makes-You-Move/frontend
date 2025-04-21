@@ -1,13 +1,18 @@
 'use client';
-import * as React from 'react';
-import { useState } from 'react';
+
+import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
 import Link from 'next/link';
 import Logo from '@/components/Logo';
 import Logout from '@/components/Logout';
 import { Button } from '@/components/ui/Button';
 import { motion, AnimatePresence } from 'motion/react';
 
-const Navbar: React.FC = () => {
+export interface NavbarHandle {
+  getHeight: () => number;
+}
+
+const Navbar = forwardRef<NavbarHandle>((_, ref) => {
+  const navRef = useRef<HTMLElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const toggleMenu = () => setIsOpen((prev) => !prev);
 
@@ -19,8 +24,15 @@ const Navbar: React.FC = () => {
     ['Mini Workouts', '/mini-workouts'],
   ];
 
+  useImperativeHandle(ref, () => ({
+    getHeight: () => navRef.current?.offsetHeight || 0,
+  }));
+
   return (
-    <header className="fixed top-4 left-1/2 z-50 -translate-x-1/2 w-[95%] max-w-screen-lg bg-primary rounded-full shadow-lg px-6 py-3 flex items-center justify-between">
+    <header
+      ref={navRef}
+      className="fixed top-4 left-1/2 z-50 -translate-x-1/2 w-[95%] max-w-screen-lg bg-primary rounded-full shadow-lg px-6 py-3 flex items-center justify-between"
+    >
       <Link href="/">
         <Logo showText variant="white" size="md" />
       </Link>
@@ -110,6 +122,6 @@ const Navbar: React.FC = () => {
       </div>
     </header>
   );
-};
+});
 
 export default Navbar;
