@@ -5,10 +5,18 @@ import Link from 'next/link';
 import Logo from '@/components/Logo';
 import Logout from '@/components/Logout';
 import { Button } from '@/components/ui/Button';
+import { motion, AnimatePresence } from 'motion/react';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleMenu = () => setIsOpen((prev) => !prev);
+
+  const mobileLinks: [string, string][] = [
+    ['Sessions', '/sessions'],
+    ['Progress', '/progress'],
+    ['Leaderboard', '/leaderboard'],
+    ['Mini Workouts', '/mini-workouts'],
+  ];
 
   return (
     <header className="fixed top-4 left-1/2 z-50 -translate-x-1/2 w-[95%] max-w-screen-lg bg-primary rounded-full shadow-lg px-6 py-3 flex items-center justify-between">
@@ -51,25 +59,29 @@ const Navbar: React.FC = () => {
             </svg>
           </Button>
 
-          {isOpen && (
-            <div className="absolute -right-3 top-10 mt-2 w-48 bg-primary border border-border rounded-xl shadow-lg z-50">
-              {[
-                ['Sessions', '/sessions'],
-                ['Progress', '/progress'],
-                ['Leaderboard', '/leaderboard'],
-                ['Mini Workouts', '/mini-workouts'],
-              ].map(([label, href]) => (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={() => setIsOpen(false)}
-                  className="block px-4 py-2 text-background hover:bg-accent hover:text-background transition-colors"
-                >
-                  {label}
-                </Link>
-              ))}
-            </div>
-          )}
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div
+                key="mobile-menu"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="absolute -right-3 top-10 mt-2 w-48 bg-primary border border-border rounded-xl shadow-lg z-50"
+              >
+                {mobileLinks.map(([label, href]) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => setIsOpen(false)}
+                    className="block px-4 py-2 text-background hover:bg-accent hover:text-background transition-colors"
+                  >
+                    {label}
+                  </Link>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </header>
