@@ -44,19 +44,40 @@ const Navbar: React.FC = () => {
             aria-label="Toggle menu"
             className="rounded-xl text-background"
           >
-            <svg
-              className="w-6 h-6 text-foreground"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h16m-7 6h7"
-              />
-            </svg>
+            <AnimatePresence mode="wait" initial={false}>
+              {isOpen ? (
+                <motion.span
+                  key="close"
+                  initial={{ opacity: 0, rotate: -90, scale: 0.8 }}
+                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                  exit={{ opacity: 0, rotate: 90, scale: 0.8 }}
+                  transition={{ duration: 0.2 }}
+                  className="text-2xl text-foreground block"
+                >
+                  ×
+                </motion.span>
+              ) : (
+                <motion.svg
+                  key="hamburger"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-6 h-6 text-foreground"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M4 6h16M4 12h16m-7 6h7"
+                  />
+                </motion.svg>
+              )}
+            </AnimatePresence>
           </Button>
 
           <AnimatePresence>
