@@ -20,6 +20,7 @@ type HomePageQueryResult = {
   quote: {
     title: string;
     text: string;
+    quotelist: { week: number; text: string; author: string }[];
   };
 };
 
@@ -36,6 +37,7 @@ const query = graphql<string, never>(/* GraphQL */ `
     quote {
       title
       text
+      quotelist
     }
   }
 `);
