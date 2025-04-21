@@ -28,9 +28,9 @@ const AboutPage = async () => {
           </CardHeader>
           <CardContent>
             <p className="text-gray-700 mb-6">
-              At Scott Makes You Move, we believe that movement is medicine. Our platform is
-              designed with one simple goal: to help you embrace an active, vibrant lifestyle
-              through the power of daily movement.
+              At OptiFit, we believe that movement is medicine. Our platform is designed with one
+              simple goal: to help you embrace an active, vibrant lifestyle through the power of
+              daily movement.
             </p>
 
             <h2 className="font-title text-2xl font-semibold text-primary mb-4">What We Do</h2>
