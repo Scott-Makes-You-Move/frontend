@@ -12,6 +12,7 @@ const Navbar: React.FC = () => {
   const toggleMenu = () => setIsOpen((prev) => !prev);
 
   const mobileLinks: [string, string][] = [
+    ['Movement', '/'],
     ['Sessions', '/sessions'],
     ['Progress', '/progress'],
     ['Leaderboard', '/leaderboard'],
@@ -20,7 +21,9 @@ const Navbar: React.FC = () => {
 
   return (
     <header className="fixed top-4 left-1/2 z-50 -translate-x-1/2 w-[95%] max-w-screen-lg bg-primary rounded-full shadow-lg px-6 py-3 flex items-center justify-between">
-      <Logo showText variant="white" size="md" />
+      <Link href="/">
+        <Logo showText variant="white" size="md" />
+      </Link>
 
       {/* Navigation + menu toggle */}
       <div className="flex items-center gap-4">
