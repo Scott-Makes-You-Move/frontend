@@ -36,19 +36,21 @@ const Footer: React.FC = () => {
           </form>
         </div>
 
-        {/* Book a Demo */}
+        {/* Book a Coach */}
         <div className="bg-[#bccac1] rounded-2xl flex flex-col justify-between shadow-sm p-8 md:p-16">
           <div className="flex flex-col items-start gap-4">
             <CalendarIcon className="w-6 h-6 text-foreground mt-1" />
             <div>
-              <h3 className="text-xl font-bold font-title">Book a call (NOT FUNCTIONAL)</h3>
+              <h3 className="text-xl font-bold font-title">
+                Book a Coaching Call (NOT FUNCTIONAL)
+              </h3>
               <p className="text-muted-foreground text-sm">
-                Get a demo of Optifit and see how it can work for you.
+                Get a session with a coach and see how it can work for you.
               </p>
             </div>
           </div>
           <div className="mt-6">
-            <Button className="rounded-full px-6">Book a demo →</Button>
+            <Button className="rounded-full px-6">Book a Coaching Call →</Button>
           </div>
         </div>
       </section>
@@ -77,7 +79,7 @@ const Footer: React.FC = () => {
               </li>
               <li>
                 <Link href="/book" className="hover:underline">
-                  Book a demo (NOT FUNCTIONAL)
+                  Book a Coaching Call (NOT FUNCTIONAL)
                 </Link>
               </li>
             </ul>
