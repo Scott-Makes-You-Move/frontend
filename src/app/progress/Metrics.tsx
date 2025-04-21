@@ -37,7 +37,7 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({ title, data, metrics, c
     setSelectedPoint(point === selectedPoint ? null : point);
   };
 
-  const currentMetrics = data[data.length - 1].metrics;
+  const currentMetrics = data.length > 0 ? data[data.length - 1].metrics : {};
 
   const renderCustomDot = (props: CustomDotProps) => {
     const { cx, cy, index } = props;
