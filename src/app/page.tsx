@@ -4,7 +4,6 @@ import EmbeddedVideo from '@/components/EmbeddedVideo';
 import TimeDisplay from '@/components/TimeDisplay';
 import { executeQuery } from '@/lib/datocms/executeQuery';
 import { graphql } from '@/lib/datocms/graphql';
-import requireAuth from '@/lib/auth/requireAuth';
 import { getWeeklyQuote } from '@/utils/getWeeklyQuote';
 
 type HomePageQueryResult = {
@@ -42,7 +41,6 @@ const query = graphql<string, never>(/* GraphQL */ `
 `);
 
 export default async function Home() {
-  await requireAuth({ callbackUrl: '/' });
   const { isEnabled: isDraftModeEnabled } = await draftMode();
   const { movementBreak, exerciseVideo, quote } = await executeQuery<HomePageQueryResult, never>(
     query,

@@ -1,9 +1,6 @@
 import EmbeddedVideo from '@/components/EmbeddedVideo';
-import requireAuth from '@/lib/auth/requireAuth';
 
-const WorkoutPage: React.FC = async () => {
-  await requireAuth({ callbackUrl: '/mini-workouts' });
-
+const WorkoutPage: React.FC = () => {
   return (
     <div className="p-6">
       <div className="max-w-4xl mx-auto">

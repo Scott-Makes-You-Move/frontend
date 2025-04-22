@@ -1,13 +1,10 @@
-import requireAuth from '@/lib/auth/requireAuth';
 import ProgressFormSection from './ProgressFormSection';
 
 export default async function ProgressFormPage() {
-  const session = await requireAuth({ callbackUrl: '/progress-form' });
-
   return (
     <div className="max-w-screen pt-20 ">
-      <ProgressFormSection accessToken={session.accessToken} accountId="1234" type="biometrics" />
-      <ProgressFormSection accessToken={session.accessToken} accountId="1234" type="mobility" />
+      <ProgressFormSection accessToken="12345" accountId="1234" type="biometrics" />
+      <ProgressFormSection accessToken="12345" accountId="1234" type="mobility" />
     </div>
   );
 }

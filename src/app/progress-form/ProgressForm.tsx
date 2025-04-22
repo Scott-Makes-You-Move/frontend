@@ -59,7 +59,7 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
   return (
     <form onSubmit={handleSubmit} className="mt-6 p-4 border rounded-md space-y-4">
       <h3 className="text-lg font-semibold text-gray-800">
-        Add {isBiometric ? 'Biometric' : 'Mobility'} Data
+        Add {isBiometric ? 'Biometric' : 'Mobility'} Data (NOT FUNCTIONAL)
       </h3>
 
       <input

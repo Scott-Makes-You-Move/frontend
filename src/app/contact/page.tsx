@@ -1,8 +1,5 @@
-import requireAuth from '@/lib/auth/requireAuth';
 import ContactForm from './ContactForm';
 
-export default async function ContactPage() {
-  await requireAuth({ callbackUrl: '/contact' });
-
+export default function ContactPage() {
   return <ContactForm />;
 }

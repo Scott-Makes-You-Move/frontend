@@ -1,14 +1,11 @@
 import Image from 'next/image';
-import requireAuth from '@/lib/auth/requireAuth';
 
-const AboutPage = async () => {
-  await requireAuth({ callbackUrl: '/about' });
-
+const AboutPage = () => {
   return (
     <>
       <div className="relative w-full h-[250px] sm:h-[300px] md:h-[400px] lg:h-[500px]">
         <Image
-          src="https://placehold.co/300x400.png"
+          src="https://placehold.co/600x1400.png"
           alt="Team working"
           fill
           priority
