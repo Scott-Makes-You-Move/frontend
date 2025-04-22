@@ -106,6 +106,6 @@ const ButtonBase = <C extends React.ElementType = 'button'>(
 };
 
 const Button = createPolymorphicComponent<'button', ButtonOwnProps>(ButtonBase);
-Button.displayName = 'Button';
+(Button as any).displayName = 'Button';
 
 export { Button, buttonVariants };
