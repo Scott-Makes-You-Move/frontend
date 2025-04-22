@@ -15,7 +15,7 @@ export type PolymorphicComponentProp<
 export type PolymorphicComponent<DefaultElement extends React.ElementType, OwnProps = unknown> = <
   C extends React.ElementType = DefaultElement,
 >(
-  props: PolymorphicComponentProp<C, OwnProps> & { ref?: React.Ref<any> },
+  props: PolymorphicComponentProp<C, OwnProps>,
 ) => React.ReactElement | null;
 
 export function createPolymorphicComponent<
@@ -26,8 +26,6 @@ export function createPolymorphicComponent<
     props: PolymorphicComponentProp<DefaultElement, OwnProps>,
     ref: React.Ref<any>,
   ) => React.ReactElement | null,
-) {
-  return React.forwardRef(render) as PolymorphicComponent<DefaultElement, OwnProps> & {
-    displayName?: string;
-  };
+): PolymorphicComponent<DefaultElement, OwnProps> {
+  return React.forwardRef(render as any) as any;
 }
