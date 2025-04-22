@@ -3,13 +3,9 @@ import { JWT } from 'next-auth/jwt';
 import KeycloakProvider from 'next-auth/providers/keycloak';
 
 const KEYCLOAK_ISSUER = process.env.KEYCLOAK_ISSUER ?? 'http://localhost:8080/realms/smym-dev';
-console.log('🚀 ~ KEYCLOAK_ISSUER:', KEYCLOAK_ISSUER);
 const KEYCLOAK_CLIENT_ID = process.env.KEYCLOAK_CLIENT_ID ?? 'myclient';
-console.log('🚀 ~ KEYCLOAK_CLIENT_ID:', KEYCLOAK_CLIENT_ID);
 const KEYCLOAK_CLIENT_SECRET = process.env.KEYCLOAK_CLIENT_SECRET ?? 'myclientsecret';
-console.log('🚀 ~ KEYCLOAK_CLIENT_SECRET:', KEYCLOAK_CLIENT_SECRET);
 const NEXT_SECRET_API_TOKEN = process.env.NEXT_SECRET_API_TOKEN ?? 'somesecret';
-console.log('🚀 ~ NEXT_SECRET_API_TOKEN:', NEXT_SECRET_API_TOKEN);
 
 function requestRefreshOfAccessToken(token: JWT) {
   return fetch(`${KEYCLOAK_ISSUER}/protocol/openid-connect/token`, {
