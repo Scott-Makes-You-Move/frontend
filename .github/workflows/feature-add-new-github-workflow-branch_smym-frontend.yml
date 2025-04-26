@@ -12,6 +12,11 @@ jobs:
     permissions:
       contents: read
 
+    env:
+      NEXT_DATOCMS_CMA_TOKEN: ${{ secrets.NEXT_DATOCMS_CMA_TOKEN }}
+      NEXT_DATOCMS_DRAFT_CONTENT_CDA_TOKEN: ${{ secrets.NEXT_DATOCMS_DRAFT_CONTENT_CDA_TOKEN }}
+      NEXT_DATOCMS_PUBLISHED_CONTENT_CDA_TOKEN: ${{ secrets.NEXT_DATOCMS_PUBLISHED_CONTENT_CDA_TOKEN }}
+
     steps:
       - uses: actions/checkout@v4
 
