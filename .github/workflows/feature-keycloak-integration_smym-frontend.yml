@@ -31,7 +31,6 @@ jobs:
           npm run build
           mv ./build/static ./build/standalone/build
           mv ./public ./build/standalone
-
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
@@ -40,4 +39,3 @@ jobs:
           slot-name: 'Production'
           publish-profile: ${{ env.APPLICATION_PUBLISH_PROFILE }}
           package: ./build/standalone
-
