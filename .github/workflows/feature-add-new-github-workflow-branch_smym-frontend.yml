@@ -3,7 +3,7 @@ name: Build and deploy Next.js app to Azure Web App
 on:
   push:
     branches:
-      - feature/add-new-github-workflow-branch
+      - feature/keycloak-integration
   workflow_dispatch:
 
 env:
