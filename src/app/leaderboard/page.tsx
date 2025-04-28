@@ -1,25 +1,36 @@
 import LeaderboardTable, { LeaderboardUser } from './LeaderboardTable';
 import WinnerDisplay from './WinnerDisplay';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/next-auth/authOptions';
-import { redirect } from 'next/navigation';
-
-const leaderboardData: LeaderboardUser[] = [
-  { id: 1, name: 'Philip Roberts', rank: 1, streak: 96 },
-  { id: 2, name: 'Lucia Morales', rank: 2, streak: 94 },
-  { id: 3, name: 'Jeroen Verhoeven', rank: 3, streak: 89 },
-  { id: 4, name: 'Tessa Liem', rank: 4, streak: 75 },
-  { id: 5, name: 'Gerard Vos', rank: 5, streak: 63 },
-];
-
-const lastMonthWinner = 'Tessa Liem';
+import requireAuth from '@/lib/auth/requireAuth';
 
 const LeaderboardPage = async () => {
-  const session = await getServerSession(authOptions);
+  const session = await requireAuth({ callbackUrl: '/leaderboard' });
 
-  if (!session) {
-    redirect('/api/auth/signin?callbackUrl=/leaderboard');
+  const res = await fetch(
+    'https://smym-backend-service.azurewebsites.net/api/v1/leaderboard?page=0&size=10&direction=desc&sortBy=completionRate',
+    {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch leaderboard data');
   }
+
+  const { content } = await res.json();
+
+  const leaderboardData: LeaderboardUser[] = content.map((user: any, index: number) => ({
+    id: index + 1,
+    name: user.fullName,
+    rank: index + 1,
+    streak: Math.round(user.completionRate),
+  }));
+
+  const lastMonthWinner = leaderboardData[0]?.name ?? 'N/A';
 
   return (
     <div className="max-w-4xl mx-auto p-4">

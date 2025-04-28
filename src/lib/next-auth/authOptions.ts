@@ -5,7 +5,7 @@ import KeycloakProvider from 'next-auth/providers/keycloak';
 const KEYCLOAK_ISSUER = process.env.KEYCLOAK_ISSUER ?? 'http://localhost:8080/realms/smym-dev';
 const KEYCLOAK_CLIENT_ID = process.env.KEYCLOAK_CLIENT_ID ?? 'myclient';
 const KEYCLOAK_CLIENT_SECRET = process.env.KEYCLOAK_CLIENT_SECRET ?? 'myclientsecret';
-const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET ?? 'somesecret';
+const NEXT_SECRET_API_TOKEN = process.env.NEXT_SECRET_API_TOKEN ?? 'somesecret';
 
 function requestRefreshOfAccessToken(token: JWT) {
   return fetch(`${KEYCLOAK_ISSUER}/protocol/openid-connect/token`, {
@@ -22,7 +22,7 @@ function requestRefreshOfAccessToken(token: JWT) {
 }
 
 export const authOptions: AuthOptions = {
-  secret: NEXTAUTH_SECRET,
+  secret: NEXT_SECRET_API_TOKEN,
   providers: [
     KeycloakProvider({
       clientId: KEYCLOAK_CLIENT_ID,
@@ -68,6 +68,7 @@ export const authOptions: AuthOptions = {
       }
     },
     async session({ session, token }) {
+      session.accountId = token.sub;
       session.accessToken = token.accessToken;
       session.error = token.error;
       return session;

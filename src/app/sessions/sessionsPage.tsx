@@ -24,7 +24,7 @@ const SessionsPage = () => {
   };
 
   return (
-    <div className="p-4 max-w-4xl mx-auto space-y-8 flex flex-col justify-between items-center md:flex-row">
+    <div className="max-w-4xl mx-auto px-4 py-12 flex flex-col justify-between items-center md:flex-row font-body">
       <section aria-labelledby="tasks-heading">
         <h2 id="tasks-heading" className="text-xl font-semibold mb-4">
           Tasks Completed Today

@@ -1,14 +1,8 @@
 import EmbeddedVideo from '@/components/EmbeddedVideo';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/next-auth/authOptions';
-import { redirect } from 'next/navigation';
+import requireAuth from '@/lib/auth/requireAuth';
 
 const WorkoutPage: React.FC = async () => {
-  const session = await getServerSession(authOptions);
-
-  if (!session) {
-    redirect('/api/auth/signin?callbackUrl=/mini-workouts');
-  }
+  await requireAuth({ callbackUrl: '/mini-workouts' });
 
   return (
     <div className="p-6">

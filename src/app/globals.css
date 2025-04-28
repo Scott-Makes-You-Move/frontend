@@ -1,4 +1,8 @@
 /* Reset CSS */
+:root {
+  --footer-height: 72px;
+}
+
 *,
 *::before,
 *::after {

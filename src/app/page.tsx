@@ -4,9 +4,8 @@ import EmbeddedVideo from '@/components/EmbeddedVideo';
 import TimeDisplay from '@/components/TimeDisplay';
 import { executeQuery } from '@/lib/datocms/executeQuery';
 import { graphql } from '@/lib/datocms/graphql';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/next-auth/authOptions';
-import { redirect } from 'next/navigation';
+import requireAuth from '@/lib/auth/requireAuth';
+import { getWeeklyQuote } from '@/utils/getWeeklyQuote';
 
 type HomePageQueryResult = {
   movementBreak: {
@@ -20,6 +19,7 @@ type HomePageQueryResult = {
   quote: {
     title: string;
     text: string;
+    quotelist: { week: number; text: string; author: string }[];
   };
 };
 
@@ -36,26 +36,24 @@ const query = graphql<string, never>(/* GraphQL */ `
     quote {
       title
       text
+      quotelist
     }
   }
 `);
 
 export default async function Home() {
+  await requireAuth({ callbackUrl: '/' });
   const { isEnabled: isDraftModeEnabled } = await draftMode();
-  const session = await getServerSession(authOptions);
   const { movementBreak, exerciseVideo, quote } = await executeQuery<HomePageQueryResult, never>(
     query,
     {
       includeDrafts: isDraftModeEnabled,
     },
   );
-
-  if (!session) {
-    redirect('/api/auth/signin?callbackUrl=/');
-  }
+  const weeklyQuote = getWeeklyQuote(quote.quotelist);
 
   return (
-    <section className="w-full p-4 md:min-h-screen">
+    <section className="w-full p-4">
       <div className="flex flex-col gap-4 md:grid md:grid-rows-[auto_1fr_auto]">
         <div className="flex justify-start">
           <TimeDisplay
@@ -71,7 +69,7 @@ export default async function Home() {
         </div>
 
         <div className="flex justify-center md:justify-end">
-          <QuoteCard title={quote.title} quote={quote.text} />
+          <QuoteCard title={quote.title} quote={weeklyQuote.text} author={weeklyQuote.author} />
         </div>
       </div>
     </section>
