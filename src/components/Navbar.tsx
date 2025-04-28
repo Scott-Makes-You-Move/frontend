@@ -1,7 +1,9 @@
 'use client';
+
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Logo from './Logo';
+import Logout from '@/components/Logout';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,6 +23,7 @@ const Navbar: React.FC = () => {
         <Link href="/contact" className="hidden md:block hover:text-accent transition-colors">
           Contact
         </Link>
+        <Logout />
         <div className="relative">
           <button className="block focus:outline-none" onClick={toggleMenu}>
             <svg
@@ -59,16 +62,10 @@ const Navbar: React.FC = () => {
                 Leaderboard
               </Link>
               <Link
-                href="/posture-check"
-                className="block px-4 py-2 text-background hover:bg-accent hover:text-background transition"
-              >
-                Posture Check (X)
-              </Link>
-              <Link
                 href="/mini-workouts"
                 className="block px-4 py-2 text-background hover:bg-accent hover:text-background transition"
               >
-                Mini Workouts (X)
+                Mini Workouts
               </Link>
             </div>
           )}

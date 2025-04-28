@@ -4,6 +4,9 @@ import EmbeddedVideo from '@/components/EmbeddedVideo';
 import TimeDisplay from '@/components/TimeDisplay';
 import { executeQuery } from '@/lib/datocms/executeQuery';
 import { graphql } from '@/lib/datocms/graphql';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/next-auth/authOptions';
+import { redirect } from 'next/navigation';
 
 type HomePageQueryResult = {
   movementBreak: {
@@ -39,13 +42,17 @@ const query = graphql<string, never>(/* GraphQL */ `
 
 export default async function Home() {
   const { isEnabled: isDraftModeEnabled } = await draftMode();
-
+  const session = await getServerSession(authOptions);
   const { movementBreak, exerciseVideo, quote } = await executeQuery<HomePageQueryResult, never>(
     query,
     {
       includeDrafts: isDraftModeEnabled,
     },
   );
+
+  if (!session) {
+    redirect('/api/auth/signin?callbackUrl=/');
+  }
 
   return (
     <section className="w-full p-4 md:min-h-screen">
