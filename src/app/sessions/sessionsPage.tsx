@@ -60,7 +60,7 @@ const SessionsPage = () => {
                       aria-label={item.status === 'completed' ? 'Completed' : 'Not completed'}
                       role="img"
                       className={`inline-block text-lg ${
-                        item.status === 'completed' ? 'text-green-600' : 'text-red-600'
+                        item.status === 'completed' ? 'text-green-800' : 'text-red-800'
                       }`}
                     >
                       {item.status === 'completed' ? '✓' : '✗'}
