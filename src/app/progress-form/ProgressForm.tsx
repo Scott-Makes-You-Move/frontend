@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 
 type Props = {
@@ -18,6 +18,8 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
 
   const [formData, setFormData] = useState(initialState);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [showToast, setShowToast] = useState(false);
+  const errorRef = useRef<HTMLDivElement>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -53,8 +55,17 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
       setFormData(initialState);
     } else {
       setStatus('error');
+      setShowToast(true);
     }
   };
+
+  useEffect(() => {
+    if (showToast && errorRef.current) {
+      errorRef.current.focus();
+      const timeout = setTimeout(() => setShowToast(false), 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [showToast]);
 
   return (
     <form
@@ -69,7 +80,7 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
       {/* Date field */}
       <div className="flex flex-col">
         <label htmlFor="measuredOn" className="mb-1 text-sm font-medium text-gray-700">
-          Measurement Date {/* TODO: use CMS content */}
+          Measurement Date
         </label>
         <input
           id="measuredOn"
@@ -78,6 +89,8 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
           value={formData.measuredOn}
           onChange={handleChange}
           required
+          aria-invalid={status === 'error'}
+          aria-describedby={status === 'error' ? 'error-message' : undefined}
           className="w-full p-2 border rounded"
         />
       </div>
@@ -98,12 +111,10 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
               value={value}
               onChange={handleChange}
               required
+              aria-invalid={status === 'error'}
+              aria-describedby={status === 'error' ? 'error-message' : undefined}
               className="w-full p-2 border rounded"
-              aria-describedby={`${key}-desc`}
             />
-            <span id={`${key}-desc`} className="sr-only">
-              Enter {key} as a number {/* TODO: use CMS content */}
-            </span>
           </div>
         ))}
 
@@ -111,19 +122,35 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
         Submit
       </Button>
 
-      {/* Status messages */}
-      <div role="status" aria-live="polite">
-        {status === 'success' && (
-          <p className="text-green-800 mt-2" role="alert">
-            Entry saved successfully. {/* TODO: use CMS content */}
-          </p>
-        )}
-        {status === 'error' && (
-          <p className="text-red-600 mt-2" role="alert">
-            Something went wrong. Try again. {/* TODO: use CMS content */}
-          </p>
-        )}
-      </div>
+      {/* Inline message for screen readers */}
+      {status === 'success' && (
+        <p className="text-green-600 mt-2" role="alert" aria-live="polite">
+          Entry saved successfully.
+        </p>
+      )}
+
+      {status === 'error' && (
+        <p id="error-message" className="sr-only" role="alert" aria-live="assertive">
+          There was an error submitting the form. Check the fields and try again.
+        </p>
+      )}
+
+      {/* Toast for visible error feedback */}
+      {showToast && (
+        <div
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="toast-title"
+          ref={errorRef}
+          tabIndex={-1}
+          className="fixed bottom-4 left-4 bg-red-600 text-white px-4 py-3 rounded shadow-lg z-50"
+        >
+          <strong id="toast-title" className="block font-semibold">
+            Submission Failed
+          </strong>
+          <p className="text-sm">Something went wrong. Please try again.</p>
+        </div>
+      )}
     </form>
   );
 };
