@@ -64,9 +64,6 @@ export default async function Home() {
 
         <div className="flex items-center justify-center w-full">
           <div className="w-full max-w-4xl">
-            {/*             <EmbeddedVideo title={exerciseVideo.title} videoUrl={exerciseVideo.videoUrl} />
-             */}
-
             <SmartVideoPlayer
               title={exerciseVideo.title}
               videoUrl={exerciseVideo.videoUrl}
