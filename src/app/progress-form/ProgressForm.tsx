@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/Button';
+import Toast from '@/components/ui/Toast';
 
 type Props = {
   accessToken: any;
@@ -137,19 +138,13 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
 
       {/* Toast for visible error feedback */}
       {showToast && (
-        <div
-          role="alertdialog"
-          aria-modal="true"
-          aria-labelledby="toast-title"
-          ref={errorRef}
-          tabIndex={-1}
-          className="fixed bottom-4 left-4 bg-red-600 text-white px-4 py-3 rounded shadow-lg z-50"
-        >
-          <strong id="toast-title" className="block font-semibold">
-            Submission Failed
-          </strong>
-          <p className="text-sm">Something went wrong. Please try again.</p>
-        </div>
+        <Toast
+          title="Submission Failed"
+          message="Something went wrong. Please try again."
+          type="error"
+          onClose={() => setShowToast(false)}
+          duration={5000}
+        />
       )}
     </form>
   );
