@@ -97,7 +97,7 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({ videoUrl, videoId, 
               className="absolute top-0 left-0"
               config={{
                 youtube: { playerVars: { title: 1 } },
-                vimeo: { title: 1 },
+                vimeo: { title: '1' },
               }}
               aria-label={`Exercise video titled ${title}`}
             />
