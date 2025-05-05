@@ -40,10 +40,10 @@ const LeaderboardPage = async () => {
 
       {/* Mobile layout */}
       <section className="block md:hidden">
+        <WinnerDisplay name={lastMonthWinner} isMobile={true} />
         <div className="mb-8">
           <LeaderboardTable data={leaderboardData} />
         </div>
-        <WinnerDisplay name={lastMonthWinner} isMobile={true} />
       </section>
 
       {/* Desktop layout */}

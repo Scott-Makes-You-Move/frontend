@@ -2,6 +2,7 @@ import { draftMode } from 'next/headers';
 import QuoteCard from '@/components/QuoteCard';
 import EmbeddedVideo from '@/components/EmbeddedVideo';
 import TimeDisplay from '@/components/TimeDisplay';
+import SmartVideoPlayer from '@/components/SmartVideoPlayer';
 import { executeQuery } from '@/lib/datocms/executeQuery';
 import { graphql } from '@/lib/datocms/graphql';
 import requireAuth from '@/lib/auth/requireAuth';
@@ -64,7 +65,14 @@ export default async function Home() {
 
         <div className="flex items-center justify-center w-full">
           <div className="w-full max-w-4xl">
-            <EmbeddedVideo title={exerciseVideo.title} videoUrl={exerciseVideo.videoUrl} />
+            {/*             <EmbeddedVideo title={exerciseVideo.title} videoUrl={exerciseVideo.videoUrl} />
+             */}
+
+            <SmartVideoPlayer
+              title={exerciseVideo.title}
+              videoUrl={exerciseVideo.videoUrl}
+              videoId="abc123" // Replace with real ID from backend!
+            />
           </div>
         </div>
 
