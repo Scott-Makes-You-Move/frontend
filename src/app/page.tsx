@@ -1,6 +1,5 @@
 import { draftMode } from 'next/headers';
 import QuoteCard from '@/components/QuoteCard';
-import EmbeddedVideo from '@/components/EmbeddedVideo';
 import TimeDisplay from '@/components/TimeDisplay';
 import SmartVideoPlayer from '@/components/SmartVideoPlayer';
 import { executeQuery } from '@/lib/datocms/executeQuery';
