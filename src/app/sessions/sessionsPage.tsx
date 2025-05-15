@@ -17,7 +17,7 @@ const sessionItems: SessionItem[] = [
 ];
 
 const SessionsPage = () => {
-  const [date, setDate] = useState<any>(new Date());
+  const [date, setDate] = useState<Date>(new Date());
 
   const onDateChange = (newDate: any) => {
     setDate(newDate);
@@ -25,15 +25,16 @@ const SessionsPage = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-12 flex flex-col justify-between items-center md:flex-row font-body">
-      <section aria-labelledby="tasks-heading">
+      {/* Task Table */}
+      <section aria-labelledby="tasks-heading" className="w-full md:w-1/2 mb-8 md:mb-0">
         <h2 id="tasks-heading" className="text-xl font-semibold mb-4">
           Tasks Completed Today
         </h2>
 
         <div className="overflow-x-auto rounded border border-gray-200">
-          <table className="min-w-full text-sm text-left">
-            <thead className="bg-gray-100 text-gray-700">
-              <tr>
+          <table className="min-w-full text-sm text-left" role="table">
+            <thead className="bg-gray-100 text-gray-700" role="rowgroup">
+              <tr role="row">
                 <th scope="col" className="px-4 py-2 font-medium">
                   Time
                 </th>
@@ -45,16 +46,22 @@ const SessionsPage = () => {
                 </th>
               </tr>
             </thead>
-            <tbody>
+            <tbody role="rowgroup">
               {sessionItems.map((item, index) => (
-                <tr key={index} className="border-t">
-                  <td className="px-4 py-2 whitespace-nowrap">{item.time}</td>
-                  <td className="px-4 py-2 whitespace-nowrap">{item.session}</td>
-                  <td className="px-4 py-2">
+                <tr key={index} className="border-t" role="row">
+                  <td className="px-4 py-2 whitespace-nowrap" role="cell">
+                    {item.time}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap" role="cell">
+                    {item.session}
+                  </td>
+                  <td className="px-4 py-2" role="cell">
                     <span
-                      role="img"
                       aria-label={item.status === 'completed' ? 'Completed' : 'Not completed'}
-                      className={item.status === 'completed' ? 'text-green-600' : 'text-red-600'}
+                      role="img"
+                      className={`inline-block text-lg ${
+                        item.status === 'completed' ? 'text-green-800' : 'text-red-800'
+                      }`}
                     >
                       {item.status === 'completed' ? '✓' : '✗'}
                     </span>
@@ -66,12 +73,17 @@ const SessionsPage = () => {
         </div>
       </section>
 
-      <section aria-label="Calendar Section">
+      {/* Calendar */}
+      <section aria-labelledby="calendar-heading" className="w-full md:w-1/2">
+        <h2 id="calendar-heading" className="sr-only">
+          Select a Date from the Calendar
+        </h2>
+
         <div className="max-w-md">
           <Calendar
             onChange={onDateChange}
             value={date}
-            aria-label="Select date"
+            aria-label="Select a date"
             className="w-full"
           />
         </div>

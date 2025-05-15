@@ -6,6 +6,7 @@ import Navbar, { NavbarHandle } from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Providers } from './Providers';
 import SessionGuard from '@/components/SessionGuard';
+import ChatWidget from '@/components/ChatWidget';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const navbarRef = useRef<NavbarHandle>(null);
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               style={{ paddingTop: navHeight, paddingBottom: 'var(--footer-height)' }}
             >
               {children}
+              <ChatWidget />
             </main>
             <Footer />
           </SessionGuard>

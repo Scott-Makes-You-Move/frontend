@@ -9,7 +9,7 @@ const TimeDisplay: React.FC<TimeDisplayProps> = ({ nextBreakPrefix, nextBreakTim
   return (
     <div className="mt-6 p-4 bg-accent text-primary font-body rounded-lg h-max">
       <p>
-        {nextBreakPrefix} <span className="font-bold">{nextBreakTime}</span>
+        {nextBreakPrefix} <time className="font-bold">{nextBreakTime}</time>
       </p>
     </div>
   );

@@ -53,31 +53,52 @@ export default async function Home() {
   const weeklyQuote = getWeeklyQuote(quote.quotelist);
 
   return (
-    <section className="w-full p-4">
+    <section className="w-full p-4" aria-labelledby="home-content-heading">
+      <h1 id="home-content-heading" className="sr-only">
+        Home Page Content {/* TODO: use CMS content */}
+      </h1>
+
       <div className="flex flex-col gap-4 md:grid md:grid-rows-[auto_1fr_auto]">
-        <div className="flex justify-start">
-          <TimeDisplay
-            nextBreakPrefix={movementBreak.reminderPrefix}
-            nextBreakTime={movementBreak.nextBreakTime}
-          />
-        </div>
+        {/* Movement Break  */}
+        <section aria-labelledby="movement-break-heading">
+          <h2 id="movement-break-heading" className="sr-only">
+            Next Movement Break {/* TODO: use CMS content */}
+          </h2>
 
-        <div className="flex items-center justify-center w-full">
-          <div className="w-full max-w-4xl">
-            {/*             <EmbeddedVideo title={exerciseVideo.title} videoUrl={exerciseVideo.videoUrl} />
-             */}
-
-            <SmartVideoPlayer
-              title={exerciseVideo.title}
-              videoUrl={exerciseVideo.videoUrl}
-              videoId="abc123" // Replace with real ID from backend!
+          <div className="flex justify-start">
+            <TimeDisplay
+              nextBreakPrefix={movementBreak.reminderPrefix}
+              nextBreakTime={movementBreak.nextBreakTime}
             />
           </div>
-        </div>
+        </section>
 
-        <div className="flex justify-center md:justify-end">
-          <QuoteCard title={quote.title} quote={weeklyQuote.text} author={weeklyQuote.author} />
-        </div>
+        {/* Exercise Video */}
+        <section aria-labelledby="exercise-video-heading">
+          <h2 id="exercise-video-heading" className="sr-only">
+            Exercise Video {/* TODO: use CMS content */}
+          </h2>
+
+          <div className="flex items-center justify-center w-full">
+            <div className="w-full max-w-4xl">
+              <SmartVideoPlayer
+                title={exerciseVideo.title}
+                videoUrl={exerciseVideo.videoUrl}
+                videoId="abc123" // TODO: Replace with real ID from backend!
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Quote */}
+        <section aria-labelledby="weekly-quote-heading">
+          <h2 id="weekly-quote-heading" className="sr-only">
+            Weekly Quote {/* TODO: use CMS content */}
+          </h2>
+          <div className="flex justify-center md:justify-end">
+            <QuoteCard title={quote.title} quote={weeklyQuote.text} author={weeklyQuote.author} />
+          </div>
+        </section>
       </div>
     </section>
   );
