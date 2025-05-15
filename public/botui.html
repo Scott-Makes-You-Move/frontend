@@ -82,24 +82,98 @@
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/botui@0.3.9/build/botui.min.js"></script>
-
     <script>
       const botui = new BotUI('botui-app');
 
-      botui.message
-        .add({ content: '👋 Hi! I’m OptiChat!' })
-        .then(() => {
-          return botui.action.text({
-            action: {
-              placeholder: 'What’s your name?',
-            },
+      async function startConversation() {
+        const storedInterest = localStorage.getItem('optifit_interest');
+        const storedTeamInterest = localStorage.getItem('optifit_team_interest');
+
+        // Personalize if they've been here before
+        if (storedInterest === 'yes') {
+          await botui.message.add({
+            content: '👋 Welcome back! Ready to continue learning about OptiFit?',
           });
-        })
-        .then((res) => {
-          return botui.message.add({
-            content: `Nice to meet you, ${res.value}!`,
+        } else {
+          await botui.message.add({
+            content: '👋 Hi! Welcome to OptiFit — your movement companion.',
           });
+        }
+
+        await botui.message.add({
+          content: 'Want to know more about what we do?',
         });
+
+        const res = await botui.action.button({
+          action: [
+            { text: 'Yes, tell me!', value: 'yes' },
+            { text: 'Not now', value: 'no' },
+          ],
+        });
+
+        localStorage.setItem('optifit_interest', res.value);
+        localStorage.setItem('optifit_last_visit', new Date().toISOString());
+
+        if (res.value === 'yes') {
+          await botui.message.add({
+            content: 'Awesome. At OptiFit, we believe movement is medicine 💪.',
+          });
+
+          await botui.message.add({
+            content:
+              'Our platform encourages you to embrace an active lifestyle by making daily movement fun and rewarding.',
+          });
+
+          await botui.message.add({
+            content:
+              'Whether you’re just starting out or looking to stay consistent, we’ve got your back.',
+          });
+
+          await botui.message.add({
+            content: 'Want to meet the team behind OptiFit?',
+          });
+
+          const teamRes = await botui.action.button({
+            action: [
+              { text: 'Yes please!', value: 'team' },
+              { text: 'Maybe later', value: 'later' },
+            ],
+          });
+
+          localStorage.setItem('optifit_team_interest', teamRes.value);
+
+          if (teamRes.value === 'team') {
+            await botui.message.add({
+              content:
+                'Our team is made up of wellness enthusiasts, passionate about helping people move more.',
+            });
+
+            await botui.message.add({
+              content:
+                'We’re building tools that blend fitness with tech — making health more accessible for everyone.',
+            });
+          } else {
+            await botui.message.add({
+              content: 'No problem! Feel free to explore the rest of the site.',
+            });
+          }
+        } else {
+          await botui.message.add({
+            content: 'Totally okay. I’ll be here if you need anything!',
+          });
+        }
+      }
+
+      startConversation();
+
+      window.addEventListener('message', function (event) {
+        if (event.data?.type === 'RESET_CHAT') {
+          localStorage.removeItem('optifit_interest');
+          localStorage.removeItem('optifit_team_interest');
+          localStorage.removeItem('optifit_last_visit');
+          location.reload(); // Restart conversation
+        }
+      });
     </script>
   </body>
 </html>

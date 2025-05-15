@@ -1,10 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { X, BotMessageSquare } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { X, BotMessageSquare, RotateCcw } from 'lucide-react';
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  const handleReset = () => {
+    iframeRef.current?.contentWindow?.postMessage({ type: 'RESET_CHAT' }, '*');
+  };
 
   return (
     <>
@@ -41,9 +46,23 @@ export default function ChatWidget() {
           role="dialog"
           aria-modal="true"
           aria-label="Live chat support"
-          className="fixed bottom-20 right-6 z-20 w-80 h-60 bg-white rounded-xl shadow-xl border border-gray-300 overflow-hidden focus:outline-none"
+          className="fixed bottom-20 right-6 z-20 w-96 h-80 bg-white rounded-xl shadow-xl border border-gray-300 overflow-hidden focus:outline-none"
         >
-          <iframe src="/botui.html" title="Chatbot" className="w-full h-full border-none" />
+          <button
+            onClick={handleReset}
+            aria-label="Reset chat"
+            title="Reset chat"
+            className="absolute top-2 right-2 z-30 bg-accent text-black p-1 rounded-full hover:bg-secondary hover:text-white transition"
+          >
+            <RotateCcw className="h-4 w-4" />
+          </button>
+
+          <iframe
+            ref={iframeRef}
+            src="/botui.html"
+            title="Chatbot"
+            className="w-full h-full border-none"
+          />
         </div>
       )}
     </>
