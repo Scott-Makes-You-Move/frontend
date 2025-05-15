@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import Toast from '@/components/ui/Toast';
+import { Input } from '@/components/ui/Input';
 
 type Props = {
   accessToken: any;
@@ -78,25 +79,23 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
         Add {isBiometric ? 'Biometric' : 'Mobility'} Data
       </h3>
 
-      {/* Date field */}
+      {/* Date Field */}
       <div className="flex flex-col">
         <label htmlFor="measuredOn" className="mb-1 text-sm font-medium text-gray-700">
           Measurement Date
         </label>
-        <input
+        <Input
           id="measuredOn"
-          type="date"
           name="measuredOn"
+          type="date"
           value={formData.measuredOn}
           onChange={handleChange}
           required
-          aria-invalid={status === 'error'}
-          aria-describedby={status === 'error' ? 'error-message' : undefined}
-          className="w-full p-2 border rounded"
+          error={status === 'error' ? 'Please select a date.' : undefined}
         />
       </div>
 
-      {/* Dynamic fields */}
+      {/* Dynamic Fields */}
       {Object.entries(formData)
         .filter(([key]) => key !== 'measuredOn')
         .map(([key, value]) => (
@@ -104,17 +103,15 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
             <label htmlFor={key} className="mb-1 text-sm font-medium text-gray-700">
               {key[0].toUpperCase() + key.slice(1)}
             </label>
-            <input
+            <Input
               id={key}
+              name={key}
               type="number"
               step="any"
-              name={key}
               value={value}
               onChange={handleChange}
               required
-              aria-invalid={status === 'error'}
-              aria-describedby={status === 'error' ? 'error-message' : undefined}
-              className="w-full p-2 border rounded"
+              error={status === 'error' ? `Please enter a valid ${key}.` : undefined}
             />
           </div>
         ))}
@@ -123,20 +120,19 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
         Submit
       </Button>
 
-      {/* Inline message for screen readers */}
+      {/* Screen Reader Announcement */}
       {status === 'success' && (
         <p className="text-green-600 mt-2" role="alert" aria-live="polite">
           Entry saved successfully.
         </p>
       )}
-
       {status === 'error' && (
         <p id="error-message" className="sr-only" role="alert" aria-live="assertive">
           There was an error submitting the form. Check the fields and try again.
         </p>
       )}
 
-      {/* Toast for visible error feedback */}
+      {/* Accessible Toast */}
       {showToast && (
         <Toast
           title="Submission Failed"
