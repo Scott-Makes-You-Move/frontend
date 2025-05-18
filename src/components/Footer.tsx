@@ -2,38 +2,55 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useForm, ValidationError } from '@formspree/react';
 import { Button } from '@/components/ui/Button';
 import Logo from '@/components/Logo';
 import { MailIcon, CalendarIcon } from 'lucide-react';
 
 const Footer: React.FC = () => {
+  const [state, handleSubmit] = useForm('xblowvoa');
+
   return (
     <footer className="bg-gray-100 text-foreground border-t border-border">
+      {/* Top Section: Newsletter & Book a Coach */}
       <section className="max-w-screen-xl mx-auto grid md:grid-cols-2 gap-6 px-6 py-12">
+        {/* Newsletter */}
         <div className="bg-[#e8e6e1] rounded-2xl flex flex-col gap-4 shadow-sm p-8 md:p-16">
           <div className="flex flex-col items-start gap-4">
             <MailIcon className="w-6 h-6 text-foreground mt-1" />
             <div>
-              <h3 className="text-xl font-bold font-title">Stay up to date (NOT FUNCTIONAL)</h3>
+              <h3 className="text-xl font-bold font-title">Stay up to date</h3>
               <p className="text-muted-foreground text-sm">
                 Join our newsletter to stay up to date with all that we are working on.
               </p>
             </div>
           </div>
 
-          <form
-            onSubmit={(e) => e.preventDefault()}
-            className="flex flex-col sm:flex-row gap-3 mt-4"
-          >
-            <input
-              type="email"
-              placeholder="Email"
-              className="flex-1 rounded-full px-4 py-2 border border-border bg-white text-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-            <Button type="submit" className="rounded-full px-6">
-              Join newsletter →
-            </Button>
-          </form>
+          {state.succeeded ? (
+            <p className="text-sm font-medium text-green-700 mt-4">Thanks for joining!</p>
+          ) : (
+            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 mt-4">
+              <div className="w-full">
+                <input
+                  id="email"
+                  type="email"
+                  name="email"
+                  required
+                  placeholder="Email"
+                  className="w-full flex-1 rounded-full px-4 py-2 border border-border bg-white text-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+                <ValidationError
+                  prefix="Email"
+                  field="email"
+                  errors={state.errors}
+                  className="text-red-500 text-sm mt-1"
+                />
+              </div>
+              <Button type="submit" disabled={state.submitting} className="rounded-full px-6">
+                {state.submitting ? 'Joining...' : 'Join newsletter →'}
+              </Button>
+            </form>
+          )}
         </div>
 
         {/* Book a Coach */}
@@ -41,16 +58,20 @@ const Footer: React.FC = () => {
           <div className="flex flex-col items-start gap-4">
             <CalendarIcon className="w-6 h-6 text-foreground mt-1" />
             <div>
-              <h3 className="text-xl font-bold font-title">
-                Book a Coaching Call (NOT FUNCTIONAL)
-              </h3>
+              <h3 className="text-xl font-bold font-title">Book a Coaching Call</h3>
               <p className="text-muted-foreground text-sm">
                 Get a session with a coach and see how it can work for you.
               </p>
             </div>
           </div>
           <div className="mt-6">
-            <Button className="rounded-full px-6">Book a Coaching Call →</Button>
+            <Button
+              as="a"
+              href="https://calendly.com/scottmakesyoumove/coachcall"
+              className="rounded-full px-6"
+            >
+              Book a Coaching Call →
+            </Button>
           </div>
         </div>
       </section>
