@@ -14,7 +14,7 @@ export default async function ProgressFormPage() {
       <ProgressFormSection
         accessToken={session.accessToken}
         accountId={session.accountId ?? ''}
-        type="mobility"
+        type="mobilities"
       />
     </div>
   );
