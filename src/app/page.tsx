@@ -95,7 +95,7 @@ export default async function Home() {
           <h2 id="weekly-quote-heading" className="sr-only">
             Weekly Quote {/* TODO: use CMS content */}
           </h2>
-          <div className="flex justify-center md:justify-end">
+          <div className="flex justify-center md:justify-start">
             <QuoteCard title={quote.title} quote={weeklyQuote.text} author={weeklyQuote.author} />
           </div>
         </section>

@@ -25,7 +25,7 @@ export default function ChatWidget() {
             {open ? (
               <X className="h-5 w-5" aria-hidden="true" />
             ) : (
-              <BotMessageSquare className="h-5 w-5" aria-hidden="true" />
+              <BotMessageSquare className="h-5 w-5 md:h-12 md:w-12" aria-hidden="true" />
             )}
           </button>
 
