@@ -5,11 +5,44 @@ import { graphql } from '@/lib/datocms/graphql';
 import { StructuredText } from 'react-datocms';
 import { draftMode } from 'next/headers';
 
+type ImageRecord = {
+  __typename: 'ImageRecord';
+  id: string;
+  image: {
+    responsiveImage: {
+      src: string;
+      alt?: string;
+      width: number;
+      height: number;
+    };
+  };
+};
+
+type ImageGalleryBlockRecord = {
+  __typename: 'ImageGalleryBlockRecord';
+  id: string;
+  assets: {
+    title: string;
+    url: string;
+    alt: string;
+  }[];
+};
+
+type VideoBlockRecord = {
+  __typename: 'VideoBlockRecord';
+  id: string;
+  asset: {
+    url: string;
+    title: string;
+  };
+};
+
 type AboutPageQueryResult = {
   page: {
     title: string;
     structuredText: {
-      value: string;
+      value: any;
+      blocks: (ImageRecord | ImageGalleryBlockRecord | VideoBlockRecord)[];
     };
   };
 };
@@ -20,15 +53,22 @@ const query = graphql<string, never>(`
       id
       title
       structuredText {
+        value
         blocks {
-          ... on ImageBlockRecord {
+          ... on ImageRecord {
+            __typename
             id
-            asset {
-              url
-              alt
+            image {
+              responsiveImage {
+                src
+                alt
+                width
+                height
+              }
             }
           }
           ... on ImageGalleryBlockRecord {
+            __typename
             id
             assets {
               title
@@ -37,9 +77,10 @@ const query = graphql<string, never>(`
             }
           }
           ... on VideoBlockRecord {
+            __typename
             id
             asset {
-              url(imgixParams: {})
+              url
               title
             }
           }
@@ -92,7 +133,7 @@ const AboutPage = async () => {
           </div>
           <div className="text-foreground space-y-4">
             {page?.structuredText?.value && (
-              <StructuredText
+              <StructuredText<ImageRecord | ImageGalleryBlockRecord | VideoBlockRecord>
                 data={page.structuredText}
                 renderBlock={({ record }) => {
                   if (record.__typename === 'ImageRecord') {
@@ -109,16 +150,40 @@ const AboutPage = async () => {
                     );
                   }
 
+                  if (record.__typename === 'ImageGalleryBlockRecord') {
+                    return (
+                      <div className="grid grid-cols-2 gap-4 my-6">
+                        {record.assets.map((asset, i) => (
+                          <Image
+                            key={i}
+                            src={asset.url}
+                            alt={asset.alt}
+                            width={300}
+                            height={200}
+                            className="rounded-lg object-cover"
+                          />
+                        ))}
+                      </div>
+                    );
+                  }
+
+                  if (record.__typename === 'VideoBlockRecord') {
+                    return (
+                      <div className="aspect-video my-6">
+                        <video
+                          controls
+                          src={record.asset.url}
+                          title={record.asset.title}
+                          className="rounded-xl w-full h-full"
+                        />
+                      </div>
+                    );
+                  }
+
                   return null;
                 }}
               />
             )}
-            {/* <h2 className="text-2xl sm:text-3xl lg:text-4xl font-title font-bold">Who We Are</h2>
-            <p className="text-muted-foreground text-base sm:text-lg leading-relaxed">
-              At OptiFit, we believe that movement is medicine. Our platform is designed with one
-              simple goal: to help you embrace an active, vibrant lifestyle through the power of
-              daily movement.
-            </p> */}
           </div>
         </div>
       </section>
