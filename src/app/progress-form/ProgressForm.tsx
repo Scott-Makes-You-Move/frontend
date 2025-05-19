@@ -59,12 +59,13 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
       setFormData(initialState);
       setErrorMessage('');
     } else {
-      let message = 'Something went wrong. Please try again.';
+      let message;
       try {
         const data = await res.json();
         if (data && data.message) message = data.message;
       } catch (e) {
-        // fallback to default message
+        console.error('Error parsing error response:', e);
+        message = 'Something went wrong. Please try again.';
       }
       setErrorMessage(message);
       setStatus('error');
