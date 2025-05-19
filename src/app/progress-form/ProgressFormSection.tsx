@@ -4,7 +4,7 @@ import ProgressForm from './ProgressForm';
 type Props = {
   accessToken: any;
   accountId: string;
-  type: 'biometrics' | 'mobility';
+  type: 'biometrics' | 'mobilities';
 };
 
 const ProgressFormSection: React.FC<Props> = ({ accessToken, accountId, type }) => {

@@ -13,6 +13,7 @@
     "@botui/react": "^1.1.5",
     "@datocms/cda-client": "^0.2.6",
     "@datocms/cma-client": "^3.4.3",
+    "@formspree/react": "^3.0.0",
     "@types/react-calendar": "^4.1.0",
     "botui": "^1.1.3",
     "class-variance-authority": "^0.7.1",
