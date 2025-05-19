@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/Input';
 type Props = {
   accessToken: any;
   accountId: string;
-  type: 'biometrics' | 'mobility';
+  type: 'biometrics' | 'mobilities';
 };
 
 const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
@@ -21,6 +21,7 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
   const [formData, setFormData] = useState(initialState);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [showToast, setShowToast] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const errorRef = useRef<HTMLDivElement>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,6 +32,7 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('idle');
+    setErrorMessage('');
 
     const res = await fetch(
       `https://smym-backend-service.azurewebsites.net/api/v1/account/${accountId}/${type}`,
@@ -55,7 +57,16 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
     if (res.ok) {
       setStatus('success');
       setFormData(initialState);
+      setErrorMessage('');
     } else {
+      let message = 'Something went wrong. Please try again.';
+      try {
+        const data = await res.json();
+        if (data && data.message) message = data.message;
+      } catch (e) {
+        // fallback to default message
+      }
+      setErrorMessage(message);
       setStatus('error');
       setShowToast(true);
     }
@@ -128,7 +139,8 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
       )}
       {status === 'error' && (
         <p id="error-message" className="sr-only" role="alert" aria-live="assertive">
-          There was an error submitting the form. Check the fields and try again.
+          {errorMessage ||
+            'There was an error submitting the form. Check the fields and try again.'}
         </p>
       )}
 
@@ -136,7 +148,7 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
       {showToast && (
         <Toast
           title="Submission Failed"
-          message="Something went wrong. Please try again."
+          message={errorMessage || 'Something went wrong. Please try again.'}
           type="error"
           onClose={() => setShowToast(false)}
           duration={5000}
