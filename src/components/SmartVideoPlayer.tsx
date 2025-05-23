@@ -20,11 +20,12 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({ videoUrl, videoId, 
     if (watched) return;
 
     setWatched(true);
+    // TODO: Use PUT endpoint on POSTMAN to send sessionId to backend.
     try {
       await fetch('/api/video-watched', {
-        method: 'POST',
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ videoId }),
+        body: JSON.stringify({ videoId }), // 
       });
       console.log('✅ Video marked as watched');
     } catch (err) {

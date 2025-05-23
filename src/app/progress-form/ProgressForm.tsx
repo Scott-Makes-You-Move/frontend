@@ -34,6 +34,21 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
     setStatus('idle');
     setErrorMessage('');
 
+    if (!isBiometric) {
+      const invalidFields = Object.entries(formData).filter(([key, value]) => {
+        if (key === 'measuredOn') return false;
+        const intVal = parseInt(value, 10);
+        return isNaN(intVal) || intVal < 1 || intVal > 3 || value.includes('.');
+      });
+
+      if (invalidFields.length > 0) {
+        setStatus('error');
+        setErrorMessage('All mobility values must be whole numbers between 1 and 3.');
+        setShowToast(true);
+        return;
+      }
+    }
+
     const res = await fetch(
       `https://smym-backend-service.azurewebsites.net/api/v1/account/${accountId}/${type}`,
       {
@@ -119,7 +134,9 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
               id={key}
               name={key}
               type="number"
-              step="any"
+              step={isBiometric ? 'any' : '1'}
+              min={isBiometric ? undefined : 1}
+              max={isBiometric ? undefined : 3}
               value={value}
               onChange={handleChange}
               required
