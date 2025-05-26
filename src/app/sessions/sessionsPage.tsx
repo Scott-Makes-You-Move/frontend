@@ -1,8 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+
+interface SessionsPageProps {
+  accountId: string;
+  accessToken: string;
+}
 
 type SessionItem = {
   time: string;
@@ -10,25 +15,68 @@ type SessionItem = {
   status: 'completed' | 'not-completed';
 };
 
-const sessionItems: SessionItem[] = [
-  { time: '10:00 AM', session: 'Hip', status: 'completed' },
-  { time: '1:30 PM', session: 'Shoulder', status: 'not-completed' },
-  { time: '3:00 PM', session: 'Back', status: 'completed' },
-];
-
-const SessionsPage = () => {
+const SessionsPage = ({ accountId, accessToken }: SessionsPageProps) => {
   const [date, setDate] = useState<Date>(new Date());
+  const [sessionItems, setSessionItems] = useState<SessionItem[]>([]);
+
+  useEffect(() => {
+    const fetchSessions = async () => {
+      try {
+        const res = await fetch(
+          `https://smym-backend-service.azurewebsites.net/api/v1/account/${accountId}/sessions`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+
+        if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+
+        const data = await res.json();
+
+        if (Array.isArray(data.content)) {
+          const selectedDate = date.toLocaleDateString('en-CA');
+
+          const formatted = data.content
+            .filter((session: { sessionStartTime: string }) =>
+              session.sessionStartTime.startsWith(selectedDate),
+            )
+            .map((session: any) => {
+              const time = new Date(session.sessionStartTime).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+              });
+
+              return {
+                time,
+                session:
+                  session.exerciseType.charAt(0) + session.exerciseType.slice(1).toLowerCase(),
+                status: session.sessionStatus === 'COMPLETED' ? 'completed' : 'not-completed',
+              };
+            });
+
+          setSessionItems(formatted);
+        }
+      } catch (error) {
+        console.error('Failed to fetch session data:', error);
+      }
+    };
+
+    fetchSessions();
+  }, [date, accessToken, accountId]);
 
   const onDateChange = (newDate: any) => {
     setDate(newDate);
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12 flex flex-col justify-between items-center md:flex-row font-body">
+    <div className="max-w-4xl mx-auto px-4 py-12 flex flex-col justify-between items-center md:flex-row font-body md:gap-x-4">
       {/* Task Table */}
       <section aria-labelledby="tasks-heading" className="w-full md:w-1/2 mb-8 md:mb-0">
         <h2 id="tasks-heading" className="text-xl font-semibold mb-4">
-          Tasks Completed Today
+          Tasks Completed on {date.toLocaleDateString()}
         </h2>
 
         <div className="overflow-x-auto rounded border border-gray-200">
