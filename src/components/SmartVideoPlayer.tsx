@@ -25,7 +25,7 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({ videoUrl, videoId, 
       await fetch('/api/video-watched', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ videoId }), // 
+        body: JSON.stringify({ videoId }), //
       });
       console.log('✅ Video marked as watched');
     } catch (err) {
