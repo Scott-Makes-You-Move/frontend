@@ -65,7 +65,7 @@ const SessionsPage = ({ accountId, accessToken }: SessionsPageProps) => {
     };
 
     fetchSessions();
-  }, [date]);
+  }, [date, accessToken, accountId]);
 
   const onDateChange = (newDate: any) => {
     setDate(newDate);
