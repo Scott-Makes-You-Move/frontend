@@ -72,7 +72,7 @@ const SessionsPage = ({ accountId, accessToken }: SessionsPageProps) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12 flex flex-col justify-between items-center md:flex-row font-body border border-red-500 md:gap-x-4">
+    <div className="max-w-4xl mx-auto px-4 py-12 flex flex-col justify-between items-center md:flex-row font-body md:gap-x-4">
       {/* Task Table */}
       <section aria-labelledby="tasks-heading" className="w-full md:w-1/2 mb-8 md:mb-0">
         <h2 id="tasks-heading" className="text-xl font-semibold mb-4">
