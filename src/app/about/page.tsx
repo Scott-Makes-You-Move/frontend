@@ -55,10 +55,10 @@ const query = graphql<string, never>(`
       structuredText {
         value
         blocks {
-          ... on ImageRecord {
+          ... on ImageBlockRecord {
             __typename
             id
-            image {
+            asset {
               responsiveImage {
                 src
                 alt
@@ -181,6 +181,16 @@ const AboutPage = async () => {
                   }
 
                   return null;
+                }}
+                renderLinkToRecord={({ record, children }) => {
+                  return (
+                    <a
+                      href={`/${record.__typename.toLowerCase()}/${record.id}`}
+                      className="text-primary underline"
+                    >
+                      {children}
+                    </a>
+                  );
                 }}
               />
             )}
