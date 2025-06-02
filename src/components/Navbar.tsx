@@ -17,7 +17,7 @@ const Navbar = forwardRef<NavbarHandle>((_, ref) => {
   const toggleMenu = () => setIsOpen((prev) => !prev);
 
   const mobileLinks: [string, string][] = [
-    ['Movement', '/'],
+    ['Home', '/'],
     ['Sessions', '/sessions'],
     ['Progress', '/progress'],
     ['Leaderboard', '/leaderboard'],
