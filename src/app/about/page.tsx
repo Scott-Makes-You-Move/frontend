@@ -43,6 +43,10 @@ type AboutPageQueryResult = {
     structuredText: {
       value: any;
       blocks: (ImageRecord | ImageGalleryBlockRecord | VideoBlockRecord)[];
+      links: Array<{
+        id: string;
+        __typename: string;
+      }>;
     };
   };
 };
@@ -84,6 +88,10 @@ const query = graphql<string, never>(`
               title
             }
           }
+        }
+        links {
+          id
+          __typename
         }
       }
     }
@@ -192,6 +200,11 @@ const AboutPage = async () => {
                     </a>
                   );
                 }}
+                renderInlineRecord={({ record }) => (
+                  <span className="inline-block font-medium text-primary">
+                    [{record.__typename} - {record.id}]
+                  </span>
+                )}
               />
             )}
           </div>
