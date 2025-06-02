@@ -1,16 +1,23 @@
 'use client';
+
 import { signIn, useSession } from 'next-auth/react';
 import { ReactNode, useEffect } from 'react';
+import { AuthContext } from '@/contexts/AuthContext';
 
-export default function SessionGuard({ children }: { children: ReactNode }) {
-  const { data } = useSession();
+const SessionGuard = ({ children }: { children: ReactNode }) => {
+  const { data: session } = useSession();
+
   useEffect(() => {
-    if (data?.error === 'RefreshAccessTokenError') {
+    if (session?.error === 'RefreshAccessTokenError') {
       signIn('keycloak', {
         callbackUrl: window.location.href,
       });
     }
-  }, [data]);
+  }, [session]);
 
-  return <>{children}</>;
-}
+  const token = session?.accessToken ?? null;
+
+  return <AuthContext.Provider value={{ token }}>{children}</AuthContext.Provider>;
+};
+
+export default SessionGuard;

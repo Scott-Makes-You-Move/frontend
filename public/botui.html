@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>BotUI Chat</title>
+    <title>OptiFit Chatbot</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/botui/build/botui.min.css" />
     <style>
@@ -20,54 +20,6 @@
         padding: 20px;
       }
 
-      .botui-actions-text {
-        display: flex;
-        gap: 1rem;
-      }
-
-      /* Match Input component */
-      .botui-actions-text-input {
-        width: 100%;
-        padding: 0.5rem 0.75rem;
-        font-size: 1rem;
-        border-radius: 0.375rem;
-        border: 1px solid rgba(20, 93, 160, 0.2); /* primary/20 */
-        color: #145da0;
-        outline: none;
-        font-family: inherit;
-        transition:
-          border 0.2s,
-          box-shadow 0.2s;
-      }
-
-      .botui-actions-text-input:focus {
-        border-color: #00a650;
-        box-shadow: 0 0 0 3px rgba(0, 166, 80, 0.3); /* soft green ring */
-      }
-
-      /* Match Button styles */
-      button {
-        background-color: #145da0;
-        color: #ffffff;
-        padding: 0.5rem 1rem;
-        font-size: 1rem;
-        border: none;
-        border-radius: 0.375rem;
-        cursor: pointer;
-        font-family: inherit;
-        transition: background-color 0.2s;
-      }
-
-      .botui-actions-buttons-button:hover {
-        background-color: #00a650;
-      }
-
-      .botui-actions-buttons-button:focus {
-        outline: 2px solid #ffd202;
-        outline-offset: 2px;
-      }
-
-      /* Bot message font styling */
       .botui-message-content {
         color: #145da0;
         font-family: inherit;
@@ -75,6 +27,7 @@
       }
     </style>
   </head>
+
   <body>
     <div id="botui-app">
       <bot-ui></bot-ui>
@@ -84,96 +37,78 @@
     <script src="https://cdn.jsdelivr.net/npm/botui@0.3.9/build/botui.min.js"></script>
     <script>
       const botui = new BotUI('botui-app');
+      let bearerToken = null;
 
-      async function startConversation() {
-        const storedInterest = localStorage.getItem('optifit_interest');
-        const storedTeamInterest = localStorage.getItem('optifit_team_interest');
+      // Receive token from React ChatWidget
+      window.addEventListener('message', function (event) {
+        const { type, token } = event.data || {};
 
-        // Personalize if they've been here before
-        if (storedInterest === 'yes') {
-          await botui.message.add({
-            content: '👋 Welcome back! Ready to continue learning about OptiFit?',
-          });
-        } else {
-          await botui.message.add({
-            content: '👋 Hi! Welcome to OptiFit — your movement companion.',
-          });
+        if (type === 'SET_TOKEN') {
+          bearerToken = token;
+          botui.message.add({ content: '✅ Token received. Starting chat...' });
+
+          startConversation();
         }
 
-        await botui.message.add({
-          content: 'Want to know more about what we do?',
-        });
+        if (type === 'RESET_CHAT') {
+          localStorage.clear();
+          location.reload();
+        }
+      });
 
-        const res = await botui.action.button({
-          action: [
-            { text: 'Yes, tell me!', value: 'yes' },
-            { text: 'Not now', value: 'no' },
-          ],
-        });
-
-        localStorage.setItem('optifit_interest', res.value);
-        localStorage.setItem('optifit_last_visit', new Date().toISOString());
-
-        if (res.value === 'yes') {
+      async function startConversation() {
+        if (!bearerToken) {
+          console.warn('[BotUI] No bearer token. Cannot proceed.');
           await botui.message.add({
-            content: 'Awesome. At OptiFit, we believe movement is medicine 💪.',
+            content: '⚠️ Missing authentication. Please reload the chat.',
           });
+          return;
+        }
 
-          await botui.message.add({
-            content:
-              'Our platform encourages you to embrace an active lifestyle by making daily movement fun and rewarding.',
-          });
+        // 1. Display loading message
+        await botui.message.add({ content: '⏳ Loading your chat experience…' });
 
-          await botui.message.add({
-            content:
-              'Whether you’re just starting out or looking to stay consistent, we’ve got your back.',
-          });
+        // 2. Initiate API call
+        try {
+          const res = await fetch(
+            'https://smym-backend-service.azurewebsites.net/api/v1/chatbot/initiate',
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${bearerToken}`,
+              },
+              body: JSON.stringify({
+                source: 'optifit-site',
+                timestamp: new Date().toISOString(),
+              }),
+            },
+          );
 
-          await botui.message.add({
-            content: 'Want to meet the team behind OptiFit?',
-          });
-
-          const teamRes = await botui.action.button({
-            action: [
-              { text: 'Yes please!', value: 'team' },
-              { text: 'Maybe later', value: 'later' },
-            ],
-          });
-
-          localStorage.setItem('optifit_team_interest', teamRes.value);
-
-          if (teamRes.value === 'team') {
+          if (!res.ok) {
+            const errorText = await res.text();
+            console.error('[BotUI] Initiate call failed:', res.status, errorText);
             await botui.message.add({
-              content:
-                'Our team is made up of wellness enthusiasts, passionate about helping people move more.',
+              content: `⚠️ Failed to connect (HTTP ${res.status})`,
             });
-
-            await botui.message.add({
-              content:
-                'We’re building tools that blend fitness with tech — making health more accessible for everyone.',
-            });
-          } else {
-            await botui.message.add({
-              content: 'No problem! Feel free to explore the rest of the site.',
-            });
+            return;
           }
-        } else {
+
+          const data = await res.json();
+          console.log('[BotUI] Init response:', data);
+
           await botui.message.add({
-            content: 'Totally okay. I’ll be here if you need anything!',
+            content: data.message || '👋 Hello! Welcome to OptiFit.',
+          });
+
+          // Proceed with next bot actions here (optional)
+        } catch (error) {
+          console.error('[BotUI] Network or server error:', error);
+          await botui.message.add({
+            content: '⚠️ Something went wrong while starting your chat.',
           });
         }
       }
-
-      startConversation();
-
-      window.addEventListener('message', function (event) {
-        if (event.data?.type === 'RESET_CHAT') {
-          localStorage.removeItem('optifit_interest');
-          localStorage.removeItem('optifit_team_interest');
-          localStorage.removeItem('optifit_last_visit');
-          location.reload(); // Restart conversation
-        }
-      });
     </script>
   </body>
 </html>
