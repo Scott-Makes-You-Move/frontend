@@ -1,8 +1,5 @@
-'use client';
-
 import React from 'react';
 import requireAuth from '@/lib/auth/requireAuth';
-
 import { Button } from '@/components/ui/Button';
 
 const Home = async () => {
@@ -19,9 +16,6 @@ const Home = async () => {
           <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto">
             Just one minute of movement a day. Built for office life.
           </p>
-          <Button variant="secondary" size="lg">
-            Get Started
-          </Button>
         </div>
       </section>
 
@@ -58,10 +52,6 @@ const Home = async () => {
           <p className="text-gray-700 mb-12">
             Daily 1-minute prompts. Streaks. Leaderboards. Community. No gym required.
           </p>
-
-          <Button variant="default" size="lg">
-            Try It Now
-          </Button>
         </div>
       </section>
     </main>
