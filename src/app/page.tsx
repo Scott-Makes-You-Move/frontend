@@ -1,9 +1,13 @@
 'use client';
 
 import React from 'react';
+import requireAuth from '@/lib/auth/requireAuth';
+
 import { Button } from '@/components/ui/Button';
 
-const Home = () => {
+const Home = async () => {
+  await requireAuth({ callbackUrl: '/' });
+
   return (
     <main className="min-h-screen bg-background font-body text-gray-900">
       {/* Hero */}
@@ -13,7 +17,7 @@ const Home = () => {
             Move More. Feel Better.
           </h1>
           <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto">
-            Just one minute of movement a day—built for office life.
+            Just one minute of movement a day. Built for office life.
           </p>
           <Button variant="secondary" size="lg">
             Get Started
@@ -26,7 +30,7 @@ const Home = () => {
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-title font-semibold text-primary mb-4">The Program</h2>
           <p className="text-gray-700 mb-12">
-            Movement that fits into your day—personal, preventative, and team-friendly.
+            Movement that fits into your day, personal, preventative, and team-friendly.
           </p>
 
           <div className="grid md:grid-cols-3 gap-6 text-left">

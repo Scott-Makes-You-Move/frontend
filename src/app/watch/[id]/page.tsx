@@ -46,7 +46,9 @@ const query = graphql<string, never>(/* GraphQL */ `
 `);
 
 export default async function WatchPage({ params }: PageProps) {
-  const session = await requireAuth({ callbackUrl: '/' });
+  const { id: sessionId } = await params;
+  const callbackUrl = `/watch/${sessionId}`;
+  const session = await requireAuth({ callbackUrl });
   const { isEnabled: isDraftModeEnabled } = await draftMode();
   const { movementBreak, exerciseVideo, quote } = await executeQuery<HomePageQueryResult, never>(
     query,
@@ -55,7 +57,6 @@ export default async function WatchPage({ params }: PageProps) {
     },
   );
   const weeklyQuote = getWeeklyQuote(quote.quotelist);
-  const { id: sessionId } = await params;
   const { accountId, accessToken } = session;
 
   return (
