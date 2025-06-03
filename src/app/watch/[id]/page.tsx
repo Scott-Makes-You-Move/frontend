@@ -55,7 +55,7 @@ export default async function WatchPage({ params }: PageProps) {
     },
   );
   const weeklyQuote = getWeeklyQuote(quote.quotelist);
-  const { id: sessionId } = params;
+  const { id: sessionId } = await params;
   const { accountId, accessToken } = session;
 
   return (
