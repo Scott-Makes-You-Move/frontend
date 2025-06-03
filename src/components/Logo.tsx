@@ -75,7 +75,7 @@ const Logo: React.FC<LogoProps> = ({
                 : 'text-primary'
           }`}
         >
-          OptiFit
+          SMYM
         </span>
       )}
     </div>
