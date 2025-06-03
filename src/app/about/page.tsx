@@ -150,14 +150,14 @@ const AboutPage = async () => {
                 data={page.structuredText}
                 renderBlock={({ record }) => {
                   if (record.__typename === 'ImageBlockRecord') {
-                    const img = record.image.responsiveImage;
+                    const img = record?.image?.responsiveImage;
                     return (
                       <Image
                         key={record.id}
-                        src={img.src}
-                        alt={img.alt || ''}
-                        width={img.width}
-                        height={img.height}
+                        src={img?.src}
+                        alt={img?.alt || ''}
+                        width={img?.width}
+                        height={img?.height}
                         className="rounded-xl my-6"
                       />
                     );
