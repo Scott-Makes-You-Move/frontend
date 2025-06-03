@@ -7,6 +7,10 @@ import { graphql } from '@/lib/datocms/graphql';
 import requireAuth from '@/lib/auth/requireAuth';
 import { getWeeklyQuote } from '@/utils/getWeeklyQuote';
 
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+
 type HomePageQueryResult = {
   movementBreak: {
     nextBreakTime: string;
@@ -41,7 +45,7 @@ const query = graphql<string, never>(/* GraphQL */ `
   }
 `);
 
-export default async function WatchPage({ params }: { params: { id: string } }) {
+export default async function WatchPage({ params }: PageProps) {
   const session = await requireAuth({ callbackUrl: '/' });
   const { isEnabled: isDraftModeEnabled } = await draftMode();
   const { movementBreak, exerciseVideo, quote } = await executeQuery<HomePageQueryResult, never>(
@@ -51,7 +55,7 @@ export default async function WatchPage({ params }: { params: { id: string } }) 
     },
   );
   const weeklyQuote = getWeeklyQuote(quote.quotelist);
-  const { id: sessionId } = await params;
+  const { id: sessionId } = params;
   const { accountId, accessToken } = session;
 
   return (
