@@ -5,8 +5,8 @@ import { graphql } from '@/lib/datocms/graphql';
 import { StructuredText } from 'react-datocms';
 import { draftMode } from 'next/headers';
 
-type ImageRecord = {
-  __typename: 'ImageRecord';
+type ImageBlockRecord = {
+  __typename: 'ImageBlockRecord';
   id: string;
   image: {
     responsiveImage: {
@@ -37,12 +37,18 @@ type VideoBlockRecord = {
   };
 };
 
+type LinkRecord = {
+  id: string;
+  __typename: string;
+};
+
 type AboutPageQueryResult = {
   page: {
     title: string;
     structuredText: {
       value: any;
-      blocks: (ImageRecord | ImageGalleryBlockRecord | VideoBlockRecord)[];
+      blocks: (ImageBlockRecord | ImageGalleryBlockRecord | VideoBlockRecord)[];
+      links: LinkRecord[];
     };
   };
 };
@@ -55,10 +61,10 @@ const query = graphql<string, never>(`
       structuredText {
         value
         blocks {
-          ... on ImageRecord {
+          ... on ImageBlockRecord {
             __typename
             id
-            image {
+            asset {
               responsiveImage {
                 src
                 alt
@@ -84,6 +90,10 @@ const query = graphql<string, never>(`
               title
             }
           }
+        }
+        links {
+          id
+          __typename
         }
       }
     }
@@ -133,10 +143,13 @@ const AboutPage = async () => {
           </div>
           <div className="text-foreground space-y-4">
             {page?.structuredText?.value && (
-              <StructuredText<ImageRecord | ImageGalleryBlockRecord | VideoBlockRecord>
+              <StructuredText<
+                ImageBlockRecord | ImageGalleryBlockRecord | VideoBlockRecord,
+                LinkRecord
+              >
                 data={page.structuredText}
                 renderBlock={({ record }) => {
-                  if (record.__typename === 'ImageRecord') {
+                  if (record.__typename === 'ImageBlockRecord') {
                     const img = record.image.responsiveImage;
                     return (
                       <Image
@@ -182,6 +195,21 @@ const AboutPage = async () => {
 
                   return null;
                 }}
+                renderLinkToRecord={({ record, children }) => {
+                  return (
+                    <a
+                      href={`/${record.__typename.toLowerCase()}/${record.id}`}
+                      className="text-primary underline"
+                    >
+                      {children}
+                    </a>
+                  );
+                }}
+                renderInlineRecord={({ record }) => (
+                  <span className="inline-block font-medium text-primary">
+                    [{record.__typename} - {record.id}]
+                  </span>
+                )}
               />
             )}
           </div>

@@ -4,7 +4,7 @@ const nextConfig = {
   distDir: 'build',
   output: 'standalone',
   images: {
-    domains: ['fakeimg.pl', 'placehold.co'],
+    domains: ['fakeimg.pl', 'placehold.co', 'www.datocms-assets.com'],
   },
 };
 

@@ -3,34 +3,103 @@
 import React, { useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { throttle } from 'lodash';
+import Toast from './ui/Toast';
 
 interface SmartVideoPlayerProps {
   videoUrl: string;
-  videoId: string;
   title?: string;
+  sessionId?: string;
+  accountId?: string;
+  accessToken?: string;
 }
 
-const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({ videoUrl, videoId, title }) => {
+const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
+  videoUrl,
+  title,
+  sessionId,
+  accountId,
+  accessToken,
+}) => {
   const playerRef = useRef<ReactPlayer>(null);
   const [progress, setProgress] = useState(0);
-  const [watched, setWatched] = useState(false);
   const [manualOverride, setManualOverride] = useState(false);
+  const [sessionOverdue, setSessionOverdue] = useState(false);
+
+  const [toast, setToast] = useState<{
+    title: string;
+    message: string;
+    type?: 'error' | 'success' | 'info';
+  } | null>(null);
+
+  // Utility: scoped key for localStorage
+  const getStorageKey = (accountId?: string, sessionId?: string) =>
+    `watched_session_${accountId}_${sessionId}`;
+
+  // Load watched state from localStorage
+  const [watchedState, setWatchedState] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem(getStorageKey(accountId, sessionId)) === 'true';
+  });
+
+  // Custom setter that updates both state and localStorage
+  const setWatched = (val: boolean) => {
+    setWatchedState(val);
+    const key = getStorageKey(accountId, sessionId);
+    if (val) {
+      localStorage.setItem(key, 'true');
+    } else {
+      localStorage.removeItem(key);
+    }
+  };
+
+  // Toast handlers
+  const showToast = (
+    title: string,
+    message: string,
+    type: 'error' | 'success' | 'info' = 'info',
+  ) => {
+    setToast({ title, message, type });
+  };
+
+  const handleCloseToast = () => {
+    setToast(null);
+  };
 
   const markAsWatched = async () => {
-    if (watched) return;
+    if (watchedState || sessionOverdue) return;
 
-    setWatched(true);
-    // TODO: Use PUT endpoint on POSTMAN to send sessionId to backend.
     try {
-      await fetch('/api/video-watched', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ videoId }), //
-      });
-      console.log('✅ Video marked as watched');
-    } catch (err) {
-      console.error('Failed to mark as watched:', err);
-      setWatched(false);
+      const res = await fetch(
+        `https://smym-backend-service.azurewebsites.net/api/v1/account/${accountId}/sessions/${sessionId}`,
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        const errorMsg = data?.message || 'An error occurred while marking the video as watched.';
+
+        if (res.status === 409 && errorMsg.includes('Session is already finished')) {
+          setSessionOverdue(true);
+          showToast('Session Expired', 'This session is no longer available to complete.', 'info');
+        } else {
+          showToast('Failed to Save Progress', errorMsg, 'error');
+        }
+
+        return;
+      }
+
+      setWatched(true);
+      showToast('Nice Work!', 'Video successfully marked as completed.', 'success');
+    } catch (err: any) {
+      console.error('Unexpected error:', err);
+      showToast('Error', 'Something went wrong. Please try again later.', 'error');
     }
   };
 
@@ -42,7 +111,7 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({ videoUrl, videoId, 
   const throttledProgress = useRef(
     throttle((state: { played: number }) => {
       setProgress(state.played);
-      if (state.played >= 0.9 && !watched) {
+      if (state.played >= 0.9 && !watchedState && !sessionOverdue) {
         markAsWatched();
       }
     }, 1000),
@@ -54,7 +123,7 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({ videoUrl, videoId, 
         Video player section
       </h2>
 
-      {!watched && !manualOverride && (
+      {!watchedState && !manualOverride && !sessionOverdue && (
         <div className="w-full flex flex-col-reverse md:flex-col items-end gap-4">
           <div className="relative group w-full md:w-auto">
             <button
@@ -106,22 +175,33 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({ videoUrl, videoId, 
         </div>
       )}
 
-      {watched && (
+      {(watchedState || sessionOverdue) && (
         <div
           role="status"
           aria-live="polite"
           className="flex flex-col items-center justify-center space-y-4"
         >
-          <div
-            className="transform -translate-x-1/2 mt-2 animate-bounce bg-green-600 text-white px-4 py-2 rounded-full shadow-lg text-2xl font-semibold"
-            tabIndex={0}
-            aria-label="Video completed. Great job!"
-          >
-            🏅
-          </div>
-          <p className="text-lg text-gray-900 font-medium" aria-live="polite">
-            Nice work on completing the video!
-          </p>
+          {watchedState && !sessionOverdue && (
+            <>
+              <div
+                className="transform -translate-x-1/2 mt-2 animate-bounce bg-green-600 text-white px-4 py-2 rounded-full shadow-lg text-2xl font-semibold"
+                tabIndex={0}
+                aria-label="Video completed. Great job!"
+              >
+                🏅
+              </div>
+              <p className="text-lg text-gray-900 font-medium" aria-live="polite">
+                Nice work on completing the video!
+              </p>
+            </>
+          )}
+
+          {sessionOverdue && (
+            <p className="text-red-600 text-sm font-medium text-center">
+              This session has expired. You had 1 hour to complete it.
+            </p>
+          )}
+
           <a
             href="/leaderboard"
             className="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -132,8 +212,16 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({ videoUrl, videoId, 
           </a>
         </div>
       )}
+
+      {toast && (
+        <Toast
+          title={toast.title}
+          message={toast.message}
+          type={toast.type}
+          onClose={handleCloseToast}
+        />
+      )}
     </div>
   );
 };
-
 export default SmartVideoPlayer;

@@ -1,105 +1,71 @@
-import { draftMode } from 'next/headers';
-import QuoteCard from '@/components/QuoteCard';
-import TimeDisplay from '@/components/TimeDisplay';
-import SmartVideoPlayer from '@/components/SmartVideoPlayer';
-import { executeQuery } from '@/lib/datocms/executeQuery';
-import { graphql } from '@/lib/datocms/graphql';
+'use client';
+
+import React from 'react';
 import requireAuth from '@/lib/auth/requireAuth';
-import { getWeeklyQuote } from '@/utils/getWeeklyQuote';
 
-type HomePageQueryResult = {
-  movementBreak: {
-    nextBreakTime: string;
-    reminderPrefix: string;
-  };
-  exerciseVideo: {
-    title: string;
-    videoUrl: string;
-  };
-  quote: {
-    title: string;
-    text: string;
-    quotelist: { week: number; text: string; author: string }[];
-  };
-};
+import { Button } from '@/components/ui/Button';
 
-const query = graphql<string, never>(/* GraphQL */ `
-  query HomePageQuery {
-    movementBreak {
-      nextBreakTime
-      reminderPrefix
-    }
-    exerciseVideo {
-      title
-      videoUrl
-    }
-    quote {
-      title
-      text
-      quotelist
-    }
-  }
-`);
-
-export default async function Home() {
+const Home = async () => {
   await requireAuth({ callbackUrl: '/' });
-  const { isEnabled: isDraftModeEnabled } = await draftMode();
-  const { movementBreak, exerciseVideo, quote } = await executeQuery<HomePageQueryResult, never>(
-    query,
-    {
-      includeDrafts: isDraftModeEnabled,
-    },
-  );
-  const weeklyQuote = getWeeklyQuote(quote.quotelist);
 
   return (
-    <section className="w-full p-4" aria-labelledby="home-content-heading">
-      <h1 id="home-content-heading" className="sr-only">
-        Home Page Content {/* TODO: use CMS content */}
-      </h1>
+    <main className="min-h-screen bg-background font-body text-gray-900">
+      {/* Hero */}
+      <section className="bg-primary text-white py-24 px-6 md:px-20 text-center">
+        <div className="max-w-5xl mx-auto">
+          <h1 className="text-4xl md:text-6xl font-title font-bold mb-6">
+            Move More. Feel Better.
+          </h1>
+          <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto">
+            Just one minute of movement a day. Built for office life.
+          </p>
+          <Button variant="secondary" size="lg">
+            Get Started
+          </Button>
+        </div>
+      </section>
 
-      <div className="flex flex-col gap-4 md:grid md:grid-rows-[auto_1fr_auto]">
-        {/* Movement Break  */}
-        <section aria-labelledby="movement-break-heading">
-          <h2 id="movement-break-heading" className="sr-only">
-            Next Movement Break {/* TODO: use CMS content */}
-          </h2>
+      {/* Program */}
+      <section className="bg-white py-20 px-6 md:px-20 text-center">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-title font-semibold text-primary mb-4">The Program</h2>
+          <p className="text-gray-700 mb-12">
+            Movement that fits into your day, personal, preventative, and team-friendly.
+          </p>
 
-          <div className="flex justify-start">
-            <TimeDisplay
-              nextBreakPrefix={movementBreak.reminderPrefix}
-              nextBreakTime={movementBreak.nextBreakTime}
-            />
+          <div className="grid md:grid-cols-3 gap-6 text-left">
+            {[
+              ['Personal', 'Custom to your posture and workflow.'],
+              ['Preventative', 'Stay energized and avoid pain.'],
+              ['Community', 'Move with your team in sync.'],
+            ].map(([title, desc]) => (
+              <div
+                key={title}
+                className="bg-gray-50 p-5 rounded-lg border-l-4 border-primary shadow-sm"
+              >
+                <h3 className="text-xl font-semibold font-title mb-2">{title}</h3>
+                <p className="text-gray-700">{desc}</p>
+              </div>
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Exercise Video */}
-        <section aria-labelledby="exercise-video-heading">
-          <h2 id="exercise-video-heading" className="sr-only">
-            Exercise Video {/* TODO: use CMS content */}
-          </h2>
+      {/* App */}
+      <section className="bg-gray-100 py-20 px-6 md:px-20 text-center">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-title font-semibold text-primary mb-4">The App</h2>
+          <p className="text-gray-700 mb-12">
+            Daily 1-minute prompts. Streaks. Leaderboards. Community. No gym required.
+          </p>
 
-          <div className="flex items-center justify-center w-full">
-            <div className="w-full max-w-4xl">
-              <SmartVideoPlayer
-                title={exerciseVideo.title}
-                videoUrl={exerciseVideo.videoUrl}
-                videoId="abc123" // TODO: Replace with real ID from backend!
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* Quote */}
-        <section aria-labelledby="weekly-quote-heading">
-          <h2 id="weekly-quote-heading" className="sr-only">
-            Weekly Quote {/* TODO: use CMS content */}
-          </h2>
-          <div className="flex justify-center md:justify-start">
-            <QuoteCard title={quote.title} quote={weeklyQuote.text} author={weeklyQuote.author} />
-          </div>
-        </section>
-      </div>
-    </section>
+          <Button variant="default" size="lg">
+            Try It Now
+          </Button>
+        </div>
+      </section>
+    </main>
   );
-}
+};
+
+export default Home;

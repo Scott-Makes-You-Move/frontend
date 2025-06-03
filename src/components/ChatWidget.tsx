@@ -1,15 +1,32 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X, BotMessageSquare, RotateCcw } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function ChatWidget() {
+  const { token: bearerToken } = useAuth();
   const [open, setOpen] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const handleReset = () => {
     iframeRef.current?.contentWindow?.postMessage({ type: 'RESET_CHAT' }, '*');
   };
+
+  useEffect(() => {
+    if (!open || !bearerToken) return;
+
+    const sendToken = () => {
+      iframeRef.current?.contentWindow?.postMessage({ type: 'SET_TOKEN', token: bearerToken }, '*');
+    };
+
+    const iframe = iframeRef.current;
+    iframe?.addEventListener('load', sendToken);
+
+    return () => {
+      iframe?.removeEventListener('load', sendToken);
+    };
+  }, [open, bearerToken]);
 
   return (
     <>
