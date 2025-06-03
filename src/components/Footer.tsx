@@ -99,8 +99,13 @@ const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link href="/book" className="hover:underline">
-                  Book a Coaching Call (NOT FUNCTIONAL)
+                <Link
+                  href="https://calendly.com/scottmakesyoumove/coachcall"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline"
+                >
+                  Book a Coaching Call
                 </Link>
               </li>
             </ul>
@@ -112,7 +117,7 @@ const Footer: React.FC = () => {
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/about" className="hover:underline">
-                  About Optifit
+                  About SMYM
                 </Link>
               </li>
               <li>
