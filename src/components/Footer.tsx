@@ -94,8 +94,8 @@ const Footer: React.FC = () => {
             <h4 className="font-semibold mb-2">Product</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/faqs" className="hover:underline">
-                  FAQs (NOT FUNCTIONAL)
+                <Link href="/faq" className="hover:underline">
+                  FAQ
                 </Link>
               </li>
               <li>
