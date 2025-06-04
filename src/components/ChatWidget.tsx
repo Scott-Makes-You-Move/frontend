@@ -5,7 +5,7 @@ import { X, BotMessageSquare, RotateCcw } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function ChatWidget() {
-  const { token: bearerToken } = useAuth();
+  const { token: bearerToken, session } = useAuth();
   const [open, setOpen] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -14,19 +14,37 @@ export default function ChatWidget() {
   };
 
   useEffect(() => {
-    if (!open || !bearerToken) return;
+    if (!open || !bearerToken || !session) return;
 
-    const sendToken = () => {
-      iframeRef.current?.contentWindow?.postMessage({ type: 'SET_TOKEN', token: bearerToken }, '*');
+    const sendAuthData = () => {
+      // Send both token and session ID
+      const authData = {
+        type: 'SET_AUTH_DATA',
+        token: bearerToken,
+        sessionId: session.accountId, // Keycloak user ID
+        userId: session.accountId, // Keycloak user ID
+        userEmail: session.user?.email,
+        userName: session.user?.name,
+      };
+
+      setTimeout(() => {
+        iframeRef.current?.contentWindow?.postMessage(authData, '*');
+      }, 500);
     };
 
     const iframe = iframeRef.current;
-    iframe?.addEventListener('load', sendToken);
+    if (iframe) {
+      if (iframe.contentDocument?.readyState === 'complete') {
+        sendAuthData();
+      } else {
+        iframe.addEventListener('load', sendAuthData);
+      }
+    }
 
     return () => {
-      iframe?.removeEventListener('load', sendToken);
+      iframe?.removeEventListener('load', sendAuthData);
     };
-  }, [open, bearerToken]);
+  }, [open, bearerToken, session]);
 
   return (
     <>

@@ -37,40 +37,86 @@
     <script src="https://cdn.jsdelivr.net/npm/botui@0.3.9/build/botui.min.js"></script>
     <script>
       const botui = new BotUI('botui-app');
+
+      // Auth data from parent
       let bearerToken = null;
+      let sessionId = null;
+      let userId = null;
+      let userEmail = null;
+      let userName = null;
 
-      // Receive token from React ChatWidget
+      let conversationStarted = false;
+
+      // Generate a unique chat session ID (different from user session)
+      function generateChatSessionId() {
+        return `chat_${userId || 'anonymous'}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      }
+
+      // Initialize chat
+      async function initializeChat() {
+        await botui.message.add({
+          content: '👋 Welcome to OptiFit! Waiting for authentication...',
+        });
+      }
+
+      // Handle messages from parent window
       window.addEventListener('message', function (event) {
-        const { type, token } = event.data || {};
+        const { type } = event.data || {};
 
-        if (type === 'SET_TOKEN') {
+        if (type === 'SET_AUTH_DATA') {
+          const {
+            token,
+            sessionId: userSessionId,
+            userId: uid,
+            userEmail: email,
+            userName: name,
+          } = event.data;
+
           bearerToken = token;
-          botui.message.add({ content: '✅ Token received. Starting chat...' });
+          sessionId = userSessionId; // This is the Keycloak user session ID
+          userId = uid;
+          userEmail = email;
+          userName = name;
 
-          startConversation();
+          console.log('[BotUI] Auth data received:', {
+            hasToken: !!bearerToken,
+            sessionId,
+            userId,
+            userEmail,
+            userName,
+          });
+
+          if (!conversationStarted) {
+            startConversation();
+          }
         }
 
         if (type === 'RESET_CHAT') {
-          localStorage.clear();
-          location.reload();
+          resetChat();
         }
       });
 
       async function startConversation() {
-        if (!bearerToken) {
-          console.warn('[BotUI] No bearer token. Cannot proceed.');
+        if (!bearerToken || !sessionId) {
+          console.warn('[BotUI] Missing required auth data');
           await botui.message.add({
-            content: '⚠️ Missing authentication. Please reload the chat.',
+            content: '⚠️ Authentication required. Please log in and try again.',
           });
           return;
         }
 
-        // 1. Display loading message
-        await botui.message.add({ content: '⏳ Loading your chat experience…' });
+        conversationStarted = true;
 
-        // 2. Initiate API call
+        // Generate unique chat session ID
+        const chatSessionId = generateChatSessionId();
+
+        // Show loading message
+        await botui.message.add({
+          content: '⏳ Connecting to OptiFit assistant...',
+        });
+
         try {
-          const res = await fetch(
+          const response = await fetch(
             'https://smym-backend-service.azurewebsites.net/api/v1/chatbot/initiate',
             {
               method: 'POST',
@@ -79,36 +125,134 @@
                 Authorization: `Bearer ${bearerToken}`,
               },
               body: JSON.stringify({
+                session_id: chatSessionId, // Unique chat session
+                user_session_id: sessionId, // Keycloak user session ID
+                user_id: userId, // User identifier
+                user_email: userEmail, // User email
+                user_name: userName, // User name
+                user_message: `Hello, I'm ${userName || 'a user'} and I would like to start a conversation`,
                 source: 'optifit-site',
                 timestamp: new Date().toISOString(),
               }),
             },
           );
 
-          if (!res.ok) {
-            const errorText = await res.text();
-            console.error('[BotUI] Initiate call failed:', res.status, errorText);
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error('[BotUI] API Error:', response.status, errorText);
+
+            // Remove loading message and show error
+            botui.message.removeAll();
             await botui.message.add({
-              content: `⚠️ Failed to connect (HTTP ${res.status})`,
+              content: `⚠️ Connection failed (${response.status}). Please try again later.`,
             });
             return;
           }
 
-          const data = await res.json();
-          console.log('[BotUI] Init response:', data);
+          const data = await response.json();
+          console.log('[BotUI] Success response:', data);
+
+          // Remove loading message
+          botui.message.removeAll();
+
+          // Display personalized welcome message
+          const welcomeMessage =
+            data.message ||
+            `👋 Hello ${userName || 'there'}! I'm your OptiFit assistant. How can I help you today?`;
 
           await botui.message.add({
-            content: data.message || '👋 Hello! Welcome to OptiFit.',
+            content: welcomeMessage,
           });
 
-          // Proceed with next bot actions here (optional)
+          // Start chat loop with the chat session ID
+          startChatLoop(chatSessionId);
         } catch (error) {
-          console.error('[BotUI] Network or server error:', error);
+          console.error('[BotUI] Network error:', error);
+
+          // Remove loading message and show error
+          botui.message.removeAll();
           await botui.message.add({
-            content: '⚠️ Something went wrong while starting your chat.',
+            content: '⚠️ Network error. Please check your connection and try again.',
           });
         }
       }
+
+      async function startChatLoop(chatSessionId) {
+        while (true) {
+          try {
+            // Get user input
+            const userInput = await botui.action.text({
+              action: {
+                placeholder: 'Type your message...',
+              },
+            });
+
+            if (!userInput.value?.trim()) continue;
+
+            // Display user message
+            await botui.message.add({
+              content: userInput.value,
+              human: true,
+            });
+
+            // Show typing indicator
+            const typingMessage = await botui.message.add({
+              content: '💭 Thinking...',
+            });
+
+            // Send to API with session context
+            const response = await fetch(
+              'https://smym-backend-service.azurewebsites.net/api/v1/chatbot/chat',
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${bearerToken}`,
+                },
+                body: JSON.stringify({
+                  session_id: chatSessionId, // Chat session ID
+                  user_session_id: sessionId, // User session ID
+                  user_id: userId, // User identifier
+                  user_message: userInput.value,
+                  source: 'optifit-site',
+                  timestamp: new Date().toISOString(),
+                }),
+              },
+            );
+
+            // Remove typing indicator
+            botui.message.remove(typingMessage.id);
+
+            if (!response.ok) {
+              await botui.message.add({
+                content: '⚠️ Sorry, I encountered an error. Please try again.',
+              });
+              continue;
+            }
+
+            const data = await response.json();
+
+            // Display bot response
+            await botui.message.add({
+              content: data.message || "I apologize, but I don't have a response for that.",
+            });
+          } catch (error) {
+            console.error('[BotUI] Chat error:', error);
+            await botui.message.add({
+              content: '⚠️ Something went wrong. Please try again.',
+            });
+          }
+        }
+      }
+
+      function resetChat() {
+        conversationStarted = false;
+        botui.message.removeAll();
+        initializeChat();
+      }
+
+      // Initialize on load
+      document.addEventListener('DOMContentLoaded', initializeChat);
     </script>
   </body>
 </html>

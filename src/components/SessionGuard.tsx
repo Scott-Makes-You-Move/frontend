@@ -17,7 +17,14 @@ const SessionGuard = ({ children }: { children: ReactNode }) => {
 
   const token = session?.accessToken ?? null;
 
-  return <AuthContext.Provider value={{ token }}>{children}</AuthContext.Provider>;
+  // Add session and status to match AuthContextType
+  const status = session ? 'authenticated' : 'unauthenticated';
+
+  return (
+    <AuthContext.Provider value={{ token, session, status }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export default SessionGuard;
