@@ -50,7 +50,7 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
     }
 
     const res = await fetch(
-      `https://smym-backend-service.azurewebsites.net/api/v1/account/${accountId}/${type}`,
+      `https://backend.scottmakesyoumove.com/api/v1/account/${accountId}/${type}`,
       {
         method: 'POST',
         headers: {

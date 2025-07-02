@@ -12,11 +12,11 @@ export default async function ProgressPage() {
   };
 
   const [biometricsRes, mobilityRes] = await Promise.all([
-    fetch(`https://smym-backend-service.azurewebsites.net/api/v1/account/${accountId}/biometrics`, {
+    fetch(`https://backend.scottmakesyoumove.com/api/v1/account/${accountId}/biometrics`, {
       headers,
       cache: 'no-store',
     }),
-    fetch(`https://smym-backend-service.azurewebsites.net/api/v1/account/${accountId}/mobilities`, {
+    fetch(`https://backend.scottmakesyoumove.com/api/v1/account/${accountId}/mobilities`, {
       headers,
       cache: 'no-store',
     }),

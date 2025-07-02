@@ -6,7 +6,7 @@ const LeaderboardPage = async () => {
   const session = await requireAuth({ callbackUrl: '/leaderboard' });
 
   const res = await fetch(
-    'https://smym-backend-service.azurewebsites.net/api/v1/leaderboard?page=0&size=10&direction=desc&sortBy=completionRate',
+    'https://backend.scottmakesyoumove.com/api/v1/leaderboard?page=0&size=10&direction=desc&sortBy=completionRate',
     {
       method: 'GET',
       headers: {
