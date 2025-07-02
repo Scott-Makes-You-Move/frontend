@@ -23,7 +23,7 @@ const SessionsPage = ({ accountId, accessToken }: SessionsPageProps) => {
     const fetchSessions = async () => {
       try {
         const res = await fetch(
-          `https://smym-backend-service.azurewebsites.net/api/v1/account/${accountId}/sessions`,
+          `https://backend.scottmakesyoumove.com/api/v1/account/${accountId}/sessions`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,

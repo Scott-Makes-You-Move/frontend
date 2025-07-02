@@ -70,7 +70,7 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
 
     try {
       const res = await fetch(
-        `https://smym-backend-service.azurewebsites.net/api/v1/account/${accountId}/sessions/${sessionId}`,
+        `https://backend.scottmakesyoumove.com/api/v1/account/${accountId}/sessions/${sessionId}`,
         {
           method: 'PUT',
           headers: {
