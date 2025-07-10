@@ -1,4 +1,7 @@
+'use client';
+
 import React from 'react';
+import ReactPlayer from 'react-player';
 
 interface EmbeddedVideoProps {
   videoUrl: string;
@@ -7,14 +10,15 @@ interface EmbeddedVideoProps {
 
 const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({ videoUrl, title }) => {
   return (
-    <div className="mt-6 w-full">
-      <iframe
-        className="w-full aspect-video rounded-lg shadow-md"
-        src={videoUrl}
-        title={title || 'Embedded Video'}
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-      ></iframe>
+    <div className="w-full h-full aspect-video rounded-lg overflow-hidden shadow-md">
+      <ReactPlayer
+        url={videoUrl}
+        controls
+        width="100%"
+        height="100%"
+        title={title}
+        className="react-player"
+      />
     </div>
   );
 };

@@ -1,67 +1,141 @@
+import { draftMode } from 'next/headers';
 import EmbeddedVideo from '@/components/EmbeddedVideo';
 import requireAuth from '@/lib/auth/requireAuth';
+import { graphql } from '@/lib/datocms/graphql';
+import { executeQuery } from '@/lib/datocms/executeQuery';
+
+type PageQueryResult = {
+  page: {
+    id: string;
+    sections: Array<
+      | {
+          __typename: 'VideoSectionRecord';
+          id: string;
+          videoHeader: string;
+          videoSubheader: string;
+          video: {
+            title: string;
+            url: string;
+          };
+        }
+      | {
+          __typename: 'HeroSectionRecord';
+          id: string;
+          heroTitle: string;
+          heroSubtitle: string;
+          buttons: Array<{
+            label: string;
+            primary: boolean;
+            url: string;
+          }>;
+          heroImage: {
+            alt: string;
+            height: number;
+            url: string;
+            title: string;
+            width: number;
+          };
+        }
+    >;
+  };
+};
+
+const query = graphql<string, never>(/* GraphQL */ `
+  query MyQuery {
+    page(filter: { slug: { eq: "mini-workouts" } }) {
+      id
+      sections {
+        __typename
+        ... on VideoSectionRecord {
+          id
+          videoHeader
+          videoSubheader(markdown: false)
+          video {
+            title
+            url
+          }
+        }
+        ... on HeroSectionRecord {
+          id
+          heroTitle
+          heroSubtitle(markdown: false)
+          buttons {
+            label
+            primary
+            url
+          }
+          heroImage {
+            alt
+            height
+            url
+            title
+            width
+          }
+        }
+      }
+    }
+  }
+`);
 
 const WorkoutPage: React.FC = async () => {
   await requireAuth({ callbackUrl: '/mini-workouts' });
+  const { isEnabled: isDraftModeEnabled } = await draftMode();
+  const { page } = await executeQuery<PageQueryResult, never>(query, {
+    includeDrafts: isDraftModeEnabled,
+  });
 
   return (
     <div className="p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-12 flex flex-col md:flex-row">
-          <div className="relative w-full md:w-64 h-48 md:h-36 md:mr-6 flex-shrink-0 mb-4 md:mb-0">
-            <EmbeddedVideo
-              videoUrl="https://www.youtube.com/embed/bTWomPwoUj4?si=-5-25LgnvfmFM0b6"
-              title="Core Workout"
-            />
-          </div>
-          <div className="text-left">
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">Move Your Core</h1>
-            <h2 className="text-xl md:text-2xl font-medium mb-2">10 min core workout</h2>
-            <p className="mb-1">
-              Build core strength and stability with this workout. Suitable for all levels.
-            </p>
-            <p>No equipment needed</p>
-          </div>
-        </div>
+      {page.sections.map((section) => {
+        if (section.__typename === 'HeroSectionRecord') {
+          return (
+            <section
+              key={section.id}
+              className="bg-primary text-white py-24 px-6 md:px-20 text-center mb-12"
+            >
+              <div className="max-w-5xl mx-auto">
+                <h1 className="text-4xl md:text-6xl font-title font-bold mb-6">
+                  {section.heroTitle}
+                </h1>
+                <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto">{section.heroSubtitle}</p>
+                {section.buttons.length > 0 && (
+                  <div className="flex flex-wrap justify-center gap-4">
+                    {section.buttons.map((button, idx) => (
+                      <a
+                        key={idx}
+                        href={button.url}
+                        className={`px-6 py-3 rounded font-semibold transition ${
+                          button.primary
+                            ? 'bg-white text-primary hover:bg-gray-100'
+                            : 'border border-white text-white hover:bg-white hover:text-primary'
+                        }`}
+                      >
+                        {button.label}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </section>
+          );
+        }
 
-        {/* Workout 2 */}
-        <div className="mb-12 flex flex-col md:flex-row">
-          <div className="relative w-full md:w-64 h-48 md:h-36 md:mr-6 flex-shrink-0 mb-4 md:mb-0">
-            <EmbeddedVideo
-              videoUrl="https://www.youtube.com/embed/5XcVLz6BPTw?si=3moUElINIhyBq2eN"
-              title="Strength Moves"
-            />
-          </div>
-          <div className="text-left">
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">Strength Moves</h1>
-            <h2 className="text-xl md:text-2xl font-medium mb-2">30 min bodyweight strength</h2>
-            <p className="mb-1">
-              Improve your strength and conditioning only using your own bodyweight. Great for
-              beginners and more advanced participants.
-            </p>
-            <p>No equipment needed.</p>
-          </div>
-        </div>
+        if (section.__typename === 'VideoSectionRecord') {
+          return (
+            <section key={section.id} className="mb-12 flex flex-col md:flex-row max-w-4xl mx-auto">
+              <div className="relative w-full md:w-64 h-48 md:h-36 md:mr-6 flex-shrink-0 mb-4 md:mb-0">
+                <EmbeddedVideo videoUrl={section.video.url} title={section.video.title} />
+              </div>
+              <div className="text-left">
+                <h1 className="text-3xl md:text-4xl font-bold mb-2">{section.videoHeader}</h1>
+                <p className="text-xl md:text-2xl font-medium mb-2">{section.videoSubheader}</p>
+              </div>
+            </section>
+          );
+        }
 
-        {/* Workout 3 */}
-        <div className="mb-12 flex flex-col md:flex-row">
-          <div className="relative w-full md:w-64 h-48 md:h-36 md:mr-6 flex-shrink-0 mb-4 md:mb-0">
-            <EmbeddedVideo
-              videoUrl="https://www.youtube.com/embed/5NTn9c0LIXQ?si=_U3jd5oe2ebiDkdF"
-              title="Primal Moves"
-            />
-          </div>
-          <div className="text-left">
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">Primal Moves</h1>
-            <h2 className="text-xl md:text-2xl font-medium mb-2">15 min mobility</h2>
-            <p className="mb-1">
-              Get stronger, flexible and work on your stability with animal flow and primal
-              movement. Explore your instinctive movement patterns.
-            </p>
-            <p>Suitable for intermediate and advanced movers. No equipment needed.</p>
-          </div>
-        </div>
-      </div>
+        return null; // fallback for unknown section types
+      })}
     </div>
   );
 };
