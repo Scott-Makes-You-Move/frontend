@@ -123,6 +123,8 @@ const query = graphql<string, never>(/* GraphQL */ `
   }
 `);
 
+export const revalidate = 60;
+
 const Home = async () => {
   await requireAuth({ callbackUrl: '/' });
   const { isEnabled: isDraftModeEnabled } = await draftMode();

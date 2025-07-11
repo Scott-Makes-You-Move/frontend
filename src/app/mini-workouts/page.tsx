@@ -77,6 +77,8 @@ const query = graphql<string, never>(/* GraphQL */ `
   }
 `);
 
+export const revalidate = 60;
+
 const WorkoutPage: React.FC = async () => {
   await requireAuth({ callbackUrl: '/mini-workouts' });
   const { isEnabled: isDraftModeEnabled } = await draftMode();
