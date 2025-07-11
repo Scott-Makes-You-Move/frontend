@@ -8,6 +8,7 @@ import { Providers } from './Providers';
 import SessionGuard from '@/components/SessionGuard';
 import ChatWidget from '@/components/ChatWidget';
 
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const navbarRef = useRef<NavbarHandle>(null);
   const [navHeight, setNavHeight] = useState(80);
