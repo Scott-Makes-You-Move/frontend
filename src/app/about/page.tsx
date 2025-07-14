@@ -118,10 +118,12 @@ const AboutPage = async () => {
                     </div>
                   </div>
                   <div className="w-full md:w-1/2">
-                    <img
+                    <Image
                       src={section.image.url}
                       alt={section.image.alt}
-                      className="rounded-lg shadow-md w-full max-w-md mx-auto"
+                      width={section.image.width}
+                      height={section.image.height}
+                      className="rounded-lg shadow-md w-full max-w-md mx-auto object-contain"
                     />
                   </div>
                 </div>
