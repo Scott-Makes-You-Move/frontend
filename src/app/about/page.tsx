@@ -5,95 +5,66 @@ import { graphql } from '@/lib/datocms/graphql';
 import { StructuredText } from 'react-datocms';
 import { draftMode } from 'next/headers';
 
-type ImageBlockRecord = {
-  __typename: 'ImageBlockRecord';
-  id: string;
-  image: {
-    responsiveImage: {
-      src: string;
-      alt?: string;
-      width: number;
-      height: number;
-    };
-  };
-};
-
-type ImageGalleryBlockRecord = {
-  __typename: 'ImageGalleryBlockRecord';
-  id: string;
-  assets: {
-    title: string;
-    url: string;
-    alt: string;
-  }[];
-};
-
-type VideoBlockRecord = {
-  __typename: 'VideoBlockRecord';
-  id: string;
-  asset: {
-    url: string;
-    title: string;
-  };
-};
-
-type LinkRecord = {
-  id: string;
-  __typename: string;
-};
-
-type AboutPageQueryResult = {
+type PageQueryResult = {
   page: {
     title: string;
-    structuredText: {
-      value: any;
-      blocks: (ImageBlockRecord | ImageGalleryBlockRecord | VideoBlockRecord)[];
-      links: LinkRecord[];
-    };
+    sections: Array<
+      | {
+          __typename: 'DetailSectionRecord';
+          id: string;
+          imagePosition: 'left' | 'right' | string;
+          details: {
+            value: any;
+          };
+          image: {
+            alt: string;
+            height: number;
+            url: string;
+            title: string;
+            width: number;
+          };
+        }
+      | {
+          __typename: 'AboutIntroRecord';
+          id: string;
+          preHeader: string;
+          subheader: string;
+          introductionText: {
+            value: any;
+          };
+        }
+    >;
   };
 };
 
 const query = graphql<string, never>(`
-  query AboutPage {
-    page {
+  query MyQuery {
+    page(filter: { slug: { eq: "about" } }) {
       id
-      title
-      structuredText {
-        value
-        blocks {
-          ... on ImageBlockRecord {
-            __typename
-            id
-            asset {
-              responsiveImage {
-                src
-                alt
-                width
-                height
-              }
-            }
+      sections {
+        __typename
+        ... on DetailSectionRecord {
+          id
+          imagePosition
+          details {
+            value
+            blocks
           }
-          ... on ImageGalleryBlockRecord {
-            __typename
-            id
-            assets {
-              title
-              url
-              alt
-            }
-          }
-          ... on VideoBlockRecord {
-            __typename
-            id
-            asset {
-              url
-              title
-            }
+          image {
+            height
+            alt
+            url
+            title
+            width
           }
         }
-        links {
+        ... on AboutIntroRecord {
           id
-          __typename
+          preHeader
+          subheader(markdown: false)
+          introductionText {
+            value
+          }
         }
       }
     }
@@ -103,119 +74,77 @@ const query = graphql<string, never>(`
 const AboutPage = async () => {
   await requireAuth({ callbackUrl: '/about' });
   const { isEnabled: isDraftModeEnabled } = await draftMode();
-  const { page } = await executeQuery<AboutPageQueryResult, never>(query, {
+  const { page } = await executeQuery<PageQueryResult, never>(query, {
     includeDrafts: isDraftModeEnabled,
   });
 
   return (
-    <>
-      <div className="relative w-full h-[250px] sm:h-[300px] md:h-[400px] lg:h-[500px]">
-        <Image
-          src="https://placehold.co/300x400.png"
-          alt="Team working"
-          fill
-          priority
-          className="object-cover"
-        />
-      </div>
-
-      <section className="bg-primary text-background px-4 sm:px-6 md:px-12 lg:px-24 py-12 sm:py-16 md:py-24">
-        <div className="max-w-7xl mx-auto">
-          <span className="inline-block border border-background text-background text-xs px-4 py-1 rounded-full mb-6">
-            About OptiFit
-          </span>
-
-          <h1 className="text-4xl md:text-5xl font-title font-black leading-tight">
-            {page?.title || 'About Us'}
-          </h1>
-        </div>
-      </section>
-
-      <section className="bg-muted/20 px-4 sm:px-6 md:px-12 lg:px-24 py-12 sm:py-16 md:py-24">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8 md:gap-16 items-center">
-          <div className="w-full h-[250px] sm:h-[300px] md:h-[400px] relative">
-            <Image
-              src="https://placehold.co/300x400.png"
-              alt="Developers working"
-              fill
-              className="rounded-3xl object-cover"
-            />
-          </div>
-          <div className="text-foreground space-y-4">
-            {page?.structuredText?.value && (
-              <StructuredText<
-                ImageBlockRecord | ImageGalleryBlockRecord | VideoBlockRecord,
-                LinkRecord
+    <section className="min-h-screen bg-background font-body text-gray-900">
+      {page.sections.map((section) => {
+        switch (section.__typename) {
+          case 'AboutIntroRecord':
+            return (
+              <section
+                key={section.id}
+                className="bg-primary text-white py-24 px-6 md:px-20 text-center"
               >
-                data={page.structuredText}
-                renderBlock={({ record }) => {
-                  if (record.__typename === 'ImageBlockRecord') {
-                    const img = record?.image?.responsiveImage;
-                    return (
-                      <Image
-                        key={record.id}
-                        src={img?.src}
-                        alt={img?.alt || ''}
-                        width={img?.width}
-                        height={img?.height}
-                        className="rounded-xl my-6"
-                      />
-                    );
-                  }
+                <div className="max-w-5xl mx-auto">
+                  {section.preHeader && (
+                    <span className="inline-block text-xs tracking-widest uppercase border px-4 py-1 rounded-full border-white mb-4">
+                      {section.preHeader}
+                    </span>
+                  )}
+                  <h1 className="text-4xl md:text-6xl font-title font-bold mb-6">
+                    {section.subheader}
+                  </h1>
+                  <div className="text-lg md:text-xl max-w-3xl mx-auto text-white/90">
+                    <StructuredText data={section.introductionText} />
+                  </div>
+                </div>
+              </section>
+            );
 
-                  if (record.__typename === 'ImageGalleryBlockRecord') {
-                    return (
-                      <div className="grid grid-cols-2 gap-4 my-6">
-                        {record.assets.map((asset, i) => (
-                          <Image
-                            key={i}
-                            src={asset.url}
-                            alt={asset.alt}
-                            width={300}
-                            height={200}
-                            className="rounded-lg object-cover"
-                          />
-                        ))}
-                      </div>
-                    );
-                  }
+          case 'DetailSectionRecord':
+            return (
+              <section key={section.id} className="bg-gray-100 py-20 px-6 md:px-20">
+                <div
+                  className={`max-w-5xl mx-auto flex flex-col md:flex-row ${
+                    section.imagePosition === 'left' ? 'md:flex-row' : 'md:flex-row-reverse'
+                  } items-center gap-10 text-center md:text-left`}
+                >
+                  {/* Image always comes first in markup */}
+                  <div
+                    className={`w-full md:w-1/2 ${
+                      section.imagePosition === 'left' ? 'order-1 md:order-1' : 'order-1 md:order-2'
+                    }`}
+                  >
+                    <Image
+                      src={section.image.url}
+                      alt={section.image.alt}
+                      width={section.image.width}
+                      height={section.image.height}
+                      className="rounded-lg shadow-md w-full max-w-md mx-auto object-contain"
+                    />
+                  </div>
 
-                  if (record.__typename === 'VideoBlockRecord') {
-                    return (
-                      <div className="aspect-video my-6">
-                        <video
-                          controls
-                          src={record.asset.url}
-                          title={record.asset.title}
-                          className="rounded-xl w-full h-full"
-                        />
-                      </div>
-                    );
-                  }
+                  <div
+                    className={`w-full md:w-1/2 ${
+                      section.imagePosition === 'left' ? 'order-2 md:order-2' : 'order-2 md:order-1'
+                    }`}
+                  >
+                    <div className="text-gray-700 mb-4">
+                      <StructuredText data={section.details} />
+                    </div>
+                  </div>
+                </div>
+              </section>
+            );
 
-                  return null;
-                }}
-                renderLinkToRecord={({ record, children }) => {
-                  return (
-                    <a
-                      href={`/${record.__typename.toLowerCase()}/${record.id}`}
-                      className="text-primary underline"
-                    >
-                      {children}
-                    </a>
-                  );
-                }}
-                renderInlineRecord={({ record }) => (
-                  <span className="inline-block font-medium text-primary">
-                    [{record.__typename} - {record.id}]
-                  </span>
-                )}
-              />
-            )}
-          </div>
-        </div>
-      </section>
-    </>
+          default:
+            return null;
+        }
+      })}
+    </section>
   );
 };
 

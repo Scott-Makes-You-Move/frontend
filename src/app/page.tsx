@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { draftMode } from 'next/headers';
 import { StructuredText } from 'react-datocms';
 import requireAuth from '@/lib/auth/requireAuth';
@@ -187,10 +188,12 @@ const Home = async () => {
                         className="bg-gray-50 p-5 rounded-lg border-l-4 border-primary shadow-sm"
                       >
                         {feature.featureIcon && (
-                          <img
+                          <Image
                             src={feature.featureIcon.url}
                             alt={feature.featureIcon.alt}
-                            className="h-12 mb-4"
+                            width={feature.featureIcon.width}
+                            height={feature.featureIcon.height}
+                            className="h-12 mb-4 object-contain"
                           />
                         )}
                         <h3 className="text-xl font-semibold font-title mb-2">
@@ -219,10 +222,12 @@ const Home = async () => {
                     </div>
                   </div>
                   <div className="w-full md:w-1/2">
-                    <img
+                    <Image
                       src={section.image.url}
                       alt={section.image.alt}
-                      className="rounded-lg shadow-md w-full max-w-md mx-auto"
+                      width={section.image.width}
+                      height={section.image.height}
+                      className="rounded-lg shadow-md w-full max-w-md mx-auto object-contain"
                     />
                   </div>
                 </div>
