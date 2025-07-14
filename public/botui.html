@@ -48,8 +48,12 @@
       let conversationStarted = false;
 
       // Generate a unique chat session ID (different from user session)
-      function generateChatSessionId() {
-        return `chat_${userId || 'anonymous'}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      function generateUUIDv4() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+          const r = (Math.random() * 16) | 0,
+            v = c === 'x' ? r : (r & 0x3) | 0x8;
+          return v.toString(16);
+        });
       }
 
       // Initialize chat
@@ -98,7 +102,7 @@
 
         conversationStarted = true;
 
-        const chatSessionId = generateChatSessionId();
+        const chatSessionId = generateUUIDv4();
 
         await botui.message.add({ content: '⏳ Connecting to SMYM assistant...' });
 
