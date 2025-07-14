@@ -108,16 +108,16 @@ const AboutPage = async () => {
             return (
               <section key={section.id} className="bg-gray-100 py-20 px-6 md:px-20">
                 <div
-                  className={`max-w-5xl mx-auto flex flex-col ${
+                  className={`max-w-5xl mx-auto flex flex-col md:flex-row ${
                     section.imagePosition === 'left' ? 'md:flex-row' : 'md:flex-row-reverse'
                   } items-center gap-10 text-center md:text-left`}
                 >
-                  <div className="w-full md:w-1/2">
-                    <div className="text-gray-700 mb-4">
-                      <StructuredText data={section.details} />
-                    </div>
-                  </div>
-                  <div className="w-full md:w-1/2">
+                  {/* Image always comes first in markup */}
+                  <div
+                    className={`w-full md:w-1/2 ${
+                      section.imagePosition === 'left' ? 'order-1 md:order-1' : 'order-1 md:order-2'
+                    }`}
+                  >
                     <Image
                       src={section.image.url}
                       alt={section.image.alt}
@@ -125,6 +125,16 @@ const AboutPage = async () => {
                       height={section.image.height}
                       className="rounded-lg shadow-md w-full max-w-md mx-auto object-contain"
                     />
+                  </div>
+
+                  <div
+                    className={`w-full md:w-1/2 ${
+                      section.imagePosition === 'left' ? 'order-2 md:order-2' : 'order-2 md:order-1'
+                    }`}
+                  >
+                    <div className="text-gray-700 mb-4">
+                      <StructuredText data={section.details} />
+                    </div>
                   </div>
                 </div>
               </section>
