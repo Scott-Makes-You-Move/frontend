@@ -71,6 +71,8 @@ const query = graphql<string, never>(`
   }
 `);
 
+export const revalidate = 60;
+
 const AboutPage = async () => {
   await requireAuth({ callbackUrl: '/about' });
   const { isEnabled: isDraftModeEnabled } = await draftMode();
