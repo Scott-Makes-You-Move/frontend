@@ -16,7 +16,7 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
 
   const initialState = isBiometric
     ? { measuredOn: '', weight: '', fat: '', visceralFat: '' }
-    : { measuredOn: '', hips: '', shoulder: '', back: '' };
+    : { measuredOn: '', hip: '', shoulder: '', back: '' };
 
   const [formData, setFormData] = useState(initialState);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -34,6 +34,15 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
     setStatus('idle');
     setErrorMessage('');
 
+    const todayISO = new Date().toISOString().split('T')[0];
+
+    if (formData.measuredOn > todayISO) {
+      setStatus('error');
+      setErrorMessage('Measurement date cannot be in the future.');
+      setShowToast(true);
+      return;
+    }
+
     if (!isBiometric) {
       const invalidFields = Object.entries(formData).filter(([key, value]) => {
         if (key === 'measuredOn') return false;
@@ -49,6 +58,16 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
       }
     }
 
+    const normalizedFormData = Object.fromEntries(
+      Object.entries(formData).map(([key, value]) => {
+        if (key === 'measuredOn') {
+          const formattedDate = new Date(value).toISOString().split('T')[0]; // yyyy-MM-dd
+          return [key, formattedDate];
+        }
+        return [key, parseFloat(value as string)];
+      }),
+    );
+
     const res = await fetch(
       `https://backend.scottmakesyoumove.com/api/v1/account/${accountId}/${type}`,
       {
@@ -57,15 +76,7 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
           Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...formData,
-          ...Object.fromEntries(
-            Object.entries(formData).map(([k, v]) => [
-              k,
-              k === 'measuredOn' ? v : parseFloat(v as string),
-            ]),
-          ),
-        }),
+        body: JSON.stringify(normalizedFormData),
       },
     );
 
@@ -96,6 +107,8 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
     }
   }, [showToast]);
 
+  const today = new Date().toISOString().split('T')[0];
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -118,6 +131,7 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
           value={formData.measuredOn}
           onChange={handleChange}
           required
+          max={today}
           error={status === 'error' ? 'Please select a date.' : undefined}
         />
       </div>
