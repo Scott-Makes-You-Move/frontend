@@ -5,7 +5,7 @@ const ProgressFormPage = async () => {
   const session = await requireAuth({ callbackUrl: '/progress-form' });
 
   return (
-    <div className="max-w-screen pt-20 ">
+    <div className="max-w-screen">
       <ProgressFormPageClient
         accessToken={session.accessToken ?? ''}
         accountId={session.accountId ?? ''}
