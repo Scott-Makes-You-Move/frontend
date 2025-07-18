@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, createContext, useContext, useId } from 'react';
+import React, { useState, createContext, useContext } from 'react';
 
 type TabsContextType = {
   activeTab: string;
