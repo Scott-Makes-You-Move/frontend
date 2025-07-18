@@ -48,9 +48,11 @@ export const Tab = ({ value, children }: { value: string; children: React.ReactN
       id={`tab-${value}`}
       tabIndex={isActive ? 0 : -1}
       onClick={() => setActiveTab(value)}
-      className={`px-4 py-2 text-sm font-medium border-b-2 transition ${
-        isActive ? 'border-blue-600 text-blue-700' : 'border-transparent text-gray-500'
-      } focus:outline-none focus-visible:ring focus-visible:ring-blue-300`}
+      className={`
+        px-4 py-2 text-sm font-medium border-b-2 transition
+        ${isActive ? 'border-blue-600 text-blue-700 font-semibold' : 'border-transparent text-gray-500 hover:text-gray-700'}
+        focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 rounded-md
+      `}
     >
       {children}
     </button>

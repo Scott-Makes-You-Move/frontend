@@ -91,7 +91,7 @@ const ProgressFormLoader = ({ accessToken, accountId }: Props) => {
           <Tab value="mobilities">
             <div className="flex items-center gap-2">
               <Move className="w-4 h-4 text-sm font-medium" />
-              <span>Mobility Scores</span>
+              <span>Mobility Data</span>
             </div>
           </Tab>
         </TabList>
