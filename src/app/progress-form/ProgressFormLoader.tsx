@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { User, Move } from 'lucide-react';
 import ProgressFormSection from './ProgressFormSection';
 import Toast from '@/components/ui/Toast';
 import Spinner from '@/components/ui/Spinner';
+import { Tabs, TabList, Tab, TabPanel } from '@/components/ui/Tabs';
 
 type Props = {
   accessToken: string;
@@ -76,10 +78,33 @@ const ProgressFormLoader = ({ accessToken, accountId }: Props) => {
   }
 
   return (
-    <>
-      <ProgressFormSection accessToken={accessToken} accountId={accountId} type="biometrics" />
-      <ProgressFormSection accessToken={accessToken} accountId={accountId} type="mobilities" />
-    </>
+    <div className="max-w-4xl mx-auto px-4 pt-10">
+      <Tabs defaultValue="biometrics">
+        <TabList>
+          <Tab value="biometrics">
+            <div className="flex items-center gap-2">
+              <User className="w-4 h-4 text-sm font-medium" />
+              <span>Biometric Data</span>
+            </div>
+          </Tab>
+
+          <Tab value="mobilities">
+            <div className="flex items-center gap-2">
+              <Move className="w-4 h-4 text-sm font-medium" />
+              <span>Mobility Scores</span>
+            </div>
+          </Tab>
+        </TabList>
+
+        <TabPanel value="biometrics">
+          <ProgressFormSection accessToken={accessToken} accountId={accountId} type="biometrics" />
+        </TabPanel>
+
+        <TabPanel value="mobilities">
+          <ProgressFormSection accessToken={accessToken} accountId={accountId} type="mobilities" />
+        </TabPanel>
+      </Tabs>
+    </div>
   );
 };
 
