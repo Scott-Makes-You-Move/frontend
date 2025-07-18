@@ -11,7 +11,7 @@ const biometricsMetrics = [
 ];
 
 const mobilityMetrics = [
-  { key: 'hips', label: 'Hips' },
+  { key: 'hip', label: 'Hip' },
   { key: 'shoulder', label: 'Shoulder' },
   { key: 'back', label: 'Back' },
 ];

@@ -16,7 +16,7 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
 
   const initialState = isBiometric
     ? { measuredOn: '', weight: '', fat: '', visceralFat: '' }
-    : { measuredOn: '', hips: '', shoulder: '', back: '' };
+    : { measuredOn: '', hip: '', shoulder: '', back: '' };
 
   const [formData, setFormData] = useState(initialState);
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');

@@ -41,9 +41,9 @@ export default async function ProgressPage() {
 
   const mobilityData = mobilityRaw.content.map((entry: any) => ({
     date: entry.measuredOn,
-    average: (entry.hips + entry.shoulder + entry.back) / 3,
+    average: (entry.hip + entry.shoulder + entry.back) / 3,
     metrics: {
-      hips: entry.hips,
+      hip: entry.hip,
       shoulder: entry.shoulder,
       back: entry.back,
     },
