@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import MetricsSection from './Metrics';
 import { biometricsDummyData, mobilityDummyData } from './backup';
 
@@ -21,7 +21,7 @@ type Props = {
   initialMobility: any[];
 };
 
-export default function ProgressDashboard({ initialBiometrics, initialMobility }: Props) {
+const ProgressDashboard = ({ initialBiometrics, initialMobility }: Props) => {
   const [biometrics, setBiometrics] = useState(initialBiometrics);
   const [mobility, setMobility] = useState(initialMobility);
 
@@ -44,4 +44,6 @@ export default function ProgressDashboard({ initialBiometrics, initialMobility }
       />
     </section>
   );
-}
+};
+
+export default ProgressDashboard;
