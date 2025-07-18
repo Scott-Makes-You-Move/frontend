@@ -1,7 +1,7 @@
 import requireAuth from '@/lib/auth/requireAuth';
 import ProgressFormSection from './ProgressFormSection';
 
-export default async function ProgressFormPage() {
+const ProgressFormPage = async () => {
   const session = await requireAuth({ callbackUrl: '/progress-form' });
 
   return (
@@ -18,4 +18,6 @@ export default async function ProgressFormPage() {
       />
     </div>
   );
-}
+};
+
+export default ProgressFormPage;
