@@ -38,6 +38,7 @@ const FAQ = ({ sections }: FAQProps) => {
         <div className="space-y-4">
           {questions.map((faq) => {
             const isOpen = openId === faq.id;
+
             return (
               <div
                 key={faq.id}
@@ -45,6 +46,9 @@ const FAQ = ({ sections }: FAQProps) => {
               >
                 <button
                   onClick={() => toggle(faq.id)}
+                  id={`faq-trigger-${faq.id}`}
+                  aria-expanded={isOpen}
+                  aria-controls={`faq-panel-${faq.id}`}
                   className="w-full flex justify-between items-center px-4 py-3 text-left bg-white hover:bg-gray-50 focus:outline-none"
                 >
                   <span className="font-semibold text-lg">{faq.question}</span>
@@ -55,7 +59,12 @@ const FAQ = ({ sections }: FAQProps) => {
                   />
                 </button>
                 {isOpen && (
-                  <div className="px-4 pb-4 text-gray-700 text-sm bg-white">
+                  <div
+                    id={`faq-panel-${faq.id}`}
+                    role="region"
+                    aria-labelledby={`faq-trigger-${faq.id}`}
+                    className="px-4 pb-4 text-gray-700 text-sm bg-white"
+                  >
                     <StructuredText data={faq.answer.value} />
                   </div>
                 )}
