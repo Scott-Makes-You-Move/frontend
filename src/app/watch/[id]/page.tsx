@@ -8,7 +8,7 @@ import requireAuth from '@/lib/auth/requireAuth';
 import { getWeeklyQuote } from '@/utils/getWeeklyQuote';
 
 interface PageProps {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }
 
 type HomePageQueryResult = {
@@ -49,6 +49,45 @@ export default async function WatchPage({ params }: PageProps) {
   const { id: sessionId } = await params;
   const callbackUrl = `/watch/${sessionId}`;
   const session = await requireAuth({ callbackUrl });
+  const { accountId, accessToken } = session;
+
+  let sessionData = {
+    sessionStartTime: null,
+    sessionExecutionTime: null,
+    exerciseType: null,
+    sessionStatus: null,
+    sessionVideoUrl: null,
+  };
+
+  try {
+    const sessionRes = await fetch(
+      `https://backend.scottmakesyoumove.com/api/v1/account/${accountId}/sessions/${sessionId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        cache: 'no-store',
+      },
+    );
+
+    if (!sessionRes.ok) {
+      console.error(`Session fetch failed (${sessionRes.status}):`, await sessionRes.text());
+      throw new Error('Session fetch error');
+    }
+
+    const data = await sessionRes.json();
+    sessionData = {
+      sessionStartTime: data.sessionStartTime ?? null,
+      sessionExecutionTime: data.sessionExecutionTime ?? null,
+      exerciseType: data.exerciseType ?? null,
+      sessionStatus: data.sessionStatus ?? null,
+      sessionVideoUrl: data.sessionVideoUrl ?? null,
+    };
+  } catch (err) {
+    console.error('Error fetching session data:', err);
+    throw new Error('Error fetching session data');
+  }
+
   const { isEnabled: isDraftModeEnabled } = await draftMode();
   const { movementBreak, exerciseVideo, quote } = await executeQuery<HomePageQueryResult, never>(
     query,
@@ -57,7 +96,6 @@ export default async function WatchPage({ params }: PageProps) {
     },
   );
   const weeklyQuote = getWeeklyQuote(quote.quotelist);
-  const { accountId, accessToken } = session;
 
   return (
     <section className="w-full p-4" aria-labelledby="watch-content-heading">
@@ -90,10 +128,13 @@ export default async function WatchPage({ params }: PageProps) {
             <div className="w-full max-w-4xl">
               <SmartVideoPlayer
                 title={exerciseVideo.title}
-                videoUrl={exerciseVideo.videoUrl}
+                videoUrl={sessionData.sessionVideoUrl || exerciseVideo.videoUrl}
                 sessionId={sessionId}
                 accountId={accountId}
                 accessToken={accessToken}
+                sessionStartTime={sessionData.sessionStartTime}
+                sessionStatus={sessionData.sessionStatus}
+                sessionExecutionTime={sessionData.sessionExecutionTime}
               />
             </div>
           </div>

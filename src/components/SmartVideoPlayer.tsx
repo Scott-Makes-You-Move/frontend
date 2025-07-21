@@ -11,6 +11,9 @@ interface SmartVideoPlayerProps {
   sessionId?: string;
   accountId?: string;
   accessToken?: string;
+  sessionStartTime?: string | null;
+  sessionStatus?: string | null;
+  sessionExecutionTime?: string | null;
 }
 
 const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
