@@ -5,6 +5,7 @@ import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { StructuredText, renderRule } from 'react-datocms';
 import { isLink } from 'datocms-structured-text-utils';
+import Link from 'next/link';
 
 type FaqSection = {
   id: string;
@@ -95,8 +96,8 @@ const FAQ = ({ sections }: FAQProps) => {
         </div>
 
         <div className="mt-12 text-center">
-          <Button variant="default" size="lg" className="rounded-full">
-            Contact Support
+          <Button as={Link} href="/contact" variant="default" size="lg" className="rounded-full">
+            Contact Support →
           </Button>
         </div>
       </div>
