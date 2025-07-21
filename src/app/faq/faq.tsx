@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { StructuredText } from 'react-datocms';
+import { StructuredText, renderRule } from 'react-datocms';
+import { isLink } from 'datocms-structured-text-utils';
 
 type FaqSection = {
   id: string;
@@ -65,7 +66,27 @@ const FAQ = ({ sections }: FAQProps) => {
                     aria-labelledby={`faq-trigger-${faq.id}`}
                     className="px-4 pb-4 text-gray-700 text-sm bg-white"
                   >
-                    <StructuredText data={faq.answer.value} />
+                    <StructuredText
+                      data={faq.answer.value}
+                      customNodeRules={[
+                        renderRule(isLink, ({ node, children, key }) => {
+                          const url = node.url;
+                          const target = node.meta?.find((m) => m.id === 'target')?.value;
+
+                          return (
+                            <a
+                              key={key}
+                              href={url}
+                              target={target === '_blank' ? '_blank' : undefined}
+                              rel={target === '_blank' ? 'noopener noreferrer' : undefined}
+                              className="text-primary underline hover:text-primary/80 transition-colors"
+                            >
+                              {children}
+                            </a>
+                          );
+                        }),
+                      ]}
+                    />
                   </div>
                 )}
               </div>
