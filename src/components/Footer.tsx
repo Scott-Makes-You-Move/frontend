@@ -129,7 +129,7 @@ const Footer: React.FC = () => {
           </div>
 
           {/* Legal */}
-          <div>
+          {/*           <div>
             <h4 className="font-semibold mb-2">Legal</h4>
             <ul className="space-y-2 text-sm">
               <li>
@@ -143,7 +143,7 @@ const Footer: React.FC = () => {
                 </Link>
               </li>
             </ul>
-          </div>
+          </div> */}
         </div>
       </section>
     </footer>
