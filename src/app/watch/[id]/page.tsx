@@ -51,12 +51,28 @@ export default async function WatchPage({ params }: PageProps) {
   const session = await requireAuth({ callbackUrl });
   const { accountId, accessToken } = session;
 
-  let sessionData = {
+  let sessionData: {
+    sessionStartTime: string | null;
+    sessionExecutionTime: string | null;
+    exerciseType: string | null;
+    sessionStatus: string | null;
+    sessionVideoUrl: string | null;
+  } = {
     sessionStartTime: null,
     sessionExecutionTime: null,
     exerciseType: null,
     sessionStatus: null,
     sessionVideoUrl: null,
+  };
+
+  const breakTimes = ['10:00', '13:30', '15:00'];
+
+  const getNextBreakTime = (current: string) => {
+    const currentIndex = breakTimes.indexOf(current);
+    if (currentIndex === -1) return breakTimes[0]; // fallback if not found
+
+    const nextIndex = (currentIndex + 1) % breakTimes.length;
+    return breakTimes[nextIndex];
   };
 
   try {
@@ -76,8 +92,12 @@ export default async function WatchPage({ params }: PageProps) {
     }
 
     const data = await sessionRes.json();
+    const timePart = data.sessionStartTime.split('T')[1];
+    const timeHHMM = timePart.slice(0, 5);
+    const nextBreakTime = getNextBreakTime(timeHHMM);
+
     sessionData = {
-      sessionStartTime: data.sessionStartTime ?? null,
+      sessionStartTime: nextBreakTime ?? null,
       sessionExecutionTime: data.sessionExecutionTime ?? null,
       exerciseType: data.exerciseType ?? null,
       sessionStatus: data.sessionStatus ?? null,
@@ -113,7 +133,7 @@ export default async function WatchPage({ params }: PageProps) {
           <div className="flex justify-start">
             <TimeDisplay
               nextBreakPrefix={movementBreak.reminderPrefix}
-              nextBreakTime={movementBreak.nextBreakTime}
+              nextBreakTime={sessionData.sessionStartTime}
             />
           </div>
         </section>

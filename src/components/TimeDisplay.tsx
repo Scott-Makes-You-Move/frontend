@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface TimeDisplayProps {
-  nextBreakTime: string;
+  nextBreakTime: string | null;
   nextBreakPrefix: string;
 }
 
