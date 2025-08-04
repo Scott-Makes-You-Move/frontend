@@ -34,7 +34,6 @@ const isWithinOneHourWindow = (startHHMM?: string | null): { active: boolean; un
 
 const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
   videoUrl,
-  title,
   sessionId,
   accountId,
   accessToken,
@@ -79,7 +78,7 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
       const parsed = parseFloat(savedProgress);
       if (!isNaN(parsed)) setProgress(parsed);
     }
-  }, [sessionStartTime]);
+  }, [sessionStartTime, progressKey]);
 
   // Handles setting watched state and persistence
   const setWatched = (val: boolean) => {
