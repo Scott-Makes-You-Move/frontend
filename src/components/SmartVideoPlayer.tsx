@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { throttle } from 'lodash';
 import Toast from './ui/Toast';
@@ -11,10 +11,26 @@ interface SmartVideoPlayerProps {
   sessionId?: string;
   accountId?: string;
   accessToken?: string;
-  sessionStartTime?: string | null;
+  sessionStartTime?: string | null; // e.g. "10:00"
   sessionStatus?: string | null;
   sessionExecutionTime?: string | null;
 }
+
+// Utility: Determines if user is within 1-hour window of sessionStartTime
+const isWithinOneHourWindow = (startHHMM?: string | null): { active: boolean; until?: string } => {
+  if (!startHHMM) return { active: false };
+
+  const [h, m] = startHHMM.split(':').map(Number);
+  const now = new Date();
+  const sessionStart = new Date(now);
+  sessionStart.setHours(h, m, 0, 0);
+
+  const sessionEnd = new Date(sessionStart.getTime() + 60 * 60 * 1000);
+  const isActive = now >= sessionStart && now < sessionEnd;
+
+  const until = sessionEnd.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  return { active: isActive, until };
+};
 
 const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
   videoUrl,
@@ -22,11 +38,13 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
   sessionId,
   accountId,
   accessToken,
+  sessionStartTime,
 }) => {
   const playerRef = useRef<ReactPlayer>(null);
   const [progress, setProgress] = useState(0);
   const [manualOverride, setManualOverride] = useState(false);
   const [sessionOverdue, setSessionOverdue] = useState(false);
+  const [videoDeadlineMessage, setVideoDeadlineMessage] = useState<string | null>(null);
 
   const [toast, setToast] = useState<{
     title: string;
@@ -34,28 +52,45 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
     type?: 'error' | 'success' | 'info';
   } | null>(null);
 
-  // Utility: scoped key for localStorage
-  const getStorageKey = (accountId?: string, sessionId?: string) =>
-    `watched_session_${accountId}_${sessionId}`;
+  const storageKey = `watched_session_${accountId}_${sessionId}`;
+  const progressKey = `watched_progress_${accountId}_${sessionId}`;
 
-  // Load watched state from localStorage
   const [watchedState, setWatchedState] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
-    return localStorage.getItem(getStorageKey(accountId, sessionId)) === 'true';
+    return localStorage.getItem(storageKey) === 'true';
   });
 
-  // Custom setter that updates both state and localStorage
+  // Evaluate session deadline and load saved progress on mount
+  useEffect(() => {
+    const { active, until } = isWithinOneHourWindow(sessionStartTime);
+    if (!active) {
+      setSessionOverdue(true);
+      setVideoDeadlineMessage(
+        "⏱ This session has expired. You had 1 hour to complete it. You can still watch the video, but it won't count toward the leaderboard.",
+      );
+    } else {
+      setVideoDeadlineMessage(
+        `✅ You have until ${until} to complete this video. Completion will count toward the leaderboard.`,
+      );
+    }
+
+    const savedProgress = localStorage.getItem(progressKey);
+    if (savedProgress) {
+      const parsed = parseFloat(savedProgress);
+      if (!isNaN(parsed)) setProgress(parsed);
+    }
+  }, [sessionStartTime]);
+
+  // Handles setting watched state and persistence
   const setWatched = (val: boolean) => {
     setWatchedState(val);
-    const key = getStorageKey(accountId, sessionId);
     if (val) {
-      localStorage.setItem(key, 'true');
+      localStorage.setItem(storageKey, 'true');
     } else {
-      localStorage.removeItem(key);
+      localStorage.removeItem(storageKey);
     }
   };
 
-  // Toast handlers
   const showToast = (
     title: string,
     message: string,
@@ -64,10 +99,7 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
     setToast({ title, message, type });
   };
 
-  const handleCloseToast = () => {
-    setToast(null);
-  };
-
+  // Marks video as completed (only allowed if not expired)
   const markAsWatched = async () => {
     if (watchedState || sessionOverdue) return;
 
@@ -106,15 +138,14 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
     }
   };
 
-  const handleManualClick = () => {
-    setManualOverride(true);
-    markAsWatched();
-  };
-
+  // Throttled progress handler
   const throttledProgress = useRef(
     throttle((state: { played: number }) => {
-      setProgress(state.played);
-      if (state.played >= 0.9 && !watchedState && !sessionOverdue) {
+      const playedPercent = state.played;
+      setProgress(playedPercent);
+      localStorage.setItem(progressKey, playedPercent.toFixed(4));
+
+      if (playedPercent >= 0.9 && !watchedState && !sessionOverdue) {
         markAsWatched();
       }
     }, 1000),
@@ -126,39 +157,47 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
         Video player section
       </h2>
 
-      {!watchedState && !manualOverride && !sessionOverdue && (
+      {videoDeadlineMessage && (
+        <div
+          role="alert"
+          className={`rounded-md px-4 py-3 text-sm ${
+            sessionOverdue ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
+          }`}
+        >
+          {videoDeadlineMessage}
+        </div>
+      )}
+
+      {/* Video & Interaction Area */}
+      {!watchedState && !manualOverride && (
         <div className="w-full flex flex-col-reverse md:flex-col items-end gap-4">
           <div className="relative group w-full md:w-auto">
             <button
-              onClick={handleManualClick}
+              onClick={() => {
+                setManualOverride(true);
+                markAsWatched();
+              }}
               disabled={progress < 0.9}
-              className={`w-full md:w-auto px-6 py-3 text-base font-semibold rounded-lg transition shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
+              className={`w-full md:w-auto px-6 py-3 text-base font-semibold rounded-lg transition shadow
                 ${
                   progress < 0.9
                     ? 'bg-gray-300 text-gray-700 cursor-not-allowed'
                     : 'bg-blue-600 text-white hover:bg-blue-700'
                 }`}
-              aria-disabled={progress < 0.9}
-              aria-label={
-                progress < 0.9
-                  ? 'Mark as done button disabled until video is 90% watched'
-                  : 'Mark video as done'
-              }
             >
               ✅ Mark as Done
             </button>
             {progress < 0.9 && (
               <div
-                role="tooltip"
-                id="mark-as-done-tooltip"
                 className="absolute top-full mt-2 right-0 w-max bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-10 hidden group-hover:block whitespace-nowrap"
+                role="tooltip"
               >
                 Watch at least 90% to enable this
               </div>
             )}
           </div>
 
-          <div className="w-full aspect-video relative" aria-label="Video player">
+          <div className="w-full aspect-video relative">
             <ReactPlayer
               ref={playerRef}
               url={videoUrl}
@@ -172,42 +211,31 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
                 youtube: { playerVars: { title: 1 } },
                 vimeo: { title: '1' },
               }}
-              aria-label={`Exercise video titled ${title}`}
             />
           </div>
         </div>
       )}
 
+      {/* Completion State */}
       {(watchedState || sessionOverdue) && (
-        <div
-          role="status"
-          aria-live="polite"
-          className="flex flex-col items-center justify-center space-y-4"
-        >
+        <div className="flex flex-col items-center justify-center space-y-4" role="status">
           {watchedState && !sessionOverdue && (
             <>
               <div
-                className="transform -translate-x-1/2 mt-2 animate-bounce bg-green-600 text-white px-4 py-2 rounded-full shadow-lg text-2xl font-semibold"
+                className="animate-bounce bg-green-600 text-white px-4 py-2 rounded-full shadow-lg text-2xl font-semibold"
                 tabIndex={0}
-                aria-label="Video completed. Great job!"
               >
                 🏅
               </div>
-              <p className="text-lg text-gray-900 font-medium" aria-live="polite">
+              <p className="text-lg text-gray-900 font-medium">
                 Nice work on completing the video!
               </p>
             </>
           )}
 
-          {sessionOverdue && (
-            <p className="text-red-600 text-sm font-medium text-center">
-              This session has expired. You had 1 hour to complete it.
-            </p>
-          )}
-
           <a
             href="/leaderboard"
-            className="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition"
             role="button"
             aria-label="View your leaderboard ranking"
           >
@@ -216,15 +244,17 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
         </div>
       )}
 
+      {/* Toast Notification */}
       {toast && (
         <Toast
           title={toast.title}
           message={toast.message}
           type={toast.type}
-          onClose={handleCloseToast}
+          onClose={() => setToast(null)}
         />
       )}
     </div>
   );
 };
+
 export default SmartVideoPlayer;

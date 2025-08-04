@@ -27,7 +27,7 @@ type HomePageQueryResult = {
   };
 };
 
-const query = graphql<string, never>(/* GraphQL */ `
+const query = graphql<string, never>(`
   query HomePageQuery {
     movementBreak {
       nextBreakTime
