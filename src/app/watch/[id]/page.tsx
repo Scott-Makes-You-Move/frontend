@@ -27,7 +27,7 @@ type HomePageQueryResult = {
   };
 };
 
-const query = graphql<string, never>(/* GraphQL */ `
+const query = graphql<string, never>(`
   query HomePageQuery {
     movementBreak {
       nextBreakTime
@@ -44,6 +44,35 @@ const query = graphql<string, never>(/* GraphQL */ `
     }
   }
 `);
+
+const breakTimes = ['10:00', '13:30', '15:00'];
+
+const getNextBreakTime = (sessionTimeStr: string) => {
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+  const [sessionHours, sessionMinutes] = sessionTimeStr.split(':').map(Number);
+  const sessionStartMinutes = sessionHours * 60 + sessionMinutes;
+  const sessionEndMinutes = sessionStartMinutes + 60;
+
+  // Case 1: current time is within the 1-hour session window
+  if (currentMinutes >= sessionStartMinutes && currentMinutes < sessionEndMinutes) {
+    return sessionTimeStr;
+  }
+
+  // Case 2: current time is outside — find next break
+  for (const timeStr of breakTimes) {
+    const [h, m] = timeStr.split(':').map(Number);
+    const breakMinutes = h * 60 + m;
+
+    if (breakMinutes > currentMinutes) {
+      return timeStr;
+    }
+  }
+
+  // Case 3: wrap to the first break time of next day
+  return breakTimes[0];
+};
 
 export default async function WatchPage({ params }: PageProps) {
   const { id: sessionId } = await params;
@@ -63,16 +92,6 @@ export default async function WatchPage({ params }: PageProps) {
     exerciseType: null,
     sessionStatus: null,
     sessionVideoUrl: null,
-  };
-
-  const breakTimes = ['10:00', '13:30', '15:00'];
-
-  const getNextBreakTime = (current: string) => {
-    const currentIndex = breakTimes.indexOf(current);
-    if (currentIndex === -1) return breakTimes[0]; // fallback if not found
-
-    const nextIndex = (currentIndex + 1) % breakTimes.length;
-    return breakTimes[nextIndex];
   };
 
   try {

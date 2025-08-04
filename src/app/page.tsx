@@ -5,6 +5,7 @@ import { StructuredText } from 'react-datocms';
 import requireAuth from '@/lib/auth/requireAuth';
 import { graphql } from '@/lib/datocms/graphql';
 import { executeQuery } from '@/lib/datocms/executeQuery';
+import { Button } from '@/components/ui/Button';
 
 type PageQueryResult = {
   page: {
@@ -65,7 +66,7 @@ type PageQueryResult = {
   };
 };
 
-const query = graphql<string, never>(/* GraphQL */ `
+const query = graphql<string, never>(`
   query MyQuery {
     page(filter: { slug: { eq: "home" } }) {
       id
@@ -141,10 +142,12 @@ const Home = async () => {
             return (
               <section
                 key={section.id}
+                role="region"
+                aria-labelledby="hero-heading"
                 className="bg-primary text-white py-24 px-6 md:px-20 text-center"
               >
                 <div className="max-w-5xl mx-auto">
-                  <h1 className="text-4xl md:text-6xl font-title font-bold mb-6">
+                  <h1 id="hero-heading" className="text-4xl md:text-6xl font-title font-bold mb-6">
                     {section.heroTitle}
                   </h1>
                   <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto">
@@ -154,17 +157,20 @@ const Home = async () => {
                   {section.buttons.length > 0 && (
                     <div className="flex flex-wrap justify-center gap-4">
                       {section.buttons.map((button, idx) => (
-                        <a
+                        <Button
                           key={idx}
+                          as="a"
                           href={button.url}
-                          className={`px-6 py-3 rounded font-semibold transition ${
+                          variant={button.primary ? 'default' : 'outline'}
+                          size="default"
+                          className={
                             button.primary
-                              ? 'bg-white text-primary hover:bg-gray-100'
-                              : 'border border-white text-white hover:bg-white hover:text-primary'
-                          }`}
+                              ? 'text-primary bg-white hover:bg-gray-100'
+                              : 'text-white border-white hover:bg-white hover:text-primary'
+                          }
                         >
                           {button.label}
-                        </a>
+                        </Button>
                       ))}
                     </div>
                   )}
@@ -174,9 +180,17 @@ const Home = async () => {
 
           case 'FeatureListSectionRecord':
             return (
-              <section key={section.id} className="bg-white py-20 px-6 md:px-20 text-center">
+              <section
+                key={section.id}
+                className="bg-white py-20 px-6 md:px-20 text-center"
+                role="region"
+                aria-labelledby="feature-heading"
+              >
                 <div className="max-w-4xl mx-auto">
-                  <h2 className="text-3xl font-title font-semibold text-primary mb-4">
+                  <h2
+                    id="feature-heading"
+                    className="text-3xl font-title font-semibold text-primary mb-4"
+                  >
                     {section.featuresHeader}
                   </h2>
                   <p className="text-gray-700 mb-12">{section.featuresSubheader}</p>
@@ -209,14 +223,24 @@ const Home = async () => {
 
           case 'DetailSectionRecord':
             return (
-              <section key={section.id} className="bg-gray-100 py-20 px-6 md:px-20">
+              <section
+                key={section.id}
+                className="bg-gray-100 py-20 px-6 md:px-20"
+                role="region"
+                aria-labelledby="detail-heading"
+              >
                 <div
                   className={`max-w-5xl mx-auto flex flex-col ${
                     section.imagePosition === 'left' ? 'md:flex-row' : 'md:flex-row-reverse'
                   } items-center gap-10 text-center md:text-left`}
                 >
                   <div className="w-full md:w-1/2">
-                    <h2 className="text-3xl font-title font-semibold text-primary mb-4">The App</h2>
+                    <h2
+                      id="detail-heading"
+                      className="text-3xl font-title font-semibold text-primary mb-4"
+                    >
+                      The App
+                    </h2>
                     <div className="text-gray-700 mb-4">
                       <StructuredText data={section.details} />
                     </div>
