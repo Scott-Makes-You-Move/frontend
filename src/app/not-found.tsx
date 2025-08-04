@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
+import Spinner from '@/components/ui/Spinner';
 
 const NotFound = () => {
   return (
@@ -11,8 +12,17 @@ const NotFound = () => {
       aria-labelledby="not-found-heading"
     >
       <div className="max-w-md">
-        <h1 id="not-found-heading" className="text-6xl font-bold text-primary mb-4">
-          404
+        <h1
+          id="not-found-heading"
+          className="text-6xl font-bold text-blue-800 mb-4 flex items-center justify-center gap-2"
+          aria-label="404"
+        >
+          4
+          <span className="relative inline-flex items-center justify-center w-10 h-10">
+            <Spinner className="h-10 w-10 text-blue-600" />
+            <span className="sr-only">0</span>
+          </span>
+          4
         </h1>
         <p className="text-xl font-semibold text-gray-900 mb-2">Oops! Page not found.</p>
         <p className="text-gray-600 mb-6">
