@@ -2,6 +2,7 @@
 
 import './globals.css';
 import React, { useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import Navbar, { NavbarHandle } from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Providers } from './Providers';
@@ -11,6 +12,7 @@ import ChatWidget from '@/components/ChatWidget';
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const navbarRef = useRef<NavbarHandle>(null);
   const [navHeight, setNavHeight] = useState(80);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleResize = () => {
@@ -37,7 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {children}
               <ChatWidget />
             </main>
-            <Footer />
+            {pathname !== '/pilot-challenge' && <Footer />}
           </SessionGuard>
         </Providers>
       </body>
