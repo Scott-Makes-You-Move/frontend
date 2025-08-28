@@ -1,8 +1,9 @@
 'use client';
 
 import type React from 'react';
+import { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card, CardContent } from '@/components/ui/Card';
@@ -11,16 +12,22 @@ import { CheckCircle, Users, Shield, Clock } from 'lucide-react';
 export default function SMYMLandingPageNL() {
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const announcementRef = useRef<HTMLDivElement | null>(null);
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
-      // Here you would integrate with your email service
       console.log('Email submitted:', email);
       setIsSubmitted(true);
       setEmail('');
     }
   };
+
+  useEffect(() => {
+    if (isSubmitted && announcementRef.current) {
+      announcementRef.current.focus();
+    }
+  }, [isSubmitted]);
 
   const EmailCaptureForm = ({
     className = '',
@@ -32,22 +39,34 @@ export default function SMYMLandingPageNL() {
     <form
       onSubmit={handleEmailSubmit}
       className={`flex flex-col sm:flex-row gap-3 max-w-md mx-auto ${className}`}
+      aria-labelledby="email-signup"
     >
+      <label htmlFor="email" className="sr-only">
+        Werk e-mailadres
+      </label>
       <Input
+        id="email"
         type="email"
+        name="email"
         placeholder="Voer je werk e-mail in"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
         className="flex-1 h-12 text-base"
+        aria-required="true"
+        autoComplete="email"
       />
       <Button
         type="submit"
         size="lg"
-        className="bg-[#155da0] hover:bg-[#124a85] text-white px-8 h-12 whitespace-nowrap"
+        className="bg-[#155da0] hover:bg-[#124a85] text-white px-8 h-12 whitespace-nowrap focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#155da0]"
       >
         {buttonText}
       </Button>
+
+      <div ref={announcementRef} role="status" aria-live="polite" tabIndex={-1} className="sr-only">
+        {isSubmitted && 'E-mail succesvol verzonden. Controleer je inbox.'}
+      </div>
     </form>
   );
 
@@ -88,10 +107,13 @@ export default function SMYMLandingPageNL() {
               <EmailCaptureForm />
             </div>
             <div className="relative">
-              <img
+              <Image
                 src="/office-workers-mobility.png"
-                alt="Kantoormedewerkers die snelle oefeningen doen"
+                alt="Kantoormedewerkers doen bureau-oefeningen"
+                width={800}
+                height={600}
                 className="w-full h-auto rounded-lg shadow-2xl"
+                priority
               />
             </div>
           </div>
@@ -111,22 +133,16 @@ export default function SMYMLandingPageNL() {
               </h3>
               <p className="text-lg text-gray-600 leading-relaxed">
                 Wist je dat Nederlandse kantoormedewerkers gemiddeld 9,1 uur per dag zitten? Dit
-                verhoogt dramatisch het risico op hart- en vaatziekten, diabetes en rugpijn.
-                Onderzoek toont aan dat meer dan 8 uur per dag zitten het risico op vroegtijdige
-                dood met 59% verhoogt, terwijl elk extra uur zitten het risico op hart- en
-                vaatziekten met 33% verhoogt. Het goede nieuws: korte bewegingspauzes van slechts 1
-                minuut herstellen spieractiviteit, verbeteren bloedsuikerregulatie en verminderen
-                nek-, schouder- en rugpijn. Met SMYM's 30-Dagen Pilot Challenge testen we hoe
-                eenvoudige, dagelijkse micro-bewegingen je gezondheid en productiviteit kunnen
-                verbeteren. Doe mee, ervaar het verschil en help ons waardevolle data te verzamelen
-                voor de toekomst van gezonde werkplekken.
+                verhoogt dramatisch het risico op hart- en vaatziekten, diabetes en rugpijn...
               </p>
               <EmailCaptureForm buttonText="Doe mee aan de 30-Dagen Pilot Challenge" />
             </div>
             <div className="relative">
-              <img
+              <Image
                 src="/health-risks-sitting.png"
-                alt="Kantoormedewerker die mobiliteitsoefening doet tegen gezondheidsrisico's van zitten"
+                alt="Kantoormedewerker doet mobiliteitsoefening tegen gezondheidsrisico's"
+                width={800}
+                height={600}
                 className="w-full h-auto rounded-lg shadow-xl"
               />
             </div>
@@ -148,44 +164,36 @@ export default function SMYMLandingPageNL() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 mb-12">
-            <Card className="text-center p-8 border-2 hover:border-[#155da0]/20 transition-colors">
-              <CardContent className="space-y-4">
-                <div className="w-16 h-16 bg-[#155da0]/10 rounded-full flex items-center justify-center mx-auto">
-                  <Users className="w-8 h-8 text-[#155da0]" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900">Persoonlijk</h3>
-                <p className="text-gray-600">
-                  Oefeningen afgestemd op jouw specifieke pijnpunten en bewegingsniveau. Of je nu in
-                  marketing, IT of compliance werkt - wij hebben je gedekt.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center p-8 border-2 hover:border-[#155da0]/20 transition-colors">
-              <CardContent className="space-y-4">
-                <div className="w-16 h-16 bg-[#155da0]/10 rounded-full flex items-center justify-center mx-auto">
-                  <Shield className="w-8 h-8 text-[#155da0]" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900">Preventief</h3>
-                <p className="text-gray-600">
-                  Stop pijn voordat het begint. Onze wetenschappelijk onderbouwde 1-minuut
-                  bewegingen voorkomen de pijntjes en stijfheid van langdurig zitten.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center p-8 border-2 hover:border-[#155da0]/20 transition-colors">
-              <CardContent className="space-y-4">
-                <div className="w-16 h-16 bg-[#155da0]/10 rounded-full flex items-center justify-center mx-auto">
-                  <Clock className="w-8 h-8 text-[#155da0]" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900">Gemeenschap</h3>
-                <p className="text-gray-600">
-                  Doe mee aan maandelijkse virtuele evenementen met collega-kantoormedewerkers. Deel
-                  vooruitgang, raak gemotiveerd en bouw samen gezonde gewoontes op.
-                </p>
-              </CardContent>
-            </Card>
+            {[
+              {
+                icon: Users,
+                title: 'Persoonlijk',
+                desc: 'Oefeningen afgestemd op jouw specifieke pijnpunten en bewegingsniveau.',
+              },
+              {
+                icon: Shield,
+                title: 'Preventief',
+                desc: 'Voorkom pijntjes met wetenschappelijk onderbouwde micro-bewegingen.',
+              },
+              {
+                icon: Clock,
+                title: 'Gemeenschap',
+                desc: 'Maandelijkse virtuele evenementen met andere kantoormedewerkers.',
+              },
+            ].map(({ icon: Icon, title, desc }) => (
+              <Card
+                key={title}
+                className="text-center p-8 border-2 hover:border-[#155da0]/20 transition-colors"
+              >
+                <CardContent className="space-y-4">
+                  <div className="w-16 h-16 bg-[#155da0]/10 rounded-full flex items-center justify-center mx-auto">
+                    <Icon className="w-8 h-8 text-[#155da0]" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
+                  <p className="text-gray-600">{desc}</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
 
           <div className="text-center">
@@ -205,42 +213,22 @@ export default function SMYMLandingPageNL() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 mb-12">
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 bg-[#155da0] text-white rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
-                1
+            {[
+              'Aanmelden',
+              'Ontvang Dagelijkse Herinneringen',
+              'Doe Mee aan Gemeenschapsevenementen',
+            ].map((step, i) => (
+              <div key={i} className="text-center space-y-4">
+                <div className="w-16 h-16 bg-[#155da0] text-white rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
+                  {i + 1}
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900">{step}</h3>
+                <p className="text-gray-600">
+                  {/* Simple desc placeholder */}
+                  Stap {i + 1} uitlegtekst.
+                </p>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900">Aanmelden</h3>
-              <p className="text-gray-600">
-                Doe mee aan onze 30-Dagen Pilot Challenge. Vertel ons over je pijnpunten en
-                bewegingsniveau.
-              </p>
-            </div>
-
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 bg-[#155da0] text-white rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
-                2
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900">
-                Ontvang Dagelijkse Herinneringen
-              </h3>
-              <p className="text-gray-600">
-                Krijg gepersonaliseerde 1-minuut bewegingsherinneringen tijdens je werkdag. Snelle,
-                effectieve, bureau-vriendelijke oefeningen.
-              </p>
-            </div>
-
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 bg-[#155da0] text-white rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
-                3
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900">
-                Doe Mee aan Gemeenschapsevenementen
-              </h3>
-              <p className="text-gray-600">
-                Neem deel aan maandelijkse virtuele bijeenkomsten. Maak contact met andere
-                professionals en vier je vooruitgang.
-              </p>
-            </div>
+            ))}
           </div>
 
           <div className="text-center">
@@ -260,51 +248,47 @@ export default function SMYMLandingPageNL() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 mb-12">
-            <Card className="p-8">
-              <CardContent className="space-y-4">
-                <div className="flex items-center space-x-1 text-yellow-400">
-                  {[...Array(5)].map((_, i) => (
-                    <span key={i}>★</span>
-                  ))}
-                </div>
-                <p className="text-gray-600 italic">
-                  "Ons IT-team was eerst sceptisch, maar na slechts twee weken vragen ze om meer
-                  bewegingspauzes. Productiviteit is omhoog en ziektedagen zijn omlaag."
-                </p>
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-                    <span className="text-gray-600 font-semibold">SJ</span>
+            {[
+              {
+                name: 'Sarah Johnson',
+                title: 'HR Directeur, TechCorp',
+                quote:
+                  'Ons IT-team was eerst sceptisch, maar na slechts twee weken vragen ze om meer bewegingspauzes.',
+                initials: 'SJ',
+              },
+              {
+                name: 'Mike Rodriguez',
+                title: 'Compliance Manager, FinanceFirst',
+                quote:
+                  'Als iemand in compliance die de hele dag zit, is SMYM een game-changer geweest.',
+                initials: 'MR',
+              },
+            ].map(({ name, title, quote, initials }, i) => (
+              <Card key={i} className="p-8">
+                <CardContent className="space-y-4">
+                  <div
+                    className="flex items-center space-x-1 text-yellow-400"
+                    aria-label="Beoordeling: 5 van 5 sterren"
+                  >
+                    {[...Array(5)].map((_, idx) => (
+                      <span key={idx} aria-hidden="true">
+                        ★
+                      </span>
+                    ))}
                   </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">Sarah Johnson</p>
-                    <p className="text-gray-600 text-sm">HR Directeur, TechCorp</p>
+                  <p className="text-gray-600 italic">"{quote}"</p>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+                      <span className="text-gray-600 font-semibold">{initials}</span>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900">{name}</p>
+                      <p className="text-gray-600 text-sm">{title}</p>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="p-8">
-              <CardContent className="space-y-4">
-                <div className="flex items-center space-x-1 text-yellow-400">
-                  {[...Array(5)].map((_, i) => (
-                    <span key={i}>★</span>
-                  ))}
-                </div>
-                <p className="text-gray-600 italic">
-                  "Als iemand in compliance die de hele dag zit, is SMYM een game-changer geweest.
-                  Mijn rugpijn is weg en ik heb meer energie voor mijn gezin na het werk."
-                </p>
-                <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-                    <span className="text-gray-600 font-semibold">MR</span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">Mike Rodriguez</p>
-                    <p className="text-gray-600 text-sm">Compliance Manager, FinanceFirst</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            ))}
           </div>
 
           <div className="text-center">
@@ -313,13 +297,13 @@ export default function SMYMLandingPageNL() {
         </div>
       </section>
 
-      {/* Final CTA Section */}
+      {/* Final CTA */}
       <section className="py-16 lg:py-24 bg-[#155da0]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
             Klaar om Je Dagelijkse Werkroutine te Transformeren?
           </h2>
-          <p className="text-xl text-[#155da0]/80 mb-8">
+          <p className="text-xl text-[#ffffffcc] mb-8">
             Doe mee met honderden kantoormedewerkers die al beter bewegen, zich beter voelen en
             beter werken.
           </p>
