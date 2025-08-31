@@ -22,7 +22,7 @@ type PageQueryResult = {
             primary: boolean;
             url: string;
           }>;
-          heroImage: {
+          image: {
             alt: string;
             height: number;
             url: string;
@@ -147,6 +147,8 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
       {page.sections.map((section) => {
         switch (section.__typename) {
           case 'HeroSectionRecord':
+            const [mainTitle, highlight] = section.heroTitle.split('|');
+
             return (
               <section key={section.id} className="relative bg-white overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#155da0]/5 to-white" />
@@ -154,20 +156,21 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
                   <div className="grid lg:grid-cols-2 gap-12 items-center">
                     <div className="space-y-8">
                       <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight">
-                        {section.heroTitle}
+                        {mainTitle}
+                        {highlight && <span className="text-[#155da0]"> {highlight}</span>}
                       </h1>
                       <p className="text-xl text-gray-600 leading-relaxed">
                         {section.heroSubtitle}
                       </p>
                       <EmailCaptureForm buttonText={section.buttons?.[0]?.label} />
                     </div>
-                    {section.heroImage && (
+                    {section.image && (
                       <div className="relative">
                         <Image
-                          src={section.heroImage.url}
-                          alt={section.heroImage.alt}
-                          width={section.heroImage.width}
-                          height={section.heroImage.height}
+                          src={section.image.url}
+                          alt={section.image.alt}
+                          width={section.image.width}
+                          height={section.image.height}
                           className="w-full h-auto rounded-lg shadow-2xl"
                           priority
                         />

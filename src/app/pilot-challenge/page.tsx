@@ -13,7 +13,7 @@ const query = graphql<string, never>(`
           id
           heroTitle
           heroSubtitle(markdown: false)
-          heroImage {
+          image {
             alt
             height
             width
