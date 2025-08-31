@@ -8,6 +8,7 @@ const query = graphql<string, never>(`
     page(filter: { slug: { eq: "pilot-challenge" } }) {
       id
       sections {
+        __typename
         ... on HeroSectionRecord {
           id
           heroTitle
@@ -77,7 +78,6 @@ const Page = async () => {
   const { page } = await executeQuery<typeof query, never>(query, {
     includeDrafts: isDraftModeEnabled,
   });
-  console.log('🚀 ~ SMYMLandingPageNL ~ page:', page);
 
   return <PilotChallenge page={page} />;
 };
