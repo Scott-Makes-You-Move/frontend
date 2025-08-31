@@ -81,6 +81,7 @@ type PilotChallengeProps = {
 };
 
 const PilotChallenge = ({ page }: PilotChallengeProps) => {
+  console.log('🚀 ~ PilotChallenge ~ page:', page);
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const announcementRef = useRef<HTMLDivElement | null>(null);
@@ -157,8 +158,14 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
                         {mainTitle}
                         {highlight && <span className="text-[#155da0]"> {highlight}</span>}
                       </h1>
+                      {section.heroSubtitle && (
+                        <p className="text-xl font-semibold text-[#155da0]">
+                          {' '}
+                          {section.heroSubtitle}
+                        </p>
+                      )}
                       <p className="text-xl text-gray-600 leading-relaxed">
-                        {section.heroSubtitle}
+                        {section.heroDescription}
                       </p>
                       <EmailCaptureForm buttonText={section.buttons?.[0]?.label} />
                     </div>
