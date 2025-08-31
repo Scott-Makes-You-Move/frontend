@@ -2,8 +2,6 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import { StructuredText } from 'react-datocms';
-import { CheckCircle, Users, Shield, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card, CardContent } from '@/components/ui/Card';
@@ -17,6 +15,7 @@ type PageQueryResult = {
           id: string;
           heroTitle: string;
           heroSubtitle: string;
+          heroDescription: string;
           buttons: Array<{
             label: string;
             primary: boolean;
@@ -82,7 +81,6 @@ type PilotChallengeProps = {
 };
 
 const PilotChallenge = ({ page }: PilotChallengeProps) => {
-  console.log('🚀 ~ PilotChallenge ~ page:', page);
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const announcementRef = useRef<HTMLDivElement | null>(null);

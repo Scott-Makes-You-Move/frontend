@@ -12,7 +12,8 @@ const query = graphql<string, never>(`
         ... on HeroSectionRecord {
           id
           heroTitle
-          heroSubtitle(markdown: false)
+          heroSubtitle
+          heroDescription(markdown: false)
           image {
             alt
             height

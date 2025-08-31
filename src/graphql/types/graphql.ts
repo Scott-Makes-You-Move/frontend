@@ -1086,9 +1086,10 @@ export type HeroSectionRecord = RecordInterface & {
   _updatedAt: Scalars['DateTime']['output'];
   buttons: Array<ButtonRecord>;
   displayOptions: Scalars['String']['output'];
-  heroImage?: Maybe<FileField>;
-  heroSubtitle?: Maybe<Scalars['String']['output']>;
+  image?: Maybe<FileField>;
+  heroDescription?: Maybe<Scalars['String']['output']>;
   heroTitle: Scalars['String']['output'];
+  heroSubtitle?: Maybe<Scalars['String']['output']>;
   id: Scalars['ItemId']['output'];
 };
 
@@ -1098,7 +1099,7 @@ export type HeroSectionRecord_SeoMetaTagsArgs = {
 };
 
 /** Block of type 🚀 Hero section (hero_section) */
-export type HeroSectionRecordHeroSubtitleArgs = {
+export type HeroSectionRecordheroDescriptionArgs = {
   markdown?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
@@ -5758,8 +5759,9 @@ export type FeaturedPostsSectionFragment = {
 
 export type HeroSectionFragment = {
   __typename?: 'HeroSectionRecord';
-  heroSubtitle?: string | null;
+  heroDescription?: string | null;
   heroTitle: string;
+  heroSubtitle?: string | null;
   displayOptions: string;
   buttons: Array<{
     __typename?: 'ButtonRecord';
@@ -5768,7 +5770,7 @@ export type HeroSectionFragment = {
     primary: boolean;
     url?: string | null;
   }>;
-  heroImage?: {
+  image?: {
     __typename?: 'FileField';
     responsiveImage?:
       | ({ __typename?: 'ResponsiveImage' } & {
@@ -6678,12 +6680,13 @@ export const HeroSectionFragmentDoc = {
               ],
             },
           },
-          { kind: 'Field', name: { kind: 'Name', value: 'heroSubtitle' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'heroDescription' } },
           { kind: 'Field', name: { kind: 'Name', value: 'heroTitle' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'heroSubtitle' } },
           { kind: 'Field', name: { kind: 'Name', value: 'displayOptions' } },
           {
             kind: 'Field',
-            name: { kind: 'Name', value: 'heroImage' },
+            name: { kind: 'Name', value: 'image' },
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
@@ -7933,12 +7936,13 @@ export const PageDocument = {
               ],
             },
           },
-          { kind: 'Field', name: { kind: 'Name', value: 'heroSubtitle' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'heroDescription' } },
           { kind: 'Field', name: { kind: 'Name', value: 'heroTitle' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'heroSubtitle' } },
           { kind: 'Field', name: { kind: 'Name', value: 'displayOptions' } },
           {
             kind: 'Field',
-            name: { kind: 'Name', value: 'heroImage' },
+            name: { kind: 'Name', value: 'image' },
             selectionSet: {
               kind: 'SelectionSet',
               selections: [

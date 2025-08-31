@@ -23,12 +23,13 @@ type PageQueryResult = {
           id: string;
           heroTitle: string;
           heroSubtitle: string;
+          heroDescription: string;
           buttons: Array<{
             label: string;
             primary: boolean;
             url: string;
           }>;
-          heroImage: {
+          image: {
             alt: string;
             height: number;
             url: string;
@@ -58,13 +59,14 @@ const query = graphql<string, never>(/* GraphQL */ `
         ... on HeroSectionRecord {
           id
           heroTitle
-          heroSubtitle(markdown: false)
+          heroSubtitle
+          heroDescription(markdown: false)
           buttons {
             label
             primary
             url
           }
-          heroImage {
+          image {
             alt
             height
             url
@@ -99,7 +101,9 @@ const WorkoutPage: React.FC = async () => {
                 <h1 className="text-4xl md:text-6xl font-title font-bold mb-6">
                   {section.heroTitle}
                 </h1>
-                <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto">{section.heroSubtitle}</p>
+                <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto">
+                  {section.heroDescription}
+                </p>
                 {section.buttons.length > 0 && (
                   <div className="flex flex-wrap justify-center gap-4">
                     {section.buttons.map((button, idx) => (

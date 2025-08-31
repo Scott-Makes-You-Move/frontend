@@ -19,7 +19,8 @@ export async function executeQuery<Result, Variables>(
       ? process.env.NEXT_DATOCMS_DRAFT_CONTENT_CDA_TOKEN!
       : process.env.NEXT_DATOCMS_PUBLISHED_CONTENT_CDA_TOKEN!,
     requestInitOptions: {
-      cache: 'force-cache',
+      cache: process.env.NODE_ENV === 'development' ? 'no-store' : 'force-cache',
+
       /*
        * This project utilizes an extremely basic cache invalidation
        * technique: by using the `next.tags` option, all requests to DatoCMS
