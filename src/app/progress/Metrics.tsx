@@ -149,6 +149,7 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({
               tickLine={false}
               axisLine={false}
               domain={['dataMin - 1', 'dataMax + 1']}
+              tickFormatter={(value) => value.toFixed(2)}
             />
             <Line
               type="monotone"
