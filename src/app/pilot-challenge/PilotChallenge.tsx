@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { StructuredText } from 'react-datocms';
+import { useForm, ValidationError } from '@formspree/react';
 import { Users, Shield, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -95,25 +95,7 @@ const getLucideIcon = (name: string) => {
 };
 
 const PilotChallenge = ({ page }: PilotChallengeProps) => {
-  console.log('🚀 ~ PilotChallenge ~ page:', page);
-  const [email, setEmail] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const announcementRef = useRef<HTMLDivElement | null>(null);
-
-  const handleEmailSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email) {
-      console.log('Email submitted:', email);
-      setIsSubmitted(true);
-      setEmail('');
-    }
-  };
-
-  useEffect(() => {
-    if (isSubmitted && announcementRef.current) {
-      announcementRef.current.focus();
-    }
-  }, [isSubmitted]);
+  const [state, handleSubmit] = useForm('mandjroj');
 
   const EmailCaptureForm = ({
     className = '',
@@ -121,39 +103,51 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
   }: {
     className?: string;
     buttonText?: string;
-  }) => (
-    <form
-      onSubmit={handleEmailSubmit}
-      className={`flex flex-col sm:flex-row gap-3 max-w-md mx-auto ${className}`}
-      aria-labelledby="email-signup"
-    >
-      <label htmlFor="email" className="sr-only">
-        Werk e-mailadres
-      </label>
-      <Input
-        id="email"
-        type="email"
-        name="email"
-        placeholder="Voer je werk e-mail in"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-        className="flex-1 h-12 text-base"
-        aria-required="true"
-        autoComplete="email"
-      />
-      <Button
-        type="submit"
-        size="lg"
-        className="bg-[#155da0] hover:bg-[#124a85] text-white px-8 h-12 whitespace-nowrap focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#155da0]"
+  }) => {
+    return (
+      <form
+        onSubmit={handleSubmit}
+        className={`flex flex-col sm:flex-row gap-3 max-w-md mx-auto ${className}`}
+        aria-labelledby="email-signup"
       >
-        {buttonText}
-      </Button>
-      <div ref={announcementRef} role="status" aria-live="polite" tabIndex={-1} className="sr-only">
-        {isSubmitted && 'E-mail succesvol verzonden. Controleer je inbox.'}
-      </div>
-    </form>
-  );
+        {state.succeeded ? (
+          <div className="text-center text-green-600 font-medium">
+            E-mail succesvol verzonden. Controleer je inbox.
+          </div>
+        ) : (
+          <>
+            <label htmlFor="email" className="sr-only">
+              Werk e-mailadres
+            </label>
+            <Input
+              id="email"
+              type="email"
+              name="email"
+              placeholder="Voer je werk e-mail in"
+              required
+              className="flex-1 h-12 text-base"
+              autoComplete="email"
+            />
+            <ValidationError
+              prefix="Email"
+              field="email"
+              errors={state.errors}
+              className="text-red-500 text-sm"
+            />
+
+            <Button
+              type="submit"
+              size="lg"
+              className="bg-[#155da0] hover:bg-[#124a85] text-white px-8 h-12 whitespace-nowrap focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#155da0]"
+              disabled={state.submitting}
+            >
+              {state.submitting ? 'Versturen...' : buttonText}
+            </Button>
+          </>
+        )}
+      </form>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
