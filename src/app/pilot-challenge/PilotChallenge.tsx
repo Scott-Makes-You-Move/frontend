@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
+import { StructuredText } from 'react-datocms';
+import { Users, Shield, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card, CardContent } from '@/components/ui/Card';
@@ -58,6 +60,7 @@ type PageQueryResult = {
             jobTitle: string;
             initials: string;
             rating: number;
+            review: { value: any };
           }>;
         }
       | {
@@ -78,6 +81,17 @@ type PageQueryResult = {
 
 type PilotChallengeProps = {
   page: PageQueryResult['page'];
+};
+
+const iconMap: Record<string, React.FC<{ className?: string }>> = {
+  users: Users,
+  shield: Shield,
+  clock: Clock,
+};
+
+const getLucideIcon = (name: string) => {
+  const key = name.toLowerCase().replace(/\s+icon$/, '');
+  return iconMap[key] || Users;
 };
 
 const PilotChallenge = ({ page }: PilotChallengeProps) => {
@@ -206,27 +220,39 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
                       section.features.length > 2 ? 3 : 2
                     } gap-8 mb-12`}
                   >
-                    {section.features.map((feature) => (
-                      <Card
-                        key={feature.id}
-                        className="text-center p-8 border-2 hover:border-[#155da0]/20 transition-colors"
-                      >
-                        <CardContent className="space-y-4">
-                          <div className="w-16 h-16 bg-[#155da0]/10 rounded-full flex items-center justify-center mx-auto">
-                            <Image
-                              src={feature.featureIcon.url}
-                              alt={feature.featureIcon.alt}
-                              width={32}
-                              height={32}
-                            />
+                    {section.featuresHeader === 'Hoe SMYM Werkt'
+                      ? section.features.map((feature, i) => (
+                          <div key={feature.id} className="text-center space-y-4">
+                            <div className="w-16 h-16 bg-[#155da0] text-white rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
+                              {i + 1}
+                            </div>
+                            <h3 className="text-xl font-semibold text-gray-900">
+                              {feature.featureTitle}
+                            </h3>
+                            <p className="text-gray-600">{feature.featureDescription}</p>
                           </div>
-                          <h3 className="text-xl font-semibold text-gray-900">
-                            {feature.featureTitle}
-                          </h3>
-                          <p className="text-gray-600">{feature.featureDescription}</p>
-                        </CardContent>
-                      </Card>
-                    ))}
+                        ))
+                      : section.features.map((feature) => {
+                          const Icon = getLucideIcon(
+                            feature.featureIcon.alt || feature.featureIcon.title,
+                          );
+                          return (
+                            <Card
+                              key={feature.id}
+                              className="text-center p-8 border-2 hover:border-[#155da0]/20 transition-colors"
+                            >
+                              <CardContent className="space-y-4">
+                                <div className="w-16 h-16 bg-[#155da0]/10 rounded-full flex items-center justify-center mx-auto">
+                                  <Icon className="w-8 h-8 text-[#155da0]" />
+                                </div>
+                                <h3 className="text-xl font-semibold text-gray-900">
+                                  {feature.featureTitle}
+                                </h3>
+                                <p className="text-gray-600">{feature.featureDescription}</p>
+                              </CardContent>
+                            </Card>
+                          );
+                        })}
                   </div>
                   <div className="text-center">
                     <EmailCaptureForm buttonText="Start Je 30-Dagen Challenge" />
@@ -257,7 +283,9 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
                               <span key={i}>★</span>
                             ))}
                           </div>
-                          <p className="text-gray-600 italic">“{review.name}”</p>
+                          <p className="text-gray-600 italic">
+                            <StructuredText data={review.review.value} />
+                          </p>
                           <div className="flex items-center space-x-3">
                             <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
                               <span className="text-gray-600 font-semibold">{review.initials}</span>
@@ -288,16 +316,10 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
                       <p className="text-gray-400">{section.companyTagLine}</p>
                     </div>
                     <div className="flex space-x-6">
-                      <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                        Privacybeleid
-                      </a>
-                      <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                        Contact
-                      </a>
+                      <EmailCaptureForm buttonText={section.button.label} />
                     </div>
                   </div>
-                  <div className="mt-8 pt-8 border-t border-gray-800 text-center">
-                    <EmailCaptureForm buttonText={section.button.label} />
+                  <div className="mt-8 border-t border-gray-800 text-center">
                     <p className="text-gray-400 text-sm mt-4">{section.copyrightText}</p>
                   </div>
                 </div>

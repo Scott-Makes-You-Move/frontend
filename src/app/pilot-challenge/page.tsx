@@ -54,6 +54,9 @@ const query = graphql<string, never>(`
             jobTitle
             initials
             rating
+            review {
+              value
+            }
           }
         }
         ... on FooterLandingPageRecord {
