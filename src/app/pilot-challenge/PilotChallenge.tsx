@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { StructuredText } from 'react-datocms';
-import { useForm, ValidationError } from '@formspree/react';
+import { useForm } from '@formspree/react';
 import { Users, Shield, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -125,23 +125,24 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
               name="email"
               placeholder="Voer je werk e-mail in"
               required
-              className="flex-1 h-12 text-base"
               autoComplete="email"
-            />
-            <ValidationError
-              prefix="Email"
-              field="email"
-              errors={state.errors}
-              className="text-red-500 text-sm"
+              describedBy="email-error"
+              error={
+                Array.isArray(state.errors)
+                  ? state.errors.find((e) => e.field === 'email')?.message
+                  : undefined
+              }
+              className="flex-1"
             />
 
             <Button
               type="submit"
+              variant="default"
               size="lg"
-              className="bg-[#155da0] hover:bg-[#124a85] text-white px-8 h-12 whitespace-nowrap focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#155da0]"
-              disabled={state.submitting}
+              loading={state.submitting}
+              className="whitespace-nowrap"
             >
-              {state.submitting ? 'Versturen...' : buttonText}
+              {buttonText}
             </Button>
           </>
         )}
