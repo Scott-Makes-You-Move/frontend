@@ -29,25 +29,29 @@ export default async function ProgressPage() {
   const biometricsRaw = await biometricsRes.json();
   const mobilityRaw = await mobilityRes.json();
 
-  const biometricsData = biometricsRaw.content.map((entry: any) => ({
-    date: entry.measuredOn,
-    average: (entry.weight + entry.fat + entry.visceralFat) / 3,
-    metrics: {
-      weight: entry.weight,
-      fatPercentage: entry.fat,
-      visceralFat: entry.visceralFat,
-    },
-  }));
+  const biometricsData = biometricsRaw.content
+    .map((entry: any) => ({
+      date: entry.measuredOn,
+      average: (entry.weight + entry.fat + entry.visceralFat) / 3,
+      metrics: {
+        weight: entry.weight,
+        fatPercentage: entry.fat,
+        visceralFat: entry.visceralFat,
+      },
+    }))
+    .reverse();
 
-  const mobilityData = mobilityRaw.content.map((entry: any) => ({
-    date: entry.measuredOn,
-    average: (entry.hip + entry.shoulder + entry.back) / 3,
-    metrics: {
-      hip: entry.hip,
-      shoulder: entry.shoulder,
-      back: entry.back,
-    },
-  }));
+  const mobilityData = mobilityRaw.content
+    .map((entry: any) => ({
+      date: entry.measuredOn,
+      average: (entry.hip + entry.shoulder + entry.back) / 3,
+      metrics: {
+        hip: entry.hip,
+        shoulder: entry.shoulder,
+        back: entry.back,
+      },
+    }))
+    .reverse();
 
   return <ProgressDashboard initialBiometrics={biometricsData} initialMobility={mobilityData} />;
 }
