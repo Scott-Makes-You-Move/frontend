@@ -30,6 +30,8 @@ type PageQueryResult = {
             email: string;
             buttonText: string;
             primary: boolean;
+            successMessage: string;
+            failureMessage: string;
           }>;
           image: {
             alt: string;
@@ -103,45 +105,64 @@ const getLucideIcon = (name: string) => {
 };
 
 const PilotChallenge = ({ page }: PilotChallengeProps) => {
-  console.log('🚀 ~ PilotChallenge ~ page:', page);
   const [state, handleSubmit] = useForm('mandjroj');
 
   const EmailCaptureForm = ({
-    className = '',
-    buttonText = 'Doe mee aan de 30-Dagen Pilot Challenge',
+    ctaData,
   }: {
-    className?: string;
-    buttonText?: string;
+    ctaData?: {
+      id: string;
+      name: string;
+      email: string;
+      buttonText: string;
+      primary: boolean;
+      successMessage: string;
+      failureMessage: string;
+    };
   }) => {
     return (
       <form
         onSubmit={handleSubmit}
-        className={`flex flex-col sm:flex-row gap-3 max-w-md mx-auto ${className}`}
+        className="flex flex-col gap-3 max-w-md mx-auto"
         aria-labelledby="email-signup"
       >
         {state.succeeded ? (
-          <div className="text-center text-green-600 font-medium">
-            E-mail succesvol verzonden. Controleer je inbox.
-          </div>
+          <div className="text-center text-secondary font-medium">{ctaData?.successMessage}</div>
         ) : (
           <>
+            <label htmlFor="text" className="sr-only">
+              Name
+            </label>
+            <Input
+              id="name"
+              type="text"
+              name="name"
+              placeholder={ctaData?.name}
+              required
+              error={
+                Array.isArray(state.errors)
+                  ? state.errors.find((e) => e.field === 'name')?.message || ctaData?.failureMessage
+                  : undefined
+              }
+              className="flex-1 h-12 text-base"
+            />
+
             <label htmlFor="email" className="sr-only">
-              Werk e-mailadres
+              Work email address
             </label>
             <Input
               id="email"
               type="email"
               name="email"
-              placeholder="Voer je werk e-mail in"
+              placeholder={ctaData?.email}
               required
-              autoComplete="email"
-              describedBy="email-error"
               error={
                 Array.isArray(state.errors)
-                  ? state.errors.find((e) => e.field === 'email')?.message
+                  ? state.errors.find((e) => e.field === 'email')?.message ||
+                    ctaData?.failureMessage
                   : undefined
               }
-              className="flex-1"
+              className="flex-1 h-12 text-base"
             />
 
             <Button
@@ -149,9 +170,9 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
               variant="default"
               size="lg"
               loading={state.submitting}
-              className="whitespace-nowrap"
+              className="whitespace-nowrap font-bold text-lg"
             >
-              {buttonText}
+              {ctaData?.buttonText}
             </Button>
           </>
         )}
@@ -185,7 +206,7 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
                       <p className="text-xl text-gray-600 leading-relaxed">
                         {section.heroDescription}
                       </p>
-                      <EmailCaptureForm buttonText={section.buttons?.[0]?.label} />
+                      <EmailCaptureForm ctaData={section.callToActionForms[0]} />
                     </div>
                     {section.image && (
                       <div className="relative">

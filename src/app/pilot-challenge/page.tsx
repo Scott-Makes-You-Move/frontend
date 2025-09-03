@@ -33,6 +33,8 @@ const query = graphql<string, never>(`
             email
             buttonText
             primary
+            successMessage
+            failureMessage
           }
         }
         ... on FeatureListSectionRecord {
