@@ -22,9 +22,17 @@ const query = graphql<string, never>(`
             title
           }
           buttons {
+            id
+            label
             primary
             url
-            label
+          }
+          callToActionForms {
+            id
+            name
+            email
+            buttonText
+            primary
           }
         }
         ... on FeatureListSectionRecord {

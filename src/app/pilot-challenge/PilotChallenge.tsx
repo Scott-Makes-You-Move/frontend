@@ -19,9 +19,17 @@ type PageQueryResult = {
           heroSubtitle: string;
           heroDescription: string;
           buttons: Array<{
+            id: string;
             label: string;
             primary: boolean;
             url: string;
+          }>;
+          callToActionForms: Array<{
+            id: string;
+            name: string;
+            email: string;
+            buttonText: string;
+            primary: boolean;
           }>;
           image: {
             alt: string;
@@ -95,6 +103,7 @@ const getLucideIcon = (name: string) => {
 };
 
 const PilotChallenge = ({ page }: PilotChallengeProps) => {
+  console.log('🚀 ~ PilotChallenge ~ page:', page);
   const [state, handleSubmit] = useForm('mandjroj');
 
   const EmailCaptureForm = ({
