@@ -120,17 +120,29 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
       failureMessage: string;
     };
   }) => {
+    const nameError =
+      Array.isArray(state.errors) && state.errors.find((e) => e.field === 'name')?.message;
+
+    const emailError =
+      Array.isArray(state.errors) && state.errors.find((e) => e.field === 'email')?.message;
+
     return (
       <form
         onSubmit={handleSubmit}
         className="flex flex-col gap-3 max-w-md mx-auto"
-        aria-labelledby="email-signup"
+        aria-labelledby="lead-gen-signup"
       >
+        <h2 id="lead-gen-signup" className="sr-only">
+          Sign up with your name and email address
+        </h2>
+
         {state.succeeded ? (
-          <div className="text-center text-secondary font-medium">{ctaData?.successMessage}</div>
+          <div className="text-center text-secondary font-medium" role="alert" aria-live="polite">
+            {ctaData?.successMessage}
+          </div>
         ) : (
           <>
-            <label htmlFor="text" className="sr-only">
+            <label htmlFor="name" className="sr-only">
               Name
             </label>
             <Input
@@ -139,6 +151,7 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
               name="name"
               placeholder={ctaData?.name}
               required
+              aria-describedby={nameError ? 'name-error' : undefined}
               error={
                 Array.isArray(state.errors)
                   ? state.errors.find((e) => e.field === 'name')?.message || ctaData?.failureMessage
@@ -146,6 +159,11 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
               }
               className="flex-1 h-12 text-base"
             />
+            {nameError && (
+              <p id="name-error" className="sr-only" role="alert" aria-live="assertive">
+                {nameError}
+              </p>
+            )}
 
             <label htmlFor="email" className="sr-only">
               Work email address
@@ -156,6 +174,8 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
               name="email"
               placeholder={ctaData?.email}
               required
+              autoComplete="email"
+              aria-describedby={emailError ? 'email-error' : undefined}
               error={
                 Array.isArray(state.errors)
                   ? state.errors.find((e) => e.field === 'email')?.message ||
@@ -164,6 +184,11 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
               }
               className="flex-1 h-12 text-base"
             />
+            {emailError && (
+              <p id="email-error" className="sr-only" role="alert" aria-live="assertive">
+                {emailError}
+              </p>
+            )}
 
             <Button
               type="submit"
@@ -280,7 +305,7 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
                         })}
                   </div>
                   <div className="text-center">
-                    <EmailCaptureForm buttonText="Start Je 30-Dagen Challenge" />
+                    <EmailCaptureForm />
                   </div>
                 </div>
               </section>
@@ -325,7 +350,7 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
                     ))}
                   </div>
                   <div className="text-center">
-                    <EmailCaptureForm buttonText="Doe Mee aan de Beweging" />
+                    <EmailCaptureForm />
                   </div>
                 </div>
               </section>
@@ -341,7 +366,7 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
                       <p className="text-gray-400">{section.companyTagLine}</p>
                     </div>
                     <div className="flex space-x-6">
-                      <EmailCaptureForm buttonText={section.button.label} />
+                      <EmailCaptureForm />
                     </div>
                   </div>
                   <div className="mt-8 border-t border-gray-800 text-center">
