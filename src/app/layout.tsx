@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               }
             >
               {children}
-              <ChatWidget />
+              {pathname !== '/pilot-challenge' && <ChatWidget />}
             </main>
             {pathname !== '/pilot-challenge' && <Footer />}
           </SessionGuard>
