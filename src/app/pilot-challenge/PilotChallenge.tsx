@@ -7,6 +7,7 @@ import { Users, Shield, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card, CardContent } from '@/components/ui/Card';
+import EmbeddedVideo from '@/components/EmbeddedVideo';
 
 type PageQueryResult = {
   page: {
@@ -40,6 +41,10 @@ type PageQueryResult = {
             title: string;
             width: number;
           } | null;
+          video: {
+            title: string;
+            url: string;
+          } | null;
         }
       | {
           __typename: 'FeatureListSectionRecord';
@@ -58,6 +63,15 @@ type PageQueryResult = {
               width: number;
             };
           }>;
+          callToActionForms: Array<{
+            id: string;
+            name: string;
+            email: string;
+            buttonText: string;
+            primary: boolean;
+            successMessage: string;
+            failureMessage: string;
+          }>;
         }
       | {
           __typename: 'TestimonialsSectionRecord';
@@ -71,6 +85,30 @@ type PageQueryResult = {
             initials: string;
             rating: number;
             review: { value: any };
+          }>;
+          callToActionForms: Array<{
+            id: string;
+            name: string;
+            email: string;
+            buttonText: string;
+            primary: boolean;
+            successMessage: string;
+            failureMessage: string;
+          }>;
+        }
+      | {
+          __typename: 'CtaSectionRecord';
+          id: string;
+          title: string;
+          description: string;
+          callToActionForms: Array<{
+            id: string;
+            name: string;
+            email: string;
+            buttonText: string;
+            primary: boolean;
+            successMessage: string;
+            failureMessage: string;
           }>;
         }
       | {
@@ -108,8 +146,10 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
   const [state, handleSubmit] = useForm('mandjroj');
 
   const EmailCaptureForm = ({
+    typeName = '',
     ctaData,
   }: {
+    typeName?: string;
     ctaData?: {
       id: string;
       name: string;
@@ -192,7 +232,7 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
 
             <Button
               type="submit"
-              variant="default"
+              variant={typeName === 'CtaSectionRecord' ? 'secondary' : 'default'}
               size="lg"
               loading={state.submitting}
               className="whitespace-nowrap font-bold text-lg"
@@ -245,6 +285,11 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
                         />
                       </div>
                     )}
+                    {section.video && (
+                      <div className="relative">
+                        <EmbeddedVideo videoUrl={section.video.url} title={section.video.title} />
+                      </div>
+                    )}
                   </div>
                 </div>
               </section>
@@ -254,7 +299,7 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
             return (
               <section
                 key={section.id}
-                className={`py-16 lg:py-24 ${section.featuresHeader === 'Hoe SMYM Werkt' ? 'bg-gray-50' : 'bg-white'}`}
+                className={`py-16 lg:py-24 ${section.featuresHeader === 'How SMYM Works' ? 'bg-gray-50' : 'bg-white'}`}
               >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                   <div className="text-center mb-16">
@@ -270,7 +315,7 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
                       section.features.length > 2 ? 3 : 2
                     } gap-8 mb-12`}
                   >
-                    {section.featuresHeader === 'Hoe SMYM Werkt'
+                    {section.featuresHeader === 'How SMYM Works'
                       ? section.features.map((feature, i) => (
                           <div key={feature.id} className="text-center space-y-4">
                             <div className="w-16 h-16 bg-[#155da0] text-white rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
@@ -305,7 +350,7 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
                         })}
                   </div>
                   <div className="text-center">
-                    <EmailCaptureForm />
+                    <EmailCaptureForm ctaData={section.callToActionForms[0]} />
                   </div>
                 </div>
               </section>
@@ -333,9 +378,9 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
                               <span key={i}>★</span>
                             ))}
                           </div>
-                          <p className="text-gray-600 italic">
+                          <div className="text-gray-600 italic">
                             <StructuredText data={review.review.value} />
-                          </p>
+                          </div>
                           <div className="flex items-center space-x-3">
                             <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
                               <span className="text-gray-600 font-semibold">{review.initials}</span>
@@ -350,8 +395,24 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
                     ))}
                   </div>
                   <div className="text-center">
-                    <EmailCaptureForm />
+                    <EmailCaptureForm ctaData={section.callToActionForms[0]} />
                   </div>
+                </div>
+              </section>
+            );
+
+          case 'CtaSectionRecord':
+            return (
+              <section className="py-16 lg:py-24 bg-[#155da0]" key={section.id}>
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                  <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
+                    {section.title}
+                  </h2>
+                  <p className="text-xl text-white mb-8">{section.description}</p>
+                  <EmailCaptureForm
+                    typeName={section.__typename}
+                    ctaData={section.callToActionForms[0]}
+                  />
                 </div>
               </section>
             );
@@ -364,9 +425,6 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
                     <div className="text-center md:text-left">
                       <h3 className="text-2xl font-bold text-white">{section.companyName}</h3>
                       <p className="text-gray-400">{section.companyTagLine}</p>
-                    </div>
-                    <div className="flex space-x-6">
-                      <EmailCaptureForm />
                     </div>
                   </div>
                   <div className="mt-8 border-t border-gray-800 text-center">
