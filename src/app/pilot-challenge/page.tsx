@@ -21,10 +21,24 @@ const query = graphql<string, never>(`
             url
             title
           }
+          video {
+            title
+            url
+          }
           buttons {
+            id
+            label
             primary
             url
-            label
+          }
+          callToActionForms {
+            id
+            name
+            email
+            buttonText
+            primary
+            successMessage
+            failureMessage
           }
         }
         ... on FeatureListSectionRecord {
@@ -43,6 +57,15 @@ const query = graphql<string, never>(`
             }
             id
           }
+          callToActionForms {
+            id
+            name
+            email
+            buttonText
+            primary
+            successMessage
+            failureMessage
+          }
         }
         ... on TestimonialsSectionRecord {
           id
@@ -57,6 +80,29 @@ const query = graphql<string, never>(`
             review {
               value
             }
+          }
+          callToActionForms {
+            id
+            name
+            email
+            buttonText
+            primary
+            successMessage
+            failureMessage
+          }
+        }
+        ... on CtaSectionRecord {
+          id
+          title
+          description(markdown: false)
+          callToActionForms {
+            id
+            name
+            primary
+            successMessage
+            failureMessage
+            email
+            buttonText
           }
         }
         ... on FooterLandingPageRecord {

@@ -7,6 +7,7 @@ import { Users, Shield, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card, CardContent } from '@/components/ui/Card';
+import EmbeddedVideo from '@/components/EmbeddedVideo';
 
 type PageQueryResult = {
   page: {
@@ -19,9 +20,19 @@ type PageQueryResult = {
           heroSubtitle: string;
           heroDescription: string;
           buttons: Array<{
+            id: string;
             label: string;
             primary: boolean;
             url: string;
+          }>;
+          callToActionForms: Array<{
+            id: string;
+            name: string;
+            email: string;
+            buttonText: string;
+            primary: boolean;
+            successMessage: string;
+            failureMessage: string;
           }>;
           image: {
             alt: string;
@@ -29,6 +40,10 @@ type PageQueryResult = {
             url: string;
             title: string;
             width: number;
+          } | null;
+          video: {
+            title: string;
+            url: string;
           } | null;
         }
       | {
@@ -48,6 +63,15 @@ type PageQueryResult = {
               width: number;
             };
           }>;
+          callToActionForms: Array<{
+            id: string;
+            name: string;
+            email: string;
+            buttonText: string;
+            primary: boolean;
+            successMessage: string;
+            failureMessage: string;
+          }>;
         }
       | {
           __typename: 'TestimonialsSectionRecord';
@@ -61,6 +85,30 @@ type PageQueryResult = {
             initials: string;
             rating: number;
             review: { value: any };
+          }>;
+          callToActionForms: Array<{
+            id: string;
+            name: string;
+            email: string;
+            buttonText: string;
+            primary: boolean;
+            successMessage: string;
+            failureMessage: string;
+          }>;
+        }
+      | {
+          __typename: 'CtaSectionRecord';
+          id: string;
+          title: string;
+          description: string;
+          callToActionForms: Array<{
+            id: string;
+            name: string;
+            email: string;
+            buttonText: string;
+            primary: boolean;
+            successMessage: string;
+            failureMessage: string;
           }>;
         }
       | {
@@ -98,51 +146,98 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
   const [state, handleSubmit] = useForm('mandjroj');
 
   const EmailCaptureForm = ({
-    className = '',
-    buttonText = 'Doe mee aan de 30-Dagen Pilot Challenge',
+    typeName = '',
+    ctaData,
   }: {
-    className?: string;
-    buttonText?: string;
+    typeName?: string;
+    ctaData?: {
+      id: string;
+      name: string;
+      email: string;
+      buttonText: string;
+      primary: boolean;
+      successMessage: string;
+      failureMessage: string;
+    };
   }) => {
+    const nameError =
+      Array.isArray(state.errors) && state.errors.find((e) => e.field === 'name')?.message;
+
+    const emailError =
+      Array.isArray(state.errors) && state.errors.find((e) => e.field === 'email')?.message;
+
     return (
       <form
         onSubmit={handleSubmit}
-        className={`flex flex-col sm:flex-row gap-3 max-w-md mx-auto ${className}`}
-        aria-labelledby="email-signup"
+        className="flex flex-col gap-3 max-w-md mx-auto"
+        aria-labelledby="lead-gen-signup"
       >
+        <h2 id="lead-gen-signup" className="sr-only">
+          Sign up with your name and email address
+        </h2>
+
         {state.succeeded ? (
-          <div className="text-center text-green-600 font-medium">
-            E-mail succesvol verzonden. Controleer je inbox.
+          <div className="text-center text-secondary font-medium" role="alert" aria-live="polite">
+            {ctaData?.successMessage}
           </div>
         ) : (
           <>
+            <label htmlFor="name" className="sr-only">
+              Name
+            </label>
+            <Input
+              id="name"
+              type="text"
+              name="name"
+              placeholder={ctaData?.name}
+              required
+              aria-describedby={nameError ? 'name-error' : undefined}
+              error={
+                Array.isArray(state.errors)
+                  ? state.errors.find((e) => e.field === 'name')?.message || ctaData?.failureMessage
+                  : undefined
+              }
+              className="flex-1 h-12 text-base"
+            />
+            {nameError && (
+              <p id="name-error" className="sr-only" role="alert" aria-live="assertive">
+                {nameError}
+              </p>
+            )}
+
             <label htmlFor="email" className="sr-only">
-              Werk e-mailadres
+              Work email address
             </label>
             <Input
               id="email"
               type="email"
               name="email"
-              placeholder="Voer je werk e-mail in"
+              placeholder={ctaData?.email}
               required
               autoComplete="email"
-              describedBy="email-error"
+              aria-describedby={emailError ? 'email-error' : undefined}
               error={
                 Array.isArray(state.errors)
-                  ? state.errors.find((e) => e.field === 'email')?.message
+                  ? state.errors.find((e) => e.field === 'email')?.message ||
+                    ctaData?.failureMessage
                   : undefined
               }
-              className="flex-1"
+              className="flex-1 h-12 text-base"
             />
+            {emailError && (
+              <p id="email-error" className="sr-only" role="alert" aria-live="assertive">
+                {emailError}
+              </p>
+            )}
 
             <Button
               type="submit"
-              variant="default"
+              variant={typeName === 'CtaSectionRecord' ? 'secondary' : 'default'}
               size="lg"
               loading={state.submitting}
-              className="whitespace-nowrap"
+              className="whitespace-nowrap font-bold text-lg"
             >
-              {buttonText}
+              {ctaData?.buttonText}
             </Button>
           </>
         )}
@@ -176,7 +271,7 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
                       <p className="text-xl text-gray-600 leading-relaxed">
                         {section.heroDescription}
                       </p>
-                      <EmailCaptureForm buttonText={section.buttons?.[0]?.label} />
+                      <EmailCaptureForm ctaData={section.callToActionForms[0]} />
                     </div>
                     {section.image && (
                       <div className="relative">
@@ -190,6 +285,11 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
                         />
                       </div>
                     )}
+                    {section.video && (
+                      <div className="relative">
+                        <EmbeddedVideo videoUrl={section.video.url} title={section.video.title} />
+                      </div>
+                    )}
                   </div>
                 </div>
               </section>
@@ -199,7 +299,7 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
             return (
               <section
                 key={section.id}
-                className={`py-16 lg:py-24 ${section.featuresHeader === 'Hoe SMYM Werkt' ? 'bg-gray-50' : 'bg-white'}`}
+                className={`py-16 lg:py-24 ${section.featuresHeader === 'How SMYM Works' ? 'bg-gray-50' : 'bg-white'}`}
               >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                   <div className="text-center mb-16">
@@ -215,7 +315,7 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
                       section.features.length > 2 ? 3 : 2
                     } gap-8 mb-12`}
                   >
-                    {section.featuresHeader === 'Hoe SMYM Werkt'
+                    {section.featuresHeader === 'How SMYM Works'
                       ? section.features.map((feature, i) => (
                           <div key={feature.id} className="text-center space-y-4">
                             <div className="w-16 h-16 bg-[#155da0] text-white rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
@@ -250,7 +350,7 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
                         })}
                   </div>
                   <div className="text-center">
-                    <EmailCaptureForm buttonText="Start Je 30-Dagen Challenge" />
+                    <EmailCaptureForm ctaData={section.callToActionForms[0]} />
                   </div>
                 </div>
               </section>
@@ -278,9 +378,9 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
                               <span key={i}>★</span>
                             ))}
                           </div>
-                          <p className="text-gray-600 italic">
+                          <div className="text-gray-600 italic">
                             <StructuredText data={review.review.value} />
-                          </p>
+                          </div>
                           <div className="flex items-center space-x-3">
                             <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
                               <span className="text-gray-600 font-semibold">{review.initials}</span>
@@ -295,8 +395,24 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
                     ))}
                   </div>
                   <div className="text-center">
-                    <EmailCaptureForm buttonText="Doe Mee aan de Beweging" />
+                    <EmailCaptureForm ctaData={section.callToActionForms[0]} />
                   </div>
+                </div>
+              </section>
+            );
+
+          case 'CtaSectionRecord':
+            return (
+              <section className="py-16 lg:py-24 bg-[#155da0]" key={section.id}>
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                  <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
+                    {section.title}
+                  </h2>
+                  <p className="text-xl text-white mb-8">{section.description}</p>
+                  <EmailCaptureForm
+                    typeName={section.__typename}
+                    ctaData={section.callToActionForms[0]}
+                  />
                 </div>
               </section>
             );
@@ -309,9 +425,6 @@ const PilotChallenge = ({ page }: PilotChallengeProps) => {
                     <div className="text-center md:text-left">
                       <h3 className="text-2xl font-bold text-white">{section.companyName}</h3>
                       <p className="text-gray-400">{section.companyTagLine}</p>
-                    </div>
-                    <div className="flex space-x-6">
-                      <EmailCaptureForm buttonText={section.button.label} />
                     </div>
                   </div>
                   <div className="mt-8 border-t border-gray-800 text-center">

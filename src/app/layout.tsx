@@ -31,13 +31,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="antialiased flex min-h-screen flex-col">
         <Providers>
           <SessionGuard>
-            <Navbar ref={navbarRef} />
+            {pathname !== '/pilot-challenge' && <Navbar ref={navbarRef} />}
             <main
               className="flex-1 w-full bg-gray-100 text-center"
-              style={{ paddingTop: navHeight, paddingBottom: 'var(--footer-height)' }}
+              style={
+                pathname !== '/pilot-challenge'
+                  ? { paddingTop: navHeight, paddingBottom: 'var(--footer-height)' }
+                  : { paddingTop: 0, paddingBottom: 0 }
+              }
             >
               {children}
-              <ChatWidget />
+              {pathname !== '/pilot-challenge' && <ChatWidget />}
             </main>
             {pathname !== '/pilot-challenge' && <Footer />}
           </SessionGuard>
