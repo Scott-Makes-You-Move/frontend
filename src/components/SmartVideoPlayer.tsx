@@ -208,6 +208,11 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
         </div>
       )}
 
+      {/* Visually hidden progress for screen readers */}
+      <div className="sr-only" aria-live="polite">
+        {Math.round(progress * 100)}% watched
+      </div>
+
       {/* Video & Interaction Area */}
       {!watchedState && !manualOverride && (
         <div className="w-full flex flex-col-reverse md:flex-col items-end gap-4">
@@ -258,12 +263,16 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
 
       {/* Completion State */}
       {(watchedState || sessionOverdue) && (
-        <div className="flex flex-col items-center justify-center space-y-4" role="status">
+        <div
+          className="flex flex-col items-center justify-center space-y-4"
+          role="status"
+          aria-live="polite"
+        >
           {watchedState && (
             <>
               <div
                 className="animate-bounce bg-green-600 text-white px-4 py-2 rounded-full shadow-lg text-2xl font-semibold"
-                tabIndex={0}
+                aria-label="Video completed and counted toward leaderboard"
               >
                 🏅
               </div>
