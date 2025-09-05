@@ -47,20 +47,16 @@ const query = graphql<string, never>(`
 
 const breakTimes = ['10:00', '13:30', '15:00'];
 
-const getNextBreakTime = (sessionTimeStr: string) => {
+const getNextBreakTime = (referenceTimeStr?: string) => {
   const now = new Date();
-  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const currentMinutes = referenceTimeStr
+    ? (() => {
+        const [h, m] = referenceTimeStr.split(':').map(Number);
+        return h * 60 + m;
+      })()
+    : now.getHours() * 60 + now.getMinutes();
 
-  const [sessionHours, sessionMinutes] = sessionTimeStr.split(':').map(Number);
-  const sessionStartMinutes = sessionHours * 60 + sessionMinutes;
-  const sessionEndMinutes = sessionStartMinutes + 60;
-
-  // Case 1: current time is within the 1-hour session window
-  if (currentMinutes >= sessionStartMinutes && currentMinutes < sessionEndMinutes) {
-    return sessionTimeStr;
-  }
-
-  // Case 2: current time is outside — find next break
+  // Find the next break, the reference time
   for (const timeStr of breakTimes) {
     const [h, m] = timeStr.split(':').map(Number);
     const breakMinutes = h * 60 + m;
@@ -70,7 +66,7 @@ const getNextBreakTime = (sessionTimeStr: string) => {
     }
   }
 
-  // Case 3: wrap to the first break time of next day
+  // If none found (end of day), return first break of next day
   return breakTimes[0];
 };
 
@@ -111,6 +107,7 @@ export default async function WatchPage({ params }: PageProps) {
     }
 
     const data = await sessionRes.json();
+    console.log('🚀 ~ WatchPage ~ data:', data);
     const timePart = data.sessionStartTime.split('T')[1];
     const timeHHMM = timePart.slice(0, 5);
     const nextBreakTime = getNextBreakTime(timeHHMM);
