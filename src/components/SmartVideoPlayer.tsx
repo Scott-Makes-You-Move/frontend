@@ -11,7 +11,7 @@ interface SmartVideoPlayerProps {
   sessionId?: string;
   accountId?: string;
   accessToken?: string;
-  sessionStartTime?: string | null; // e.g. "10:00"
+  sessionStartTime?: string | null;
   sessionStatus?: string | null;
   sessionExecutionTime?: string | null;
 }
@@ -40,8 +40,11 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
   sessionStartTime,
 }) => {
   const playerRef = useRef<ReactPlayer>(null);
+
   const [progress, setProgress] = useState(0);
   const [manualOverride, setManualOverride] = useState(false);
+
+  // Compute "overdue" for messaging, but STILL send completion to backend.
   const [sessionOverdue, setSessionOverdue] = useState(false);
   const [videoDeadlineMessage, setVideoDeadlineMessage] = useState<string | null>(null);
 
@@ -59,13 +62,26 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
     return localStorage.getItem(storageKey) === 'true';
   });
 
+  // Refs to avoid stale closures inside throttled handlers
+  const watchedRef = useRef(watchedState);
+  const overdueRef = useRef(sessionOverdue);
+  useEffect(() => {
+    watchedRef.current = watchedState;
+  }, [watchedState]);
+  useEffect(() => {
+    overdueRef.current = sessionOverdue;
+  }, [sessionOverdue]);
+
+  // In-flight lock to prevent duplicate calls
+  const isMarkingWatched = useRef(false);
+
   // Evaluate session deadline and load saved progress on mount
   useEffect(() => {
     const { active, until } = isWithinOneHourWindow(sessionStartTime);
     if (!active) {
       setSessionOverdue(true);
       setVideoDeadlineMessage(
-        "⏱ This session has expired. You had 1 hour to complete it. You can still watch the video, but it won't count toward the leaderboard.",
+        "⏱ This session has expired. You had 1 hour to complete it. You can still watch the video; the backend will record it, but it won't count toward the leaderboard.",
       );
     } else {
       setVideoDeadlineMessage(
@@ -98,10 +114,12 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
     setToast({ title, message, type });
   };
 
-  // Marks video as completed (only allowed if not expired)
+  // Single guarded completion call (always notifies backend, even if overdue)
   const markAsWatched = async () => {
-    if (watchedState || sessionOverdue) return;
+    // prevent duplicates while request is in-flight or if already marked
+    if (watchedRef.current || isMarkingWatched.current) return;
 
+    isMarkingWatched.current = true;
     try {
       const res = await fetch(
         `https://backend.scottmakesyoumove.com/api/v1/account/${accountId}/sessions/${sessionId}`,
@@ -119,32 +137,55 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
       if (!res.ok) {
         const errorMsg = data?.message || 'An error occurred while marking the video as watched.';
 
+        // If backend says session is already finished or otherwise not allowed, show on the FE.
         if (res.status === 409 && errorMsg.includes('Session is already finished')) {
           setSessionOverdue(true);
-          showToast('Session Expired', 'This session is no longer available to complete.', 'info');
+          showToast(
+            'Session Finished',
+            'Your completion was recorded, but it will not count toward the leaderboard.',
+            'info',
+          );
         } else {
           showToast('Failed to Save Progress', errorMsg, 'error');
         }
-
         return;
       }
 
+      // Mark locally
       setWatched(true);
-      showToast('Nice Work!', 'Video successfully marked as completed.', 'success');
+
+      // Interpret backend response to decide the message.
+      // Flexible checks in case backend returns different shapes.
+      const counts =
+        data?.countsTowardLeaderboard ??
+        (data?.sessionStatus ? data.sessionStatus !== 'OVERDUE' : undefined);
+
+      if (counts === false) {
+        showToast(
+          'Video Completed',
+          "Nice work! We've recorded your completion, but it won't count toward the leaderboard.",
+          'info',
+        );
+      } else {
+        showToast('Nice Work!', 'Video successfully marked as completed.', 'success');
+      }
     } catch (err: any) {
       console.error('Unexpected error:', err);
       showToast('Error', 'Something went wrong. Please try again later.', 'error');
+    } finally {
+      isMarkingWatched.current = false;
     }
   };
 
-  // Throttled progress handler
+  // Throttled progress uses refs to avoid stale state; triggers single guarded call
   const throttledProgress = useRef(
     throttle((state: { played: number }) => {
       const playedPercent = state.played;
       setProgress(playedPercent);
       localStorage.setItem(progressKey, playedPercent.toFixed(4));
 
-      if (playedPercent >= 0.9 && !watchedState && !sessionOverdue) {
+      if (playedPercent >= 0.9 && !watchedRef.current) {
+        // even if overdue, we still notify backend; lock prevents duplicates
         markAsWatched();
       }
     }, 1000),
@@ -166,6 +207,11 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
           {videoDeadlineMessage}
         </div>
       )}
+
+      {/* Visually hidden progress for screen readers */}
+      <div className="sr-only" aria-live="polite">
+        {Math.round(progress * 100)}% watched
+      </div>
 
       {/* Video & Interaction Area */}
       {!watchedState && !manualOverride && (
@@ -217,12 +263,16 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
 
       {/* Completion State */}
       {(watchedState || sessionOverdue) && (
-        <div className="flex flex-col items-center justify-center space-y-4" role="status">
-          {watchedState && !sessionOverdue && (
+        <div
+          className="flex flex-col items-center justify-center space-y-4"
+          role="status"
+          aria-live="polite"
+        >
+          {watchedState && (
             <>
               <div
                 className="animate-bounce bg-green-600 text-white px-4 py-2 rounded-full shadow-lg text-2xl font-semibold"
-                tabIndex={0}
+                aria-label="Video completed and counted toward leaderboard"
               >
                 🏅
               </div>
@@ -243,7 +293,6 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
         </div>
       )}
 
-      {/* Toast Notification */}
       {toast && (
         <Toast
           title={toast.title}

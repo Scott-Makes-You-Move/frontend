@@ -45,22 +45,11 @@ const query = graphql<string, never>(`
   }
 `);
 
-const breakTimes = ['10:00', '13:30', '15:00'];
-
-const getNextBreakTime = (sessionTimeStr: string) => {
+const getNextBreakTime = () => {
+  const breakTimes = ['10:00', '13:30', '15:00'];
   const now = new Date();
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
-  const [sessionHours, sessionMinutes] = sessionTimeStr.split(':').map(Number);
-  const sessionStartMinutes = sessionHours * 60 + sessionMinutes;
-  const sessionEndMinutes = sessionStartMinutes + 60;
-
-  // Case 1: current time is within the 1-hour session window
-  if (currentMinutes >= sessionStartMinutes && currentMinutes < sessionEndMinutes) {
-    return sessionTimeStr;
-  }
-
-  // Case 2: current time is outside — find next break
   for (const timeStr of breakTimes) {
     const [h, m] = timeStr.split(':').map(Number);
     const breakMinutes = h * 60 + m;
@@ -70,7 +59,7 @@ const getNextBreakTime = (sessionTimeStr: string) => {
     }
   }
 
-  // Case 3: wrap to the first break time of next day
+  // Wrap to the first break time of next day
   return breakTimes[0];
 };
 
@@ -112,11 +101,13 @@ export default async function WatchPage({ params }: PageProps) {
 
     const data = await sessionRes.json();
     const timePart = data.sessionStartTime.split('T')[1];
-    const timeHHMM = timePart.slice(0, 5);
-    const nextBreakTime = getNextBreakTime(timeHHMM);
+    const sessionHHMM = timePart.slice(0, 5);
+
+    // For session start time displays
+    const sessionStartTime = sessionHHMM;
 
     sessionData = {
-      sessionStartTime: nextBreakTime ?? null,
+      sessionStartTime,
       sessionExecutionTime: data.sessionExecutionTime ?? null,
       exerciseType: data.exerciseType ?? null,
       sessionStatus: data.sessionStatus ?? null,
@@ -152,7 +143,7 @@ export default async function WatchPage({ params }: PageProps) {
           <div className="flex justify-start">
             <TimeDisplay
               nextBreakPrefix={movementBreak.reminderPrefix}
-              nextBreakTime={sessionData.sessionStartTime}
+              nextBreakTime={getNextBreakTime()}
             />
           </div>
         </section>
