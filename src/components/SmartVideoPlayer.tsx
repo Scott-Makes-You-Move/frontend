@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
-import { throttle } from 'lodash';
 import Toast from './ui/Toast';
 
 interface SmartVideoPlayerProps {
@@ -16,7 +15,6 @@ interface SmartVideoPlayerProps {
   sessionExecutionTime?: string | null;
 }
 
-// Utility: Determines if user is within 1-hour window of sessionStartTime
 const isWithinOneHourWindow = (startHHMM?: string | null): { active: boolean; until?: string } => {
   if (!startHHMM) return { active: false };
 
@@ -55,23 +53,17 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
   } | null>(null);
 
   const [watchedState, setWatchedState] = useState<boolean>(
-    sessionStatus === 'COMPLETED' || sessionStatus === 'OVERDUE',
+    sessionStatus === 'FINISHED' || sessionStatus === 'OVERDUE',
   );
-
-  const watchedRef = useRef(watchedState);
-  useEffect(() => {
-    watchedRef.current = watchedState;
-  }, [watchedState]);
 
   const isMarkingWatched = useRef(false);
 
-  // Evaluate session deadline on mount
   useEffect(() => {
     const { active, until } = isWithinOneHourWindow(sessionStartTime);
     if (!active) {
       setSessionOverdue(true);
       setVideoDeadlineMessage(
-        "⏱ This session has expired. You had 1 hour to complete it. You can still watch the video; the backend will record it, but it won't count toward the leaderboard.",
+        "⏱ This session has expired. You had 1 hour to complete it. You can still watch the video, but it won't count toward the leaderboard.",
       );
     } else {
       setVideoDeadlineMessage(
@@ -88,9 +80,8 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
     setToast({ title, message, type });
   };
 
-  // Single guarded completion call (always notifies backend, even if overdue)
   const markAsWatched = async () => {
-    if (watchedRef.current || isMarkingWatched.current) return;
+    if (watchedState || isMarkingWatched.current) return;
 
     isMarkingWatched.current = true;
     try {
@@ -109,7 +100,6 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
 
       if (!res.ok) {
         const errorMsg = data?.message || 'An error occurred while marking the video as watched.';
-
         if (res.status === 409 && errorMsg.includes('Session is already finished')) {
           setSessionOverdue(true);
           showToast(
@@ -146,18 +136,6 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
     }
   };
 
-  // Throttled progress (in-memory only)
-  const throttledProgress = useRef(
-    throttle((state: { played: number }) => {
-      const playedPercent = state.played;
-      setProgress(playedPercent);
-
-      if (playedPercent >= 0.9 && !watchedRef.current) {
-        markAsWatched();
-      }
-    }, 1000),
-  ).current;
-
   return (
     <div className="space-y-6 mt-6 w-full" role="region" aria-labelledby="video-section-heading">
       <h2 id="video-section-heading" className="sr-only">
@@ -175,7 +153,7 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
         </div>
       )}
 
-      {/* Visually hidden progress for screen readers */}
+      {/* Progress for screen readers */}
       <div className="sr-only" aria-live="polite">
         {Math.round(progress * 100)}% watched
       </div>
@@ -201,7 +179,7 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
             </button>
             {progress < 0.9 && (
               <div
-                className="absolute top-full mt-2 right-0 w-max bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-10 hidden group-hover:block whitespace-nowrap"
+                className="absolute top-full mt-2 right-0 w-max bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-10 hidden group-hover:block group-focus-within:block whitespace-nowrap"
                 role="tooltip"
               >
                 Watch at least 90% to enable this
@@ -216,8 +194,8 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
               controls
               width="100%"
               height="100%"
-              onProgress={throttledProgress}
-              onEnded={markAsWatched}
+              onProgress={(state) => setProgress(state.played)}
+              onEnded={markAsWatched} // 100% complete → safe to notify backend
               className="absolute top-0 left-0"
               config={{
                 youtube: { playerVars: { title: 1 } },
