@@ -38,13 +38,13 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
   accountId,
   accessToken,
   sessionStartTime,
+  sessionStatus,
 }) => {
   const playerRef = useRef<ReactPlayer>(null);
 
   const [progress, setProgress] = useState(0);
   const [manualOverride, setManualOverride] = useState(false);
 
-  // Compute "overdue" for messaging, but STILL send completion to backend.
   const [sessionOverdue, setSessionOverdue] = useState(false);
   const [videoDeadlineMessage, setVideoDeadlineMessage] = useState<string | null>(null);
 
@@ -54,28 +54,18 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
     type?: 'error' | 'success' | 'info';
   } | null>(null);
 
-  const storageKey = `watched_session_${accountId}_${sessionId}`;
-  const progressKey = `watched_progress_${accountId}_${sessionId}`;
+  const [watchedState, setWatchedState] = useState<boolean>(
+    sessionStatus === 'COMPLETED' || sessionStatus === 'OVERDUE',
+  );
 
-  const [watchedState, setWatchedState] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return false;
-    return localStorage.getItem(storageKey) === 'true';
-  });
-
-  // Refs to avoid stale closures inside throttled handlers
   const watchedRef = useRef(watchedState);
-  const overdueRef = useRef(sessionOverdue);
   useEffect(() => {
     watchedRef.current = watchedState;
   }, [watchedState]);
-  useEffect(() => {
-    overdueRef.current = sessionOverdue;
-  }, [sessionOverdue]);
 
-  // In-flight lock to prevent duplicate calls
   const isMarkingWatched = useRef(false);
 
-  // Evaluate session deadline and load saved progress on mount
+  // Evaluate session deadline on mount
   useEffect(() => {
     const { active, until } = isWithinOneHourWindow(sessionStartTime);
     if (!active) {
@@ -88,23 +78,7 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
         `✅ You have until ${until} to complete this video. Completion will count toward the leaderboard.`,
       );
     }
-
-    const savedProgress = localStorage.getItem(progressKey);
-    if (savedProgress) {
-      const parsed = parseFloat(savedProgress);
-      if (!isNaN(parsed)) setProgress(parsed);
-    }
-  }, [sessionStartTime, progressKey]);
-
-  // Handles setting watched state and persistence
-  const setWatched = (val: boolean) => {
-    setWatchedState(val);
-    if (val) {
-      localStorage.setItem(storageKey, 'true');
-    } else {
-      localStorage.removeItem(storageKey);
-    }
-  };
+  }, [sessionStartTime]);
 
   const showToast = (
     title: string,
@@ -116,7 +90,6 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
 
   // Single guarded completion call (always notifies backend, even if overdue)
   const markAsWatched = async () => {
-    // prevent duplicates while request is in-flight or if already marked
     if (watchedRef.current || isMarkingWatched.current) return;
 
     isMarkingWatched.current = true;
@@ -137,7 +110,6 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
       if (!res.ok) {
         const errorMsg = data?.message || 'An error occurred while marking the video as watched.';
 
-        // If backend says session is already finished or otherwise not allowed, show on the FE.
         if (res.status === 409 && errorMsg.includes('Session is already finished')) {
           setSessionOverdue(true);
           showToast(
@@ -151,11 +123,8 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
         return;
       }
 
-      // Mark locally
-      setWatched(true);
+      setWatchedState(true);
 
-      // Interpret backend response to decide the message.
-      // Flexible checks in case backend returns different shapes.
       const counts =
         data?.countsTowardLeaderboard ??
         (data?.sessionStatus ? data.sessionStatus !== 'OVERDUE' : undefined);
@@ -177,15 +146,13 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
     }
   };
 
-  // Throttled progress uses refs to avoid stale state; triggers single guarded call
+  // Throttled progress (in-memory only)
   const throttledProgress = useRef(
     throttle((state: { played: number }) => {
       const playedPercent = state.played;
       setProgress(playedPercent);
-      localStorage.setItem(progressKey, playedPercent.toFixed(4));
 
       if (playedPercent >= 0.9 && !watchedRef.current) {
-        // even if overdue, we still notify backend; lock prevents duplicates
         markAsWatched();
       }
     }, 1000),

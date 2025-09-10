@@ -63,6 +63,8 @@ const getNextBreakTime = () => {
   return breakTimes[0];
 };
 
+const nextBreakTime = getNextBreakTime();
+
 export default async function WatchPage({ params }: PageProps) {
   const { id: sessionId } = await params;
   const callbackUrl = `/watch/${sessionId}`;
@@ -143,7 +145,7 @@ export default async function WatchPage({ params }: PageProps) {
           <div className="flex justify-start">
             <TimeDisplay
               nextBreakPrefix={movementBreak.reminderPrefix}
-              nextBreakTime={getNextBreakTime()}
+              nextBreakTime={nextBreakTime}
             />
           </div>
         </section>
