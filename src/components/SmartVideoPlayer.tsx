@@ -53,7 +53,7 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
   } | null>(null);
 
   const [watchedState, setWatchedState] = useState<boolean>(
-    sessionStatus === 'FINISHED' || sessionStatus === 'OVERDUE',
+    sessionStatus === 'COMPLETED' || sessionStatus === 'OVERDUE',
   );
 
   const isMarkingWatched = useRef(false);
