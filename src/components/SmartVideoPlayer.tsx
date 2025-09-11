@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
-import { throttle } from 'lodash';
 import Toast from './ui/Toast';
 
 interface SmartVideoPlayerProps {
@@ -16,7 +15,6 @@ interface SmartVideoPlayerProps {
   sessionExecutionTime?: string | null;
 }
 
-// Utility: Determines if user is within 1-hour window of sessionStartTime
 const isWithinOneHourWindow = (startHHMM?: string | null): { active: boolean; until?: string } => {
   if (!startHHMM) return { active: false };
 
@@ -38,13 +36,13 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
   accountId,
   accessToken,
   sessionStartTime,
+  sessionStatus,
 }) => {
   const playerRef = useRef<ReactPlayer>(null);
 
   const [progress, setProgress] = useState(0);
   const [manualOverride, setManualOverride] = useState(false);
 
-  // Compute "overdue" for messaging, but STILL send completion to backend.
   const [sessionOverdue, setSessionOverdue] = useState(false);
   const [videoDeadlineMessage, setVideoDeadlineMessage] = useState<string | null>(null);
 
@@ -54,57 +52,25 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
     type?: 'error' | 'success' | 'info';
   } | null>(null);
 
-  const storageKey = `watched_session_${accountId}_${sessionId}`;
-  const progressKey = `watched_progress_${accountId}_${sessionId}`;
+  const [watchedState, setWatchedState] = useState<boolean>(
+    sessionStatus === 'COMPLETED' || sessionStatus === 'OVERDUE',
+  );
 
-  const [watchedState, setWatchedState] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return false;
-    return localStorage.getItem(storageKey) === 'true';
-  });
-
-  // Refs to avoid stale closures inside throttled handlers
-  const watchedRef = useRef(watchedState);
-  const overdueRef = useRef(sessionOverdue);
-  useEffect(() => {
-    watchedRef.current = watchedState;
-  }, [watchedState]);
-  useEffect(() => {
-    overdueRef.current = sessionOverdue;
-  }, [sessionOverdue]);
-
-  // In-flight lock to prevent duplicate calls
   const isMarkingWatched = useRef(false);
 
-  // Evaluate session deadline and load saved progress on mount
   useEffect(() => {
     const { active, until } = isWithinOneHourWindow(sessionStartTime);
     if (!active) {
       setSessionOverdue(true);
       setVideoDeadlineMessage(
-        "⏱ This session has expired. You had 1 hour to complete it. You can still watch the video; the backend will record it, but it won't count toward the leaderboard.",
+        "⏱ This session has expired. You had 1 hour to complete it. You can still watch the video, but it won't count toward the leaderboard.",
       );
     } else {
       setVideoDeadlineMessage(
         `✅ You have until ${until} to complete this video. Completion will count toward the leaderboard.`,
       );
     }
-
-    const savedProgress = localStorage.getItem(progressKey);
-    if (savedProgress) {
-      const parsed = parseFloat(savedProgress);
-      if (!isNaN(parsed)) setProgress(parsed);
-    }
-  }, [sessionStartTime, progressKey]);
-
-  // Handles setting watched state and persistence
-  const setWatched = (val: boolean) => {
-    setWatchedState(val);
-    if (val) {
-      localStorage.setItem(storageKey, 'true');
-    } else {
-      localStorage.removeItem(storageKey);
-    }
-  };
+  }, [sessionStartTime]);
 
   const showToast = (
     title: string,
@@ -114,10 +80,8 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
     setToast({ title, message, type });
   };
 
-  // Single guarded completion call (always notifies backend, even if overdue)
   const markAsWatched = async () => {
-    // prevent duplicates while request is in-flight or if already marked
-    if (watchedRef.current || isMarkingWatched.current) return;
+    if (watchedState || isMarkingWatched.current) return;
 
     isMarkingWatched.current = true;
     try {
@@ -136,8 +100,6 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
 
       if (!res.ok) {
         const errorMsg = data?.message || 'An error occurred while marking the video as watched.';
-
-        // If backend says session is already finished or otherwise not allowed, show on the FE.
         if (res.status === 409 && errorMsg.includes('Session is already finished')) {
           setSessionOverdue(true);
           showToast(
@@ -151,11 +113,8 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
         return;
       }
 
-      // Mark locally
-      setWatched(true);
+      setWatchedState(true);
 
-      // Interpret backend response to decide the message.
-      // Flexible checks in case backend returns different shapes.
       const counts =
         data?.countsTowardLeaderboard ??
         (data?.sessionStatus ? data.sessionStatus !== 'OVERDUE' : undefined);
@@ -177,20 +136,6 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
     }
   };
 
-  // Throttled progress uses refs to avoid stale state; triggers single guarded call
-  const throttledProgress = useRef(
-    throttle((state: { played: number }) => {
-      const playedPercent = state.played;
-      setProgress(playedPercent);
-      localStorage.setItem(progressKey, playedPercent.toFixed(4));
-
-      if (playedPercent >= 0.9 && !watchedRef.current) {
-        // even if overdue, we still notify backend; lock prevents duplicates
-        markAsWatched();
-      }
-    }, 1000),
-  ).current;
-
   return (
     <div className="space-y-6 mt-6 w-full" role="region" aria-labelledby="video-section-heading">
       <h2 id="video-section-heading" className="sr-only">
@@ -208,7 +153,7 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
         </div>
       )}
 
-      {/* Visually hidden progress for screen readers */}
+      {/* Progress for screen readers */}
       <div className="sr-only" aria-live="polite">
         {Math.round(progress * 100)}% watched
       </div>
@@ -234,7 +179,7 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
             </button>
             {progress < 0.9 && (
               <div
-                className="absolute top-full mt-2 right-0 w-max bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-10 hidden group-hover:block whitespace-nowrap"
+                className="absolute top-full mt-2 right-0 w-max bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg z-10 hidden group-hover:block group-focus-within:block whitespace-nowrap"
                 role="tooltip"
               >
                 Watch at least 90% to enable this
@@ -249,8 +194,8 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
               controls
               width="100%"
               height="100%"
-              onProgress={throttledProgress}
-              onEnded={markAsWatched}
+              onProgress={(state) => setProgress(state.played)}
+              onEnded={markAsWatched} // 100% complete → safe to notify backend
               className="absolute top-0 left-0"
               config={{
                 youtube: { playerVars: { title: 1 } },
