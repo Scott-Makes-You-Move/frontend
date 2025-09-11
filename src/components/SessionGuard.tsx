@@ -5,23 +5,22 @@ import { ReactNode, useEffect } from 'react';
 import { AuthContext } from '@/contexts/AuthContext';
 
 const SessionGuard = ({ children }: { children: ReactNode }) => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   useEffect(() => {
-    if (status === 'unauthenticated' || session?.error === 'RefreshAccessTokenError') {
+    if (session?.error === 'RefreshAccessTokenError') {
       signIn('keycloak', {
         callbackUrl: window.location.href,
       });
     }
-  }, [status, session?.error]);
+  }, [session]);
 
   const token = session?.accessToken ?? null;
 
-  return (
-    <AuthContext.Provider value={{ token, session, status }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  // Add session and status to match AuthContextType
+  const status = session ? 'authenticated' : 'unauthenticated';
+
+  return <AuthContext.Provider value={{ token, session, status }}>{children}</AuthContext.Provider>;
 };
 
 export default SessionGuard;
