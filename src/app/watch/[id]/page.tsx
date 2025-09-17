@@ -6,6 +6,7 @@ import { executeQuery } from '@/lib/datocms/executeQuery';
 import { graphql } from '@/lib/datocms/graphql';
 import requireAuth from '@/lib/auth/requireAuth';
 import { getWeeklyQuote } from '@/utils/getWeeklyQuote';
+import { getNextBreakTime } from '@/utils/getNextBreakTime';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -44,26 +45,6 @@ const query = graphql<string, never>(`
     }
   }
 `);
-
-const getNextBreakTime = () => {
-  const breakTimes = ['10:00', '13:30', '15:00'];
-  const now = new Date();
-  const currentMinutes = now.getHours() * 60 + now.getMinutes();
-
-  for (const timeStr of breakTimes) {
-    const [h, m] = timeStr.split(':').map(Number);
-    const breakMinutes = h * 60 + m;
-
-    if (breakMinutes > currentMinutes) {
-      return timeStr;
-    }
-  }
-
-  // Wrap to the first break time of next day
-  return breakTimes[0];
-};
-
-const nextBreakTime = getNextBreakTime();
 
 export default async function WatchPage({ params }: PageProps) {
   const { id: sessionId } = await params;
@@ -145,7 +126,7 @@ export default async function WatchPage({ params }: PageProps) {
           <div className="flex justify-start">
             <TimeDisplay
               nextBreakPrefix={movementBreak.reminderPrefix}
-              nextBreakTime={nextBreakTime}
+              nextBreakTime={getNextBreakTime()}
             />
           </div>
         </section>
