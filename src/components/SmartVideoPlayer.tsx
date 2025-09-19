@@ -11,6 +11,7 @@ interface SmartVideoPlayerProps {
   accountId?: string;
   accessToken?: string;
   sessionStartTime?: string | null;
+  sessionStartDisplay?: string | null;
   sessionStatus?: string | null;
   sessionExecutionTime?: string | null;
 }
@@ -36,10 +37,9 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
   accountId,
   accessToken,
   sessionStartTime,
+  sessionStartDisplay,
   sessionStatus,
 }) => {
-  console.log('🚀 ~ SmartVideoPlayer ~ sessionStartTime:', sessionStartTime);
-  console.log('🚀 ~ SmartVideoPlayer ~ sessionStatus:', sessionStatus);
   const playerRef = useRef<ReactPlayer>(null);
 
   const [progress, setProgress] = useState(0);
@@ -65,14 +65,17 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
     if (!active) {
       setSessionOverdue(true);
       setVideoDeadlineMessage(
-        "⏱ This session has expired. You had 1 hour to complete it. You can still watch the video, but it won't count toward the leaderboard.",
+        `⏱ This ${sessionStartDisplay ?? ''} session has expired. 
+       You had 1 hour to complete it. 
+       You can still watch the video, but it won't count toward the leaderboard.`,
       );
     } else {
       setVideoDeadlineMessage(
-        `✅ You have until ${until} to complete this video. Completion will count toward the leaderboard.`,
+        `✅ This ${sessionStartDisplay ?? ''} session is active. 
+       You have until ${until} to complete it. Completion will count toward the leaderboard.`,
       );
     }
-  }, [sessionStartTime]);
+  }, [sessionStartTime, sessionStartDisplay]);
 
   const showToast = (
     title: string,
@@ -220,14 +223,21 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
             <>
               <div
                 className="animate-bounce bg-green-600 text-white px-4 py-2 rounded-full shadow-lg text-2xl font-semibold"
-                aria-label="Video completed and counted toward leaderboard"
+                aria-label={`Video completed for your ${sessionStartDisplay ?? ''} session`}
               >
                 🏅
               </div>
-              <p className="text-lg text-gray-900 font-medium">
-                Nice work on completing the video!
+              <p className="text-lg text-gray-900 font-medium text-center">
+                Nice work on completing your <strong>{sessionStartDisplay ?? ''}</strong> session!
               </p>
             </>
+          )}
+
+          {sessionOverdue && (
+            <p className="text-lg text-gray-900 font-medium text-center">
+              You finished your <strong>{sessionStartDisplay ?? ''}</strong> session, but it was too
+              late to count toward the leaderboard.
+            </p>
           )}
 
           <a
