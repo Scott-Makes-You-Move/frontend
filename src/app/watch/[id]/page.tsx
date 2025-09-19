@@ -83,6 +83,7 @@ export default async function WatchPage({ params }: PageProps) {
     }
 
     const data = await sessionRes.json();
+    console.log('🚀 ~ WatchPage ~ data:', data);
     const timePart = data.sessionStartTime.split('T')[1];
     const sessionHHMM = timePart.slice(0, 5);
 

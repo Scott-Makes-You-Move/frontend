@@ -38,6 +38,8 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
   sessionStartTime,
   sessionStatus,
 }) => {
+  console.log('🚀 ~ SmartVideoPlayer ~ sessionStartTime:', sessionStartTime);
+  console.log('🚀 ~ SmartVideoPlayer ~ sessionStatus:', sessionStatus);
   const playerRef = useRef<ReactPlayer>(null);
 
   const [progress, setProgress] = useState(0);
@@ -97,6 +99,7 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
       );
 
       const data = await res.json();
+      console.log('🚀 ~ markAsWatched ~ data:', data);
 
       if (!res.ok) {
         const errorMsg = data?.message || 'An error occurred while marking the video as watched.';
