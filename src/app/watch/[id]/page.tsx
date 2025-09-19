@@ -6,6 +6,7 @@ import { executeQuery } from '@/lib/datocms/executeQuery';
 import { graphql } from '@/lib/datocms/graphql';
 import requireAuth from '@/lib/auth/requireAuth';
 import { getWeeklyQuote } from '@/utils/getWeeklyQuote';
+import { getNextBreakTime } from '@/utils/getNextBreakTime';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -45,26 +46,6 @@ const query = graphql<string, never>(`
   }
 `);
 
-const getNextBreakTime = () => {
-  const breakTimes = ['10:00', '13:30', '15:00'];
-  const now = new Date();
-  const currentMinutes = now.getHours() * 60 + now.getMinutes();
-
-  for (const timeStr of breakTimes) {
-    const [h, m] = timeStr.split(':').map(Number);
-    const breakMinutes = h * 60 + m;
-
-    if (breakMinutes > currentMinutes) {
-      return timeStr;
-    }
-  }
-
-  // Wrap to the first break time of next day
-  return breakTimes[0];
-};
-
-const nextBreakTime = getNextBreakTime();
-
 export default async function WatchPage({ params }: PageProps) {
   const { id: sessionId } = await params;
   const callbackUrl = `/watch/${sessionId}`;
@@ -73,12 +54,14 @@ export default async function WatchPage({ params }: PageProps) {
 
   let sessionData: {
     sessionStartTime: string | null;
+    sessionStartDisplay?: string | null;
     sessionExecutionTime: string | null;
     exerciseType: string | null;
     sessionStatus: string | null;
     sessionVideoUrl: string | null;
   } = {
     sessionStartTime: null,
+    sessionStartDisplay: null,
     sessionExecutionTime: null,
     exerciseType: null,
     sessionStatus: null,
@@ -102,14 +85,17 @@ export default async function WatchPage({ params }: PageProps) {
     }
 
     const data = await sessionRes.json();
-    const timePart = data.sessionStartTime.split('T')[1];
-    const sessionHHMM = timePart.slice(0, 5);
-
-    // For session start time displays
-    const sessionStartTime = sessionHHMM;
+    const sessionStart = new Date(data.sessionStartTime);
+    const sessionStartTime = sessionStart.toISOString();
+    const sessionStartDisplay = sessionStart.toLocaleTimeString('nl-NL', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'Europe/Amsterdam',
+    });
 
     sessionData = {
       sessionStartTime,
+      sessionStartDisplay,
       sessionExecutionTime: data.sessionExecutionTime ?? null,
       exerciseType: data.exerciseType ?? null,
       sessionStatus: data.sessionStatus ?? null,
@@ -145,7 +131,7 @@ export default async function WatchPage({ params }: PageProps) {
           <div className="flex justify-start">
             <TimeDisplay
               nextBreakPrefix={movementBreak.reminderPrefix}
-              nextBreakTime={nextBreakTime}
+              nextBreakTime={getNextBreakTime()}
             />
           </div>
         </section>
@@ -165,6 +151,7 @@ export default async function WatchPage({ params }: PageProps) {
                 accountId={accountId}
                 accessToken={accessToken}
                 sessionStartTime={sessionData.sessionStartTime}
+                sessionStartDisplay={sessionData.sessionStartDisplay}
                 sessionStatus={sessionData.sessionStatus}
                 sessionExecutionTime={sessionData.sessionExecutionTime}
               />

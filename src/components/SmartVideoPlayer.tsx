@@ -11,6 +11,7 @@ interface SmartVideoPlayerProps {
   accountId?: string;
   accessToken?: string;
   sessionStartTime?: string | null;
+  sessionStartDisplay?: string | null;
   sessionStatus?: string | null;
   sessionExecutionTime?: string | null;
 }
@@ -36,6 +37,7 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
   accountId,
   accessToken,
   sessionStartTime,
+  sessionStartDisplay,
   sessionStatus,
 }) => {
   const playerRef = useRef<ReactPlayer>(null);
@@ -43,7 +45,6 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
   const [progress, setProgress] = useState(0);
   const [manualOverride, setManualOverride] = useState(false);
 
-  const [sessionOverdue, setSessionOverdue] = useState(false);
   const [videoDeadlineMessage, setVideoDeadlineMessage] = useState<string | null>(null);
 
   const [toast, setToast] = useState<{
@@ -52,9 +53,8 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
     type?: 'error' | 'success' | 'info';
   } | null>(null);
 
-  const [watchedState, setWatchedState] = useState<boolean>(
-    sessionStatus === 'COMPLETED' || sessionStatus === 'OVERDUE',
-  );
+  const [watchedState, setWatchedState] = useState<boolean>(sessionStatus === 'COMPLETED');
+  const [sessionOverdue, setSessionOverdue] = useState(sessionStatus === 'OVERDUE');
 
   const isMarkingWatched = useRef(false);
 
@@ -63,14 +63,17 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
     if (!active) {
       setSessionOverdue(true);
       setVideoDeadlineMessage(
-        "⏱ This session has expired. You had 1 hour to complete it. You can still watch the video, but it won't count toward the leaderboard.",
+        `⏱ This ${sessionStartDisplay ?? ''} session has expired. 
+       You had 1 hour to complete it. 
+       You can still watch the video, but it won't count toward the leaderboard.`,
       );
     } else {
       setVideoDeadlineMessage(
-        `✅ You have until ${until} to complete this video. Completion will count toward the leaderboard.`,
+        `✅ This ${sessionStartDisplay ?? ''} session is active. 
+       You have until ${until} to complete it. Completion will count toward the leaderboard.`,
       );
     }
-  }, [sessionStartTime]);
+  }, [sessionStartTime, sessionStartDisplay]);
 
   const showToast = (
     title: string,
@@ -97,11 +100,15 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
       );
 
       const data = await res.json();
+      console.log('🚀 ~ markAsWatched ~ data:', data);
 
       if (!res.ok) {
         const errorMsg = data?.message || 'An error occurred while marking the video as watched.';
+
         if (res.status === 409 && errorMsg.includes('Session is already finished')) {
+          // Backend says: already finished = treat as overdue
           setSessionOverdue(true);
+          setWatchedState(false); // prevent double messages
           showToast(
             'Session Finished',
             'Your completion was recorded, but it will not count toward the leaderboard.',
@@ -113,11 +120,24 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
         return;
       }
 
-      setWatchedState(true);
-
+      // ✅ success case
       const counts =
         data?.countsTowardLeaderboard ??
         (data?.sessionStatus ? data.sessionStatus !== 'OVERDUE' : undefined);
+
+      if (counts === false) {
+        setSessionOverdue(true); // expired → no leaderboard
+        setWatchedState(false);
+        showToast(
+          'Video Completed',
+          "Nice work! We've recorded your completion, but it won't count toward the leaderboard.",
+          'info',
+        );
+      } else {
+        setWatchedState(true); // counts → leaderboard credit
+        setSessionOverdue(false);
+        showToast('Nice Work!', 'Video successfully marked as completed.', 'success');
+      }
 
       if (counts === false) {
         showToast(
@@ -213,16 +233,16 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
           role="status"
           aria-live="polite"
         >
-          {watchedState && (
+          {watchedState && !sessionOverdue && (
             <>
               <div
                 className="animate-bounce bg-green-600 text-white px-4 py-2 rounded-full shadow-lg text-2xl font-semibold"
-                aria-label="Video completed and counted toward leaderboard"
+                aria-label={`Video completed for your ${sessionStartDisplay ?? ''} session`}
               >
                 🏅
               </div>
-              <p className="text-lg text-gray-900 font-medium">
-                Nice work on completing the video!
+              <p className="text-lg text-gray-900 font-medium text-center">
+                Nice work on completing your <strong>{sessionStartDisplay ?? ''}</strong> session!
               </p>
             </>
           )}

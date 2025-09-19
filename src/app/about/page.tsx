@@ -120,13 +120,15 @@ const AboutPage = async () => {
                       section.imagePosition === 'left' ? 'order-1 md:order-1' : 'order-1 md:order-2'
                     }`}
                   >
-                    <Image
-                      src={section.image.url}
-                      alt={section.image.alt}
-                      width={section.image.width}
-                      height={section.image.height}
-                      className="rounded-lg shadow-md w-full max-w-md mx-auto object-contain"
-                    />
+                    {section.image && (
+                      <Image
+                        src={section.image.url}
+                        alt={section.image.alt}
+                        width={section.image.width}
+                        height={section.image.height}
+                        className="rounded-lg shadow-md w-full max-w-md mx-auto object-contain"
+                      />
+                    )}
                   </div>
 
                   <div

@@ -248,13 +248,15 @@ const Home = async () => {
                     </div>
                   </div>
                   <div className="w-full md:w-1/2">
-                    <Image
-                      src={section.image.url}
-                      alt={section.image.alt}
-                      width={section.image.width}
-                      height={section.image.height}
-                      className="rounded-lg shadow-md w-full max-w-md mx-auto object-contain"
-                    />
+                    {section.image && (
+                      <Image
+                        src={section.image.url}
+                        alt={section.image.alt}
+                        width={section.image.width}
+                        height={section.image.height}
+                        className="rounded-lg shadow-md w-full max-w-md mx-auto object-contain"
+                      />
+                    )}
                   </div>
                 </div>
               </section>
