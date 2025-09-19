@@ -45,7 +45,6 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
   const [progress, setProgress] = useState(0);
   const [manualOverride, setManualOverride] = useState(false);
 
-  const [sessionOverdue, setSessionOverdue] = useState(false);
   const [videoDeadlineMessage, setVideoDeadlineMessage] = useState<string | null>(null);
 
   const [toast, setToast] = useState<{
@@ -54,9 +53,8 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
     type?: 'error' | 'success' | 'info';
   } | null>(null);
 
-  const [watchedState, setWatchedState] = useState<boolean>(
-    sessionStatus === 'COMPLETED' || sessionStatus === 'OVERDUE',
-  );
+  const [watchedState, setWatchedState] = useState<boolean>(sessionStatus === 'COMPLETED');
+  const [sessionOverdue, setSessionOverdue] = useState(sessionStatus === 'OVERDUE');
 
   const isMarkingWatched = useRef(false);
 
@@ -106,8 +104,11 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
 
       if (!res.ok) {
         const errorMsg = data?.message || 'An error occurred while marking the video as watched.';
+
         if (res.status === 409 && errorMsg.includes('Session is already finished')) {
+          // Backend says: already finished = treat as overdue
           setSessionOverdue(true);
+          setWatchedState(false); // prevent double messages
           showToast(
             'Session Finished',
             'Your completion was recorded, but it will not count toward the leaderboard.',
@@ -119,11 +120,24 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
         return;
       }
 
-      setWatchedState(true);
-
+      // ✅ success case
       const counts =
         data?.countsTowardLeaderboard ??
         (data?.sessionStatus ? data.sessionStatus !== 'OVERDUE' : undefined);
+
+      if (counts === false) {
+        setSessionOverdue(true); // expired → no leaderboard
+        setWatchedState(false);
+        showToast(
+          'Video Completed',
+          "Nice work! We've recorded your completion, but it won't count toward the leaderboard.",
+          'info',
+        );
+      } else {
+        setWatchedState(true); // counts → leaderboard credit
+        setSessionOverdue(false);
+        showToast('Nice Work!', 'Video successfully marked as completed.', 'success');
+      }
 
       if (counts === false) {
         showToast(
@@ -219,7 +233,7 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
           role="status"
           aria-live="polite"
         >
-          {watchedState && (
+          {watchedState && !sessionOverdue && (
             <>
               <div
                 className="animate-bounce bg-green-600 text-white px-4 py-2 rounded-full shadow-lg text-2xl font-semibold"
