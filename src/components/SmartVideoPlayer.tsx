@@ -247,13 +247,6 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
             </>
           )}
 
-          {sessionOverdue && (
-            <p className="text-lg text-gray-900 font-medium text-center">
-              You finished your <strong>{sessionStartDisplay ?? ''}</strong> session, but it was too
-              late to count toward the leaderboard.
-            </p>
-          )}
-
           <a
             href="/leaderboard"
             className="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition"
