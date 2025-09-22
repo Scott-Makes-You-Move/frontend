@@ -21,13 +21,17 @@ const isWithinOneHourWindow = (startHHMM?: string | null): { active: boolean; un
 
   const [h, m] = startHHMM.split(':').map(Number);
   const now = new Date();
+  console.log('🚀 ~ isWithinOneHourWindow ~ now:', now);
   const sessionStart = new Date(now);
+  console.log('🚀 ~ isWithinOneHourWindow ~ sessionStart:', sessionStart);
   sessionStart.setHours(h, m, 0, 0);
 
   const sessionEnd = new Date(sessionStart.getTime() + 60 * 60 * 1000);
+  console.log('🚀 ~ isWithinOneHourWindow ~ sessionEnd:', sessionEnd);
   const isActive = now >= sessionStart && now < sessionEnd;
 
   const until = sessionEnd.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  console.log('🚀 ~ isWithinOneHourWindow ~ until:', until);
   return { active: isActive, until };
 };
 
@@ -84,7 +88,7 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
   };
 
   const markAsWatched = async () => {
-    if (watchedState || isMarkingWatched.current) return;
+    if (watchedState || isMarkingWatched.current || sessionOverdue) return;
 
     isMarkingWatched.current = true;
     try {
@@ -99,19 +103,24 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
         },
       );
 
-      const data = await res.json();
-      console.log('🚀 ~ markAsWatched ~ data:', data);
+      let data: any = null;
+      if (res.status !== 204) {
+        try {
+          data = await res.json();
+        } catch {
+          data = null; // no JSON, that’s fine
+        }
+      }
 
       if (!res.ok) {
         const errorMsg = data?.message || 'An error occurred while marking the video as watched.';
 
-        if (res.status === 409 && errorMsg.includes('Session is already finished')) {
-          // Backend says: already finished = treat as overdue
+        if (res.status === 409 || errorMsg.includes('Session is already finished')) {
           setSessionOverdue(true);
-          setWatchedState(false); // prevent double messages
+          setWatchedState(false);
           showToast(
             'Session Finished',
-            'Your completion was recorded, but it will not count toward the leaderboard.',
+            'This session is already closed. You can still watch the video, but no points will be awarded.',
             'info',
           );
         } else {
@@ -120,13 +129,13 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
         return;
       }
 
-      // ✅ success case
+      // ✅ Success
       const counts =
         data?.countsTowardLeaderboard ??
         (data?.sessionStatus ? data.sessionStatus !== 'OVERDUE' : undefined);
 
       if (counts === false) {
-        setSessionOverdue(true); // expired → no leaderboard
+        setSessionOverdue(true);
         setWatchedState(false);
         showToast(
           'Video Completed',
@@ -134,18 +143,8 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
           'info',
         );
       } else {
-        setWatchedState(true); // counts → leaderboard credit
+        setWatchedState(true);
         setSessionOverdue(false);
-        showToast('Nice Work!', 'Video successfully marked as completed.', 'success');
-      }
-
-      if (counts === false) {
-        showToast(
-          'Video Completed',
-          "Nice work! We've recorded your completion, but it won't count toward the leaderboard.",
-          'info',
-        );
-      } else {
         showToast('Nice Work!', 'Video successfully marked as completed.', 'success');
       }
     } catch (err: any) {

@@ -85,6 +85,7 @@ export default async function WatchPage({ params }: PageProps) {
     }
 
     const data = await sessionRes.json();
+    console.log('🚀 ~ WatchPage ~ data:', data);
     const sessionStart = new Date(data.sessionStartTime);
     const sessionStartTime = sessionStart.toISOString();
     const sessionStartDisplay = sessionStart.toLocaleTimeString('nl-NL', {
