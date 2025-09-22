@@ -178,7 +178,7 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
       </div>
 
       {/* Video & Interaction Area */}
-      {!watchedState && !manualOverride && (
+      {!watchedState && !manualOverride && !sessionOverdue && (
         <div className="w-full flex flex-col-reverse md:flex-col items-end gap-4">
           <div className="relative group w-full md:w-auto">
             <button
@@ -188,11 +188,11 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
               }}
               disabled={progress < 0.9}
               className={`w-full md:w-auto px-6 py-3 text-base font-semibold rounded-lg transition shadow
-                ${
-                  progress < 0.9
-                    ? 'bg-gray-300 text-gray-700 cursor-not-allowed'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
-                }`}
+          ${
+            progress < 0.9
+              ? 'bg-gray-300 text-gray-700 cursor-not-allowed'
+              : 'bg-blue-600 text-white hover:bg-blue-700'
+          }`}
             >
               ✅ Mark as Done
             </button>
