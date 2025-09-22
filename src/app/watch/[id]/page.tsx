@@ -101,6 +101,16 @@ export default async function WatchPage({ params }: PageProps) {
       sessionStatus: data.sessionStatus ?? null,
       sessionVideoUrl: data.sessionVideoUrl ?? null,
     };
+
+    // Test Data
+    /* sessionData = {
+      sessionStartTime: '10:00',
+      sessionStartDisplay: '10:00',
+      sessionExecutionTime: '2025-09-22T10:15:00.000+0200',
+      exerciseType: 'HIP',
+      sessionStatus: 'COMPLETED', // try OVERDUE, COMPLETED
+      sessionVideoUrl: 'https://youtu.be/-7mdU1-eEpk',
+    }; */
   } catch (err) {
     console.error('Error fetching session data:', err);
     throw new Error('Error fetching session data');
