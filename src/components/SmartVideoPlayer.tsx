@@ -161,6 +161,7 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
         Video player section
       </h2>
 
+      {/* Deadline message */}
       {videoDeadlineMessage && (
         <div
           role="alert"
@@ -177,9 +178,9 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
         {Math.round(progress * 100)}% watched
       </div>
 
-      {/* Video & Interaction Area */}
-      {!watchedState && !manualOverride && !sessionOverdue && (
-        <div className="w-full flex flex-col-reverse md:flex-col items-end gap-4">
+      <div className="w-full flex flex-col-reverse md:flex-col items-end gap-4">
+        {/* ✅ Mark as Done button → only when eligible */}
+        {!watchedState && !manualOverride && !sessionOverdue && (
           <div className="relative group w-full md:w-auto">
             <button
               onClick={() => {
@@ -205,27 +206,28 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
               </div>
             )}
           </div>
+        )}
 
-          <div className="w-full aspect-video relative">
-            <ReactPlayer
-              ref={playerRef}
-              url={videoUrl}
-              controls
-              width="100%"
-              height="100%"
-              onProgress={(state) => setProgress(state.played)}
-              onEnded={markAsWatched} // 100% complete → safe to notify backend
-              className="absolute top-0 left-0"
-              config={{
-                youtube: { playerVars: { title: 1 } },
-                vimeo: { title: '1' },
-              }}
-            />
-          </div>
+        {/* 🎥 Video player always visible */}
+        <div className="w-full aspect-video relative">
+          <ReactPlayer
+            ref={playerRef}
+            url={videoUrl}
+            controls
+            width="100%"
+            height="100%"
+            onProgress={(state) => setProgress(state.played)}
+            onEnded={markAsWatched}
+            className="absolute top-0 left-0"
+            config={{
+              youtube: { playerVars: { title: 1 } },
+              vimeo: { title: '1' },
+            }}
+          />
         </div>
-      )}
+      </div>
 
-      {/* Completion State */}
+      {/* 🏅 Completion / Leaderboard */}
       {(watchedState || sessionOverdue) && (
         <div
           className="flex flex-col items-center justify-center space-y-4"
