@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
 import Toast from './ui/Toast';
 
@@ -16,23 +16,56 @@ interface SmartVideoPlayerProps {
   sessionExecutionTime?: string | null;
 }
 
-const isWithinOneHourWindow = (startHHMM?: string | null): { active: boolean; until?: string } => {
-  if (!startHHMM) return { active: false };
+const getBanner = (
+  status?: string | null,
+  sessionStartISO?: string | null,
+  sessionStartDisplay?: string | null,
+) => {
+  if (!status) {
+    return {
+      tone: 'warning' as const,
+      text: '⚠️ Couldn’t determine session status. Please refresh or contact support.',
+    };
+  }
 
-  const [h, m] = startHHMM.split(':').map(Number);
-  const now = new Date();
-  console.log('🚀 ~ isWithinOneHourWindow ~ now:', now);
-  const sessionStart = new Date(now);
-  console.log('🚀 ~ isWithinOneHourWindow ~ sessionStart:', sessionStart);
-  sessionStart.setHours(h, m, 0, 0);
+  if (status === 'OVERDUE') {
+    return {
+      tone: 'danger' as const,
+      text: `⏱ This ${sessionStartDisplay ?? ''} session has expired. 
+             You had 1 hour to complete it. 
+             You can still watch the video, but it won't count toward the leaderboard.`,
+    };
+  }
 
-  const sessionEnd = new Date(sessionStart.getTime() + 60 * 60 * 1000);
-  console.log('🚀 ~ isWithinOneHourWindow ~ sessionEnd:', sessionEnd);
-  const isActive = now >= sessionStart && now < sessionEnd;
+  if (status === 'COMPLETED') {
+    return {
+      tone: 'success' as const,
+      text: `✅ Great job! Your ${sessionStartDisplay ?? ''} session is completed and counted.`,
+    };
+  }
 
-  const until = sessionEnd.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  console.log('🚀 ~ isWithinOneHourWindow ~ until:', until);
-  return { active: isActive, until };
+  // status === 'NEW'
+  try {
+    const until = sessionStartISO
+      ? new Date(new Date(sessionStartISO).getTime() + 60 * 60 * 1000).toLocaleTimeString('nl-NL', {
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: 'Europe/Amsterdam',
+        })
+      : null;
+
+    return {
+      tone: 'success' as const,
+      text: `✅ This ${sessionStartDisplay ?? ''} session is active. 
+             ${until ? `You have until ${until} to complete it.` : ''} 
+             Completion will count toward the leaderboard.`,
+    };
+  } catch {
+    return {
+      tone: 'warning' as const,
+      text: '⚠️ Couldn’t parse session start time. Please refresh or contact support.',
+    };
+  }
 };
 
 const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
@@ -49,35 +82,16 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
   const [progress, setProgress] = useState(0);
   const [manualOverride, setManualOverride] = useState(false);
 
-  const [videoDeadlineMessage, setVideoDeadlineMessage] = useState<string | null>(null);
-
   const [toast, setToast] = useState<{
     title: string;
     message: string;
     type?: 'error' | 'success' | 'info';
   } | null>(null);
 
-  const [watchedState, setWatchedState] = useState<boolean>(sessionStatus === 'COMPLETED');
+  const [watchedState, setWatchedState] = useState(sessionStatus === 'COMPLETED');
   const [sessionOverdue, setSessionOverdue] = useState(sessionStatus === 'OVERDUE');
 
   const isMarkingWatched = useRef(false);
-
-  useEffect(() => {
-    const { active, until } = isWithinOneHourWindow(sessionStartTime);
-    if (!active) {
-      setSessionOverdue(true);
-      setVideoDeadlineMessage(
-        `⏱ This ${sessionStartDisplay ?? ''} session has expired. 
-       You had 1 hour to complete it. 
-       You can still watch the video, but it won't count toward the leaderboard.`,
-      );
-    } else {
-      setVideoDeadlineMessage(
-        `✅ This ${sessionStartDisplay ?? ''} session is active. 
-       You have until ${until} to complete it. Completion will count toward the leaderboard.`,
-      );
-    }
-  }, [sessionStartTime, sessionStartDisplay]);
 
   const showToast = (
     title: string,
@@ -108,7 +122,7 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
         try {
           data = await res.json();
         } catch {
-          data = null; // no JSON, that’s fine
+          data = null;
         }
       }
 
@@ -129,24 +143,10 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
         return;
       }
 
-      // ✅ Success
-      const counts =
-        data?.countsTowardLeaderboard ??
-        (data?.sessionStatus ? data.sessionStatus !== 'OVERDUE' : undefined);
-
-      if (counts === false) {
-        setSessionOverdue(true);
-        setWatchedState(false);
-        showToast(
-          'Video Completed',
-          "Nice work! We've recorded your completion, but it won't count toward the leaderboard.",
-          'info',
-        );
-      } else {
-        setWatchedState(true);
-        setSessionOverdue(false);
-        showToast('Nice Work!', 'Video successfully marked as completed.', 'success');
-      }
+      // ✅ Success → but backend returns no content
+      setWatchedState(true);
+      setSessionOverdue(false);
+      showToast('Nice Work!', 'Video successfully marked as completed.', 'success');
     } catch (err: any) {
       console.error('Unexpected error:', err);
       showToast('Error', 'Something went wrong. Please try again later.', 'error');
@@ -155,23 +155,27 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
     }
   };
 
+  // Banner is always derived from backend status
+  const banner = getBanner(sessionStatus, sessionStartTime, sessionStartDisplay);
+
   return (
     <div className="space-y-6 mt-6 w-full" role="region" aria-labelledby="video-section-heading">
       <h2 id="video-section-heading" className="sr-only">
         Video player section
       </h2>
 
-      {/* Deadline message */}
-      {videoDeadlineMessage && (
-        <div
-          role="alert"
-          className={`rounded-md px-4 py-3 text-sm ${
-            sessionOverdue ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
-          }`}
-        >
-          {videoDeadlineMessage}
-        </div>
-      )}
+      <div
+        role="alert"
+        className={`rounded-md px-4 py-3 text-sm ${
+          banner.tone === 'danger'
+            ? 'bg-red-100 text-red-800'
+            : banner.tone === 'success'
+              ? 'bg-green-100 text-green-800'
+              : 'bg-yellow-100 text-yellow-800'
+        }`}
+      >
+        {banner.text}
+      </div>
 
       {/* Progress for screen readers */}
       <div className="sr-only" aria-live="polite">
@@ -179,8 +183,8 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
       </div>
 
       <div className="w-full flex flex-col-reverse md:flex-col items-end gap-4">
-        {/* ✅ Mark as Done button → only when eligible */}
-        {!watchedState && !manualOverride && !sessionOverdue && (
+        {/* ✅ Mark as Done button → only for NEW sessions */}
+        {sessionStatus === 'NEW' && !watchedState && !manualOverride && !sessionOverdue && (
           <div className="relative group w-full md:w-auto">
             <button
               onClick={() => {
@@ -189,11 +193,11 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
               }}
               disabled={progress < 0.9}
               className={`w-full md:w-auto px-6 py-3 text-base font-semibold rounded-lg transition shadow
-          ${
-            progress < 0.9
-              ? 'bg-gray-300 text-gray-700 cursor-not-allowed'
-              : 'bg-blue-600 text-white hover:bg-blue-700'
-          }`}
+                ${
+                  progress < 0.9
+                    ? 'bg-gray-300 text-gray-700 cursor-not-allowed'
+                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                }`}
             >
               ✅ Mark as Done
             </button>
@@ -228,7 +232,7 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
       </div>
 
       {/* 🏅 Completion / Leaderboard */}
-      {(watchedState || sessionOverdue) && (
+      {(watchedState || sessionOverdue || sessionStatus === 'COMPLETED') && (
         <div
           className="flex flex-col items-center justify-center space-y-4"
           role="status"

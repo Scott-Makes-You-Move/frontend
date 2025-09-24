@@ -104,11 +104,11 @@ export default async function WatchPage({ params }: PageProps) {
 
     // Test Data
     /* sessionData = {
-      sessionStartTime: '10:00',
-      sessionStartDisplay: '10:00',
-      sessionExecutionTime: '2025-09-22T10:15:00.000+0200',
+      sessionStartTime: '2025-09-25T13:30:00.000+0200',
+      sessionStartDisplay: '13:30',
+      sessionExecutionTime: null,
       exerciseType: 'HIP',
-      sessionStatus: 'COMPLETED', // try OVERDUE, COMPLETED
+      sessionStatus: 'OVERDUE',
       sessionVideoUrl: 'https://youtu.be/-7mdU1-eEpk',
     }; */
   } catch (err) {
