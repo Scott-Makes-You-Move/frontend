@@ -36,46 +36,47 @@ Data returned (from SessionDto):
 
 4. Video Playback & Eligibility
    - `SmartVideoPlayer`:
-     - Checks whether current time is within 1 hour of `sessionStartTime`.
-     - Displays eligibility banner (active ✅ vs expired ⏱).
+     - Uses `sessionStatus` from the backend (`NEW`, `COMPLETED`, `OVERDUE`) as the single source of truth.
+     - If `NEW` → shows a green “active” banner with the deadline (`sessionStartTime + 1h`), enables “Mark as Done” after ≥90% watched.
+     - If `COMPLETED` → shows 🏅 success state, “Nice work!” message, leaderboard link.
+     - If `OVERDUE` → shows a red expired banner, video still playable, but no leaderboard credit.
      - Handles progress tracking via `ReactPlayer`.
-     - Requires ≥ 90% watched before enabling “Mark as Done”.
-     - Calls `PUT /sessions/{id}` to update session status when complete.
+   - Requires ≥ 90% watched before enabling “Mark as Done”.
+   - Calls `PUT /sessions/{id}` to update session status when complete.
 
 ## 🟩 Session Status & UI States
 
-| **`sessionStatus`** | **Frontend UI**                                                         | **Eligibility**              |
-| ------------------- | ----------------------------------------------------------------------- | ---------------------------- |
-| `NEW` + within 1h   | Green ✅ banner, video player, “Mark as Done” button (enabled at ≥ 90%) | ✅ Counts toward leaderboard |
-| `NEW` + >1h expired | Red ⏱ banner, video only (no button)                                   | ❌ No points                 |
-| `COMPLETED`         | 🏅 Success badge, “Nice work!” message, leaderboard link                | Already credited             |
-| `OVERDUE`           | Red ⏱ banner, video only, leaderboard link                             | ❌ No points                 |
+| **`sessionStatus`** | **Frontend UI**                                                                                              | **Eligibility**              |
+| ------------------- | ------------------------------------------------------------------------------------------------------------ | ---------------------------- |
+| `NEW`               | Green ✅ banner, video player, “Mark as Done” button (enabled at ≥90% watched). Shows deadline (`start+1h`). | ✅ Counts toward leaderboard |
+| `COMPLETED`         | 🏅 Success badge, “Nice work!” message, leaderboard link                                                     | Already credited             |
+| `OVERDUE`           | Red ⏱ banner, video only, leaderboard link                                                                  | ❌ No points                 |
 
 ## 📡 Backend Responses & Frontend Behavior
 
-| **Response**                 | **When**                                        | **Frontend Behavior**                      | **Toast Message**                                                                                    |
-| ---------------------------- | ----------------------------------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
-| **200 OK + JSON**            | Session marked completed within window          | `watchedState = true`, leaderboard updated | 🟢 _“Nice Work! Video successfully marked as completed.”_                                            |
-| **204 No Content**           | Success without body (normal backend behavior)  | Handled safely, no crash                   | 🟢 Success (if in time) or ℹ️ Info (if overdue)                                                      |
-| **409 Conflict**             | Session already finished (COMPLETED or OVERDUE) | No points, still watchable                 | ℹ️ _“This session is already closed. You can still watch the video, but no points will be awarded.”_ |
-| **400/401/403 Unauthorized** | Invalid/expired token                           | Error, nothing marked                      | 🔴 _“Failed to Save Progress. Unauthorized.”_                                                        |
-| **404 Not Found**            | Invalid `sessionId` or wrong account            | Error                                      | 🔴 _“Failed to Save Progress. Session not found.”_                                                   |
-| **500 Server Error**         | Unexpected backend failure                      | Error                                      | 🔴 _“Something went wrong. Please try again later.”_                                                 |
+| **Response**                 | **When**                                        | **Frontend Behavior**                   | **Toast Message**                                                                                    |
+| ---------------------------- | ----------------------------------------------- | --------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| **204 No Content**           | Normal success after PUT                        | Marks session as completed, updates UI  | 🟢 _“Nice Work! Video successfully marked as completed.”_                                            |
+| **200 OK + JSON** (rare)     | Backend returns extra info                      | Used if present, fallback same as above | 🟢 Success                                                                                           |
+| **409 Conflict**             | Session already finished (COMPLETED or OVERDUE) | No points, still watchable              | ℹ️ _“This session is already closed. You can still watch the video, but no points will be awarded.”_ |
+| **400/401/403 Unauthorized** | Invalid/expired token                           | Error, nothing marked                   | 🔴 _“Failed to Save Progress. Unauthorized.”_                                                        |
+| **404 Not Found**            | Invalid `sessionId` or wrong account            | Error                                   | 🔴 _“Failed to Save Progress. Session not found.”_                                                   |
+| **500 Server Error**         | Unexpected backend failure                      | Error                                   | 🔴 _“Something went wrong. Please try again later.”_                                                 |
 
 ## ✅ QA Checklist
 
 When testing, confirm these cases:
 
 1. **Active session:** Play ≥90% → button enabled → PUT succeeds → success toast → points awarded.
-2. **Expired session (>1h late):** Red banner, video only, no “Mark as Done” button.
-3. **Completed session:** 🏅 badge + message, no button.
-4. **Overdue session (from backend):** Red banner, no button, video watchable.
+2. **Completed session:** 🏅 badge + message, no button.
+3. **Overdue session (from backend):** Red banner, no button, video watchable.
+4. **Conflict (409):** Session already finished → info toast, no points.
 5. **Invalid sessionId:** Shows error toast.
 6. **Backend 500:** Shows red error toast.
 
 ## ⚠️ Notes for Developers
-
+- Backend is the single source of truth for session state (`NEW`, `COMPLETED`, `OVERDUE`). The frontend only reflects this state and does not re-calculate expiry windows.
+- `sessionStartTime + 1h` is used purely to display a deadline to the user in the UI, not to decide eligibility.
 - Do not assume JSON on all backend responses → handle 204 No Content safely.
-- Eligibility logic is enforced by backend — frontend only reflects it.
-- Toast messages are the user-facing feedback mechanism; always ensure they are clear and non-technical.
-- Leaderboards update only when sessions are completed within the 1h window.
+- Toast messages are the user-facing feedback mechanism. Always make sure they are clear and non-technical.
+- Leaderboards update only when sessions are completed within the 1h window (backend-enforced).
