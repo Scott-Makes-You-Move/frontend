@@ -55,15 +55,11 @@ export default async function WatchPage({ params }: PageProps) {
   let sessionData: {
     sessionStartTime: string | null;
     sessionStartDisplay?: string | null;
-    sessionExecutionTime: string | null;
-    exerciseType: string | null;
     sessionStatus: string | null;
     sessionVideoUrl: string | null;
   } = {
     sessionStartTime: null,
     sessionStartDisplay: null,
-    sessionExecutionTime: null,
-    exerciseType: null,
     sessionStatus: null,
     sessionVideoUrl: null,
   };
@@ -96,19 +92,16 @@ export default async function WatchPage({ params }: PageProps) {
     sessionData = {
       sessionStartTime,
       sessionStartDisplay,
-      sessionExecutionTime: data.sessionExecutionTime ?? null,
-      exerciseType: data.exerciseType ?? null,
       sessionStatus: data.sessionStatus ?? null,
       sessionVideoUrl: data.sessionVideoUrl ?? null,
     };
 
-    // Test Data
-    /* sessionData = {
-      sessionStartTime: '10:00',
-      sessionStartDisplay: '10:00',
-      sessionExecutionTime: '2025-09-22T10:15:00.000+0200',
-      exerciseType: 'HIP',
-      sessionStatus: 'COMPLETED', // try OVERDUE, COMPLETED
+    // Test Data (for local testing only)
+
+    /*     sessionData = {
+      sessionStartTime: '2025-09-25T13:30:00.000+0200',
+      sessionStartDisplay: '13:30',
+      sessionStatus: 'OVERDUE', // try NEW, COMPLETED, OVERDUE
       sessionVideoUrl: 'https://youtu.be/-7mdU1-eEpk',
     }; */
   } catch (err) {
@@ -163,7 +156,6 @@ export default async function WatchPage({ params }: PageProps) {
                 sessionStartTime={sessionData.sessionStartTime}
                 sessionStartDisplay={sessionData.sessionStartDisplay}
                 sessionStatus={sessionData.sessionStatus}
-                sessionExecutionTime={sessionData.sessionExecutionTime}
               />
             </div>
           </div>
