@@ -75,6 +75,7 @@ When testing, confirm these cases:
 6. **Backend 500:** Shows red error toast.
 
 ## ⚠️ Notes for Developers
+
 - Backend is the single source of truth for session state (`NEW`, `COMPLETED`, `OVERDUE`). The frontend only reflects this state and does not re-calculate expiry windows.
 - `sessionStartTime + 1h` is used purely to display a deadline to the user in the UI, not to decide eligibility.
 - Do not assume JSON on all backend responses → handle 204 No Content safely.
