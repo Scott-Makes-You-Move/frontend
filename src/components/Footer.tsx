@@ -46,7 +46,11 @@ const Footer: React.FC = () => {
                   className="text-red-500 text-sm mt-1"
                 />
               </div>
-              <Button type="submit" disabled={state.submitting} className="rounded-full w-2/3">
+              <Button
+                type="submit"
+                disabled={state.submitting}
+                className="rounded-full w-full md:w-2/3"
+              >
                 {state.submitting ? 'Joining...' : 'Join newsletter →'}
               </Button>
             </form>
