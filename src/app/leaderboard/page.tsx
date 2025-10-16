@@ -5,6 +5,7 @@ import requireAuth from '@/lib/auth/requireAuth';
 const LeaderboardPage = async () => {
   const session = await requireAuth({ callbackUrl: '/leaderboard' });
 
+  // Fetch leaderboard data (this month)
   const res = await fetch(
     'https://backend.scottmakesyoumove.com/api/v1/leaderboard?page=0&size=10&direction=desc&sortBy=completionRate',
     {
@@ -30,7 +31,31 @@ const LeaderboardPage = async () => {
     streak: Math.round(user.completionRate),
   }));
 
-  const lastMonthWinner = leaderboardData[0]?.name ?? 'N/A';
+  // Fetch recent winner (last month)
+  let lastMonthWinner = 'No winner selected yet';
+
+  try {
+    const winnerRes = await fetch(
+      'https://backend.scottmakesyoumove.com/api/v1/leaderboard/recent-winner',
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store',
+      },
+    );
+
+    if (winnerRes.ok) {
+      const winnerData = await winnerRes.json();
+      lastMonthWinner = winnerData?.fullName || lastMonthWinner;
+    } else if (winnerRes.status !== 404) {
+      console.error('Failed to fetch recent winner:', winnerRes.statusText);
+    }
+  } catch (error) {
+    console.error('Error fetching last month winner:', error);
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-4">
