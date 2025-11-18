@@ -13,6 +13,7 @@ type Props = {
 };
 
 const ProgressFormLoader = ({ accessToken, accountId }: Props) => {
+  console.log('🚀 ~ ProgressFormLoader ~ accountId:', accountId);
   const [ready, setReady] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
@@ -31,25 +32,23 @@ const ProgressFormLoader = ({ accessToken, accountId }: Props) => {
 
         if (!res.ok) {
           const data = await res.json();
-          const message = data?.message || 'Account registration failed';
+          const knownDuplicateError =
+            data?.detail?.includes('already associated with the session') ||
+            data?.message?.includes('already exists');
 
-          // TODO: Handle this in the backend to avoid duplicates
-          // Fallback for now: if it’s a known duplicate, skip the error
-          if (
-            message.includes('already associated with the session') ||
-            message.includes('already exists')
-          ) {
+          if (knownDuplicateError) {
             setReady(true);
             return;
           }
 
-          throw new Error(message);
+          throw new Error(data?.detail || data?.message || 'Account registration failed');
         }
 
         setReady(true);
       } catch (err: any) {
         setErrorMessage(err.message || 'Something went wrong');
         setShowToast(true);
+        setReady(true); // fail gracefully
       }
     };
 
