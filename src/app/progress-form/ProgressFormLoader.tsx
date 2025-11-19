@@ -13,7 +13,6 @@ type Props = {
 };
 
 const ProgressFormLoader = ({ accessToken, accountId }: Props) => {
-  console.log('🚀 ~ ProgressFormLoader ~ accountId:', accountId);
   const [ready, setReady] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
@@ -27,7 +26,10 @@ const ProgressFormLoader = ({ accessToken, accountId }: Props) => {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${accessToken}`,
           },
-          body: JSON.stringify({ accountId }),
+          body: JSON.stringify({
+            accountId,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+          }),
         });
 
         if (!res.ok) {
