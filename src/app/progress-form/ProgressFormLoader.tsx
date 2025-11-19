@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { User, Move } from 'lucide-react';
 import ProgressFormSection from './ProgressFormSection';
 import Toast from '@/components/ui/Toast';
@@ -17,44 +17,49 @@ const ProgressFormLoader = ({ accessToken, accountId }: Props) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
 
-  useEffect(() => {
-    const ensureAccountExists = async () => {
-      try {
-        const res = await fetch('https://backend.scottmakesyoumove.com/api/v1/account', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify({
-            accountId,
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
-          }),
-        });
+  // Preventing multiple POST calls to /account
+  const hasAttemptedRef = useRef(false);
 
-        if (!res.ok) {
-          const data = await res.json();
-          const knownDuplicateError =
-            data?.detail?.includes('already associated with the session') ||
-            data?.message?.includes('already exists');
+  const ensureAccountExists = async () => {
+    try {
+      const res = await fetch('https://backend.scottmakesyoumove.com/api/v1/account', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          accountId,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+        }),
+      });
 
-          if (knownDuplicateError) {
-            setReady(true);
-            return;
-          }
+      if (!res.ok) {
+        const data = await res.json();
 
-          throw new Error(data?.detail || data?.message || 'Account registration failed');
+        const knownDuplicateError =
+          data?.detail?.includes('already associated with the session') ||
+          data?.message?.includes('already exists');
+
+        if (knownDuplicateError) {
+          setReady(true);
+          return;
         }
 
-        setReady(true);
-      } catch (err: any) {
-        setErrorMessage(err.message || 'Something went wrong');
-        setShowToast(true);
-        setReady(true); // fail gracefully
+        throw new Error(data?.detail || data?.message || 'Account registration failed');
       }
-    };
 
-    if (accountId && accessToken) {
+      setReady(true);
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Something went wrong');
+      setShowToast(true);
+      setReady(true); // allow UI to load even on error
+    }
+  };
+
+  useEffect(() => {
+    if (accountId && accessToken && !hasAttemptedRef.current) {
+      hasAttemptedRef.current = true;
       ensureAccountExists();
     }
   }, [accountId, accessToken]);
