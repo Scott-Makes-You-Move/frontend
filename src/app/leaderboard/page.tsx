@@ -7,7 +7,7 @@ const LeaderboardPage = async () => {
 
   // Fetch leaderboard data (this month)
   const res = await fetch(
-    'https://backend.scottmakesyoumove.com/api/v1/leaderboard?page=0&size=10&direction=desc&sortBy=completionRate',
+    'https://backend.scottmakesyoumove.com/api/v1/leaderboard?page=0&size=10&direction=asc&sortBy=score',
     {
       method: 'GET',
       headers: {
@@ -28,7 +28,7 @@ const LeaderboardPage = async () => {
     id: index + 1,
     name: user.fullName,
     rank: index + 1,
-    streak: Math.round(user.completionRate),
+    score: user.score,
   }));
 
   // Fetch recent winner (last month)

@@ -2,7 +2,7 @@ export type LeaderboardUser = {
   id: number;
   name: string;
   rank: number;
-  streak: number;
+  score: number;
 };
 
 interface LeaderboardTableProps {
@@ -26,7 +26,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ data }) => {
   return (
     <table
       className="w-full border-collapse"
-      aria-label="Leaderboard table displaying ranks, names, and streaks"
+      aria-label="Leaderboard table displaying ranks, names, and scores"
     >
       <thead className="bg-gray-50">
         <tr>
@@ -37,7 +37,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ data }) => {
             Name
           </th>
           <th scope="col" className="text-right p-3 font-title">
-            Streak
+            Score
           </th>
         </tr>
       </thead>
@@ -60,9 +60,9 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ data }) => {
             <td className="p-3 text-right">
               <span
                 className="bg-primary text-background py-1 px-3 rounded-full text-sm font-medium"
-                aria-label={`Streak: ${user.streak}%`}
+                aria-label={`Score: ${user.score}%`}
               >
-                {user.streak}%
+                {user.score}%
               </span>
             </td>
           </tr>
