@@ -60,9 +60,9 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ data }) => {
             <td className="p-3 text-right">
               <span
                 className="bg-primary text-background py-1 px-3 rounded-full text-sm font-medium"
-                aria-label={`Score: ${user.score}%`}
+                aria-label={`Score: ${user.score ?? '-'}`}
               >
-                {user.score}%
+                {user.score === null ? '-' : user.score}
               </span>
             </td>
           </tr>
