@@ -39,7 +39,6 @@ jobs:
             --build-arg NEXT_DATOCMS_DRAFT_CONTENT_CDA_TOKEN=${{ secrets.NEXT_DATOCMS_DRAFT_CONTENT_CDA_TOKEN }} \
             --build-arg NEXT_DATOCMS_PUBLISHED_CONTENT_CDA_TOKEN=${{ secrets.NEXT_DATOCMS_PUBLISHED_CONTENT_CDA_TOKEN }} \
             -t ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} \
-            -t ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest \
             .
 
       - name: Push image to ACR
