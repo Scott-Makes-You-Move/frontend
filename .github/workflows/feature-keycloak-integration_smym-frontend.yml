@@ -16,7 +16,7 @@ env:
   ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
   ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
   IMAGE_NAME: frontend-service
-  IMAGE_TAG: ${{ github.sha }}
+  IMAGE_TAG: 1.0.0
 
 jobs:
   build-and-deploy:
