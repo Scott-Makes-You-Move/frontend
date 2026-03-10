@@ -1,3 +1,5 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
 
 name: Build and deploy Next.js app to Azure Web App
 
@@ -10,13 +12,25 @@ on:
 env:
   APPLICATION_PUBLISH_PROFILE: ${{ secrets.APP_PUBLISH_PROFILE }}
   WEBAPP_NAME: 'smym-frontend'
+  ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
+  ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
+  ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
+  IMAGE_NAME: smym-frontend
+  IMAGE_TAG: ${{ github.sha }}
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Log in to Azure Container Registry
+        run: |
+          echo "${{ secrets.ACR_PASSWORD }}" | docker login \
+            ${{ secrets.ACR_LOGIN_SERVER }} \
+            -u ${{ secrets.ACR_USERNAME }} \
+            --password-stdin
 
       - name: Build Docker image
         run: |
@@ -24,13 +38,18 @@ jobs:
             --build-arg NEXT_DATOCMS_CMA_TOKEN=${{ secrets.NEXT_DATOCMS_CMA_TOKEN }} \
             --build-arg NEXT_DATOCMS_DRAFT_CONTENT_CDA_TOKEN=${{ secrets.NEXT_DATOCMS_DRAFT_CONTENT_CDA_TOKEN }} \
             --build-arg NEXT_DATOCMS_PUBLISHED_CONTENT_CDA_TOKEN=${{ secrets.NEXT_DATOCMS_PUBLISHED_CONTENT_CDA_TOKEN }} \
-            -t smym-frontend .
+            -t ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} \
+            -t ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest \
+            .
 
-      - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
+      - name: Push image to ACR
+        run: |
+          docker push ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          docker push ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:latest
+
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.WEBAPP_NAME }}
-          slot-name: 'Production'
-          publish-profile: ${{ env.APPLICATION_PUBLISH_PROFILE }}
-          package: ./build/standalone
+          publish-profile: ${{ secrets.APP_PUBLISH_PROFILE }}
+          images: ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
