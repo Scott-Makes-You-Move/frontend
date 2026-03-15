@@ -2,7 +2,6 @@ import React from 'react';
 import Image from 'next/image';
 import { draftMode } from 'next/headers';
 import { StructuredText } from 'react-datocms';
-import requireAuth from '@/lib/auth/requireAuth';
 import { graphql } from '@/lib/datocms/graphql';
 import { executeQuery } from '@/lib/datocms/executeQuery';
 import { Button } from '@/components/ui/Button';
@@ -130,7 +129,6 @@ const query = graphql<string, never>(`
 export const revalidate = 60;
 
 const Home = async () => {
-  await requireAuth({ callbackUrl: '/' });
   const { isEnabled: isDraftModeEnabled } = await draftMode();
   const { page } = await executeQuery<PageQueryResult, never>(query, {
     includeDrafts: isDraftModeEnabled,
