@@ -17,6 +17,12 @@ resources:
     cpu: 500m
     memory: 512Mi
 
+envFrom:
+  - configMapRef:
+      name: frontend-service-config
+  - secretRef:
+      name: frontend-sealed-secret
+
 service:
   type: ClusterIP
   port: 80

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-service-config
+data:
+  KEYCLOAK_CLIENT_ID: "smym-frontend-client"
+  KEYCLOAK_ISSUER: "https://keycloak.scottmakesyoumove.com/realms/smym-dev"
+  NEXTAUTH_URL: "https://scottmakesyoumove.com"
+  WEBSITE_RUN_FROM_PACKAGE: "1"
+  WEBSITES_ENABLE_APP_SERVICE_STORAGE: "false"

@@ -23,9 +23,13 @@ spec:
               containerPort: {{ .Values.service.targetPort }}
               protocol: TCP
           env:
-            - name: NEXT_PUBLIC_BACKEND_URL
-              value: {{ .Values.backend.publicUrl | quote }}
-            - name: BACKEND_URL
-              value: {{ .Values.backend.internalUrl | quote }}
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          envFrom:
+            {{- toYaml .Values.envFrom | nindent 12 }}
+            - secretRef:
+                name: frontend-sealed-secret
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
