@@ -29,7 +29,5 @@ spec:
             {{- end }}
           envFrom:
             {{- toYaml .Values.envFrom | nindent 12 }}
-            - secretRef:
-                name: frontend-sealed-secret
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
