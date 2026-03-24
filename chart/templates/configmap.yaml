@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-service-config
+data:
+  KEYCLOAK_CLIENT_ID: "smym-frontend-client"
+  KEYCLOAK_ISSUER: "http://keycloak-service-keycloak-chart.default.svc.cluster.local:8080/realms/smym-dev"
+  NEXTAUTH_URL: "http://frontend.local"
+  NODE_ENV: "development"

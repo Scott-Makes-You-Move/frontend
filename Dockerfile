@@ -3,7 +3,7 @@ FROM node:20.11-alpine AS deps
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci --legacy-peer-deps
+RUN npm ci --legacy-peer-deps --fetch-timeout=600000
 
 
 # ---- Stage 2: Build ----
@@ -31,14 +31,16 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# Don't run as root
 RUN addgroup --system --gid 1001 nodejs && \
     adduser  --system --uid 1001 nextjs
 
-# Copy only what the standalone output needs
 COPY --from=builder /app/build/standalone ./
 COPY --from=builder /app/build/static ./build/static
 COPY --from=builder /app/public ./public
+
+# Fix permissions for nextjs user
+RUN mkdir -p build/cache build/server && \
+    chown -R nextjs:nodejs build/
 
 USER nextjs
 
