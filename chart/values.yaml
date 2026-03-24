@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: smymregistry.azurecr.io/frontend-service
-  tag: "1.0.1"
+  tag: "1.0.0"
   pullPolicy: IfNotPresent
 
 resources:
@@ -32,8 +32,9 @@ ingress:
   enabled: true
   className: nginx
   annotations:
+    kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
     nginx.ingress.kubernetes.io/proxy-buffers-number: "4"
-  host: frontend.local
+  host: scottmakesyoumove.com
 
 hostAliases: []
