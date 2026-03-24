@@ -17,6 +17,9 @@ resources:
     cpu: 500m
     memory: 512Mi
 
+env:
+  HOSTNAME: "0.0.0.0"
+
 envFrom:
   - configMapRef:
       name: frontend-service-config
