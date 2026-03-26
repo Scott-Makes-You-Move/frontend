@@ -123,6 +123,7 @@
             'https://backend.scottmakesyoumove.com/api/v1/chatbot/initiate',
             {
               method: 'POST',
+              credentials: 'include',
               headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${bearerToken}`,
@@ -227,6 +228,7 @@
               'https://backend.scottmakesyoumove.com/api/v1/chatbot/initiate',
               {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                   'Content-Type': 'application/json',
                   Authorization: `Bearer ${bearerToken}`,
@@ -234,7 +236,7 @@
                 body: JSON.stringify(payload),
               },
             );
-            /* 
+            /*
             // Step 4: Wait for Zapier to process (~3-5 seconds)
             await new Promise((resolve) => setTimeout(resolve, 4000));
 
