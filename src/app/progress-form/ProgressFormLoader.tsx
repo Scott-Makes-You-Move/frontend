@@ -12,6 +12,8 @@ type Props = {
   accountId: string;
 };
 
+const BACKEND_HOST = process.env.BACKEND_HOST ?? 'http://localhost:8080';
+
 const ProgressFormLoader = ({ accessToken, accountId }: Props) => {
   const [ready, setReady] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -22,7 +24,7 @@ const ProgressFormLoader = ({ accessToken, accountId }: Props) => {
 
   const ensureAccountExists = async () => {
     try {
-      const res = await fetch('https://backend.scottmakesyoumove.com/api/v1/account', {
+      const res = await fetch(`${BACKEND_HOST}/api/v1/account`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
