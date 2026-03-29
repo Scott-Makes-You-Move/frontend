@@ -126,7 +126,7 @@ const query = graphql<string, never>(`
   }
 `);
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic'
 
 const Home = async () => {
   const { isEnabled: isDraftModeEnabled } = await draftMode();
