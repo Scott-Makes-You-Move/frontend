@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "chart.fullname" . }}
+  name: {{ include "smym-frontend.fullname" . }}
   labels:
-    {{- include "chart.labels" . | nindent 4 }}
+    {{- include "smym-frontend.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "chart.selectorLabels" . | nindent 6 }}
+      {{- include "smym-frontend.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "chart.selectorLabels" . | nindent 8 }}
+        {{- include "smym-frontend.selectorLabels" . | nindent 8 }}
     spec:
       hostAliases:
           {{- toYaml .Values.hostAliases | nindent 8 }}

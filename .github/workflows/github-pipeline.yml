@@ -78,7 +78,7 @@ jobs:
 
       - name: Deploy Frontend
         run: |
-          helm upgrade --install smym-${{ env.ENVIRONMENT }} ./chart \
+          helm upgrade --install smym-${{ env.ENVIRONMENT }}-${{ env.IMAGE_NAME }} ./chart \
             --namespace smym-${{ env.ENVIRONMENT }} \
             --create-namespace \
             -f ./chart/values-${{ env.ENVIRONMENT }}.yaml \
