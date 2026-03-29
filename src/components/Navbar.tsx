@@ -227,7 +227,6 @@ const Navbar = forwardRef<NavbarHandle, NavbarProps>(
                       <Logout />
                     </div>
                   )}
-                  
                 </motion.div>
               )}
             </AnimatePresence>
