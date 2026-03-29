@@ -79,7 +79,7 @@ const query = graphql<string, never>(/* GraphQL */ `
   }
 `);
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic'
 
 const WorkoutPage: React.FC = async () => {
   await requireAuth({ callbackUrl: '/mini-workouts' });
