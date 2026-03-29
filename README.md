@@ -1,6 +1,6 @@
 # 🏃‍♂️ Scott Makes You Move - Frontend
 
-This is the **frontend** for _Scott Makes You Move_, a movement and vitality tracking web app designed to encourage daily activity, track progress, and engage users through gamification.
+This is the **frontend** for _Scott Makes You Move_, a movement and vitality tracking webapp designed to encourage daily activity, track progress, and engage users through gamification.
 
 🚀 **Built with:**
 
