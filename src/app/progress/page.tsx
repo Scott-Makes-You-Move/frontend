@@ -3,6 +3,7 @@ import ProgressDashboard from './ProgressDashboard';
 
 export default async function ProgressPage() {
   const session = await requireAuth({ callbackUrl: '/progress' });
+  const BACKEND_HOST = process.env.BACKEND_HOST ?? 'http://localhost:8080';
 
   const { accountId, accessToken } = session;
 
@@ -12,11 +13,11 @@ export default async function ProgressPage() {
   };
 
   const [biometricsRes, mobilityRes] = await Promise.all([
-    fetch(`https://backend.scottmakesyoumove.com/api/v1/account/${accountId}/biometrics`, {
+    fetch(`${BACKEND_HOST}/api/v1/account/${accountId}/biometrics`, {
       headers,
       cache: 'no-store',
     }),
-    fetch(`https://backend.scottmakesyoumove.com/api/v1/account/${accountId}/mobilities`, {
+    fetch(`${BACKEND_HOST}/api/v1/account/${accountId}/mobilities`, {
       headers,
       cache: 'no-store',
     }),

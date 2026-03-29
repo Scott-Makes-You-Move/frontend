@@ -13,6 +13,7 @@ type Props = {
 
 const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
   const isBiometric = type === 'biometrics';
+  const BACKEND_HOST = process.env.BACKEND_HOST ?? 'http://localhost:8080';
 
   const initialState = isBiometric
     ? { measuredOn: '', weight: '', fat: '', visceralFat: '' }
@@ -69,7 +70,7 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
     );
 
     const res = await fetch(
-      `https://backend.scottmakesyoumove.com/api/v1/account/${accountId}/${type}`,
+      `${BACKEND_HOST}/api/v1/account/${accountId}/${type}`,
       {
         method: 'POST',
         headers: {
