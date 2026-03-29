@@ -11,6 +11,58 @@ export interface NavbarHandle {
   getHeight: () => number;
 }
 
+export type NavbarLink = {
+  label: string;
+  href: string;
+  kind?: 'route' | 'anchor';
+};
+
+export type NavbarAppearance = 'solid' | 'overlay';
+
+export type NavbarCTA = {
+  label: string;
+  href: string;
+  kind?: 'route' | 'anchor';
+};
+
+interface NavbarProps {
+  appearance?: NavbarAppearance;
+  links?: NavbarLink[];
+  cta?: NavbarCTA;
+  showLogout?: boolean;
+}
+
+const DEFAULT_APP_LINKS: NavbarLink[] = [
+  { label: 'About', href: '/about', kind: 'route' },
+  { label: 'Contact', href: '/contact', kind: 'route' },
+];
+
+const navItem = ({
+  item,
+  onClick,
+  className,
+}: {
+  item: NavbarLink | NavbarCTA;
+  onClick?: () => void;
+  className?: string;
+}) => {
+  const kind = item.kind ?? (item.href.startsWith('#') ? 'anchor' : 'route');
+
+  if (kind === 'anchor') {
+    return (
+      <a href={item.href} onClick={onClick} className={className}>
+        {item.label}
+      </a>
+    );
+  }
+
+  return (
+    <Link href={item.href} onClick={onClick} className={className}>
+      {item.label}
+    </Link>
+  );
+};
+
 const Navbar = forwardRef<NavbarHandle>((_, ref) => {
   const navRef = useRef<HTMLElement>(null);
   const [isOpen, setIsOpen] = useState(false);
