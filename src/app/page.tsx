@@ -69,7 +69,7 @@ function useCountUp(end: number, duration = 2000, start = false) {
   }, [end, duration, start]);
   return count;
 }
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic';
 
 /* ─── Navigation ─── */
 function Navbar() {
