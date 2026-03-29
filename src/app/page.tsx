@@ -1113,7 +1113,7 @@ function Footer() {
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col overflow-x-hidden">
-      <Navbar />
+      {/* <Navbar /> */}
       <main>
         <HeroSection />
         <StatsBar />
