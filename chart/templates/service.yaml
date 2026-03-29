@@ -2,7 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "smym-frontend.fullname" . }}
-  labels: { { - include "smym-frontend.labels" . | nindent 4 } }
+  labels:
+    {{- include "smym-frontend.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -10,4 +11,5 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
-  selector: {{ - include "smym-frontend.selectorLabels" . | nindent 4 }}
+  selector:
+    {{- include "smym-frontend.selectorLabels" . | nindent 4 }}
