@@ -10,7 +10,8 @@ env:
   ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
   ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
   ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
-  IMAGE_NAME: frontend-service
+  IMAGE_NAME: frontend
+  ENVIRONMENT: 'prod'
 
 jobs:
   build:
@@ -80,8 +81,10 @@ jobs:
 
       - name: Deploy Frontend
         run: |
-          helm upgrade --install frontend ./chart \
-            --namespace default \
+          helm upgrade --install smym-${{ env.ENVIRONMENT }} ./chart \
+            --namespace smym-${{ env.ENVIRONMENT }} \
+            --create-namespace \
+            -f ./chart/values-${{ env.ENVIRONMENT }}.yaml \
             --set image.repository=${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }} \
             --set image.tag=${{ needs.build.outputs.image_tag }} \
             --wait
