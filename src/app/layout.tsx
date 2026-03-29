@@ -8,6 +8,7 @@ import Footer from '@/components/Footer';
 import { Providers } from './Providers';
 import SessionGuard from '@/components/SessionGuard';
 import ChatWidget from '@/components/ChatWidget';
+import { getNavConfig, resolveRouteMeta } from '@/lib/navigation/navigation';
 
 type NavbarConfig = {
   appearance: NavbarAppearance;
@@ -51,45 +52,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const [navHeight, setNavHeight] = useState(80);
   const pathname = usePathname();
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (navbarRef.current) {
-        setNavHeight(navbarRef.current.getHeight());
-      }
-    };
-
-    handleResize(); // initial
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useEffect(() => {
-    if (navbarRef.current) {
-      setNavHeight(navbarRef.current.getHeight());
-    }
-  }, [pathname]);
-
-  const isPilotChallenge = pathname === '/pilot-challenge';
-  const navbarConfig = getNavbarConfig(pathname);
+  const routeMeta = resolveRouteMeta(pathname);
+  const navbarConfig = getNavConfig(pathname);
 
   return (
     <html lang="en">
       <body className="antialiased flex min-h-screen flex-col">
         <Providers>
           <SessionGuard>
-            {!isPilotChallenge && <Navbar ref={navbarRef} {...navbarConfig} />}
+            {routeMeta.showNavbar !== false && <Navbar ref={navbarRef} {...navbarConfig} />}
             <main
               className="flex-1 w-full bg-gray-100 text-center"
               style={
-                !isPilotChallenge
+                routeMeta.showNavbar !== false
                   ? { paddingTop: navHeight, paddingBottom: 'var(--footer-height)' }
                   : { paddingTop: 0, paddingBottom: 0 }
               }
             >
               {children}
-              {!isPilotChallenge && <ChatWidget />}
+              {routeMeta.showNavbar !== false && <ChatWidget />}
             </main>
-            {!isPilotChallenge && <Footer />}
+            {routeMeta.showNavbar !== false && <Footer />}
           </SessionGuard>
         </Providers>
       </body>
