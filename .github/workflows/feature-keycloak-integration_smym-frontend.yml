@@ -35,15 +35,15 @@ jobs:
       - name: Update Chart.yaml and values.yaml version
         run: |
           sed -i "s/^appVersion:.*/appVersion: \"${{ env.IMAGE_TAG }}\"/" ./chart/Chart.yaml
-          sed -i "s/^  tag:.*/  tag: \"${{ env.IMAGE_TAG }}\"/" ./chart/values.yaml
+          sed -i "s/^  tag:.*/  tag: \"${{ env.IMAGE_TAG }}\"/" ./chart/values-${{ env.ENVIRONMENT }}.yaml
 
       - name: Commit version bumps
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add ./chart/Chart.yaml ./chart/values.yaml
-          git commit -m "chore: bump version to ${{ env.IMAGE_TAG }}"
-          git push origin HEAD:main
+          git add ./chart/Chart.yaml ./chart/values-${{ env.ENVIRONMENT }}.yaml
+          git diff --staged --quiet || git commit -m "chore: bump version to ${{ env.IMAGE_TAG }}"
+          git push origin HEAD:main || echo "Nothing to push"
 
       - name: Log in to ACR
         uses: docker/login-action@v2
@@ -55,9 +55,6 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
-            --build-arg NEXT_DATOCMS_CMA_TOKEN=${{ secrets.NEXT_DATOCMS_CMA_TOKEN }} \
-            --build-arg NEXT_DATOCMS_DRAFT_CONTENT_CDA_TOKEN=${{ secrets.NEXT_DATOCMS_DRAFT_CONTENT_CDA_TOKEN }} \
-            --build-arg NEXT_DATOCMS_PUBLISHED_CONTENT_CDA_TOKEN=${{ secrets.NEXT_DATOCMS_PUBLISHED_CONTENT_CDA_TOKEN }} \
             -t ${{ env.ACR_LOGIN_SERVER }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} \
             .
 
