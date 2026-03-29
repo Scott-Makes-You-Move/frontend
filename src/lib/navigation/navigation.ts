@@ -55,12 +55,14 @@ const ROUTE_RULES: RouteRule[] = [
       showFooter: true,
     },
   },
+
+  // Protected app areas
   {
     path: '/faq',
     match: 'exact',
     meta: {
       protected: false,
-      navContext: 'public-standard',
+      navContext: 'authenticated-app',
       showNavbar: true,
       showFooter: true,
     },
@@ -75,8 +77,6 @@ const ROUTE_RULES: RouteRule[] = [
       showFooter: false,
     },
   },
-
-  // Protected app areas
   {
     path: '/sessions',
     match: 'startsWith',

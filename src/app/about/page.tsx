@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import requireAuth from '@/lib/auth/requireAuth';
 import { executeQuery } from '@/lib/datocms/executeQuery';
 import { graphql } from '@/lib/datocms/graphql';
 import { StructuredText } from 'react-datocms';
@@ -74,7 +73,6 @@ const query = graphql<string, never>(`
 export const dynamic = 'force-dynamic';
 
 const AboutPage = async () => {
-  await requireAuth({ callbackUrl: '/about' });
   const { isEnabled: isDraftModeEnabled } = await draftMode();
   const { page } = await executeQuery<PageQueryResult, never>(query, {
     includeDrafts: isDraftModeEnabled,
