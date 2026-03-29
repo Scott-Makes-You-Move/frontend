@@ -32,12 +32,7 @@ interface NavbarProps {
   showLogout?: boolean;
 }
 
-const DEFAULT_APP_LINKS: NavbarLink[] = [
-  { label: 'About', href: '/about', kind: 'route' },
-  { label: 'Contact', href: '/contact', kind: 'route' },
-];
-
-const NavItem = ({
+function NavItem({
   item,
   onClick,
   className,
@@ -45,7 +40,7 @@ const NavItem = ({
   item: NavbarLink | NavbarCTA;
   onClick?: () => void;
   className?: string;
-}) => {
+}) {
   const kind = item.kind ?? (item.href.startsWith('#') ? 'anchor' : 'route');
 
   if (kind === 'anchor') {
@@ -61,12 +56,13 @@ const NavItem = ({
       {item.label}
     </Link>
   );
-};
+}
 
 const Navbar = forwardRef<NavbarHandle, NavbarProps>(
-  ({ appearance = 'solid', links = DEFAULT_APP_LINKS, cta, showLogout = true }, ref) => {
+  ({ appearance = 'solid', links = [], cta, showLogout = false }, ref) => {
     const navRef = useRef<HTMLElement>(null);
     const [isOpen, setIsOpen] = useState(false);
+
     const toggleMenu = () => setIsOpen((prev) => !prev);
 
     useImperativeHandle(ref, () => ({
@@ -83,25 +79,11 @@ const Navbar = forwardRef<NavbarHandle, NavbarProps>(
       ? 'fixed top-4 left-1/2 z-50 -translate-x-1/2 w-[95%] max-w-screen-lg rounded-full px-6 py-3 flex items-center justify-between transition-all duration-300 bg-primary/90 backdrop-blur-md shadow-lg'
       : 'fixed top-4 left-1/2 z-50 -translate-x-1/2 w-[95%] max-w-screen-lg rounded-full px-6 py-3 flex items-center justify-between bg-primary shadow-lg';
 
-    const desktopLinkClasses = isOverlay
-      ? 'text-white hover:text-accent transition-colors'
-      : 'text-white hover:text-accent transition-colors';
+    const desktopLinkClasses = 'text-white hover:text-accent transition-colors';
 
     const mobileMenuClasses = isOverlay
       ? 'absolute -right-3 top-10 mt-2 w-56 bg-primary/95 backdrop-blur-md border border-border rounded-xl shadow-lg z-50'
       : 'absolute -right-3 top-10 mt-2 w-56 bg-primary border border-border rounded-xl shadow-lg z-50';
-
-    /* const mobileLinks: [string, string][] = [
-      ['Home', '/'],
-      ['Sessions', '/sessions'],
-      ['Progress', '/progress'],
-      ['Leaderboard', '/leaderboard'],
-      ['Mini Workouts', '/mini-workouts'],
-    ]; */
-
-    /* useImperativeHandle(ref, () => ({
-      getHeight: () => navRef.current?.offsetHeight || 0,
-    })); */
 
     return (
       <header ref={navRef} className={headerClasses}>
@@ -110,8 +92,7 @@ const Navbar = forwardRef<NavbarHandle, NavbarProps>(
         </Link>
 
         <div className="flex items-center gap-4">
-          {/* Desktop Links */}
-          <nav className="hidden md:flex items-center gap-6 font-medium text-foreground">
+          <nav className="hidden md:flex items-center gap-6 font-medium">
             {links.map((link) => (
               <NavItem
                 key={`${link.kind ?? 'auto'}-${link.href}`}
@@ -119,6 +100,7 @@ const Navbar = forwardRef<NavbarHandle, NavbarProps>(
                 className={desktopLinkClasses}
               />
             ))}
+
             {cta && (
               <NavItem
                 item={cta}
@@ -127,17 +109,9 @@ const Navbar = forwardRef<NavbarHandle, NavbarProps>(
             )}
 
             {showLogout && <Logout />}
-            {/* <Link href="/about" className="text-white hover:text-accent transition-colors">
-              About
-            </Link>
-            <Link href="/contact" className="text-white hover:text-accent transition-colors">
-              Contact
-            </Link>
-            <Logout /> */}
           </nav>
 
-          {/* Mobile Toggle + Dropdown */}
-          <div className="relative">
+          <div className="relative md:hidden">
             <Button
               onClick={toggleMenu}
               size="icon"
@@ -162,7 +136,7 @@ const Navbar = forwardRef<NavbarHandle, NavbarProps>(
                   <motion.svg
                     key="hamburger"
                     xmlns="http://www.w3.org/2000/svg"
-                    className="w-6 h-6 text-foreground"
+                    className="h-6 w-6 text-foreground"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -192,17 +166,6 @@ const Navbar = forwardRef<NavbarHandle, NavbarProps>(
                   transition={{ duration: 0.2 }}
                   className={mobileMenuClasses}
                 >
-                  {/* {mobileLinks.map(([label, href]) => (
-                    <Link
-                      key={href}
-                      href={href}
-                      onClick={() => setIsOpen(false)}
-                      className="block px-4 py-2 text-background hover:bg-accent hover:text-background transition-colors"
-                    >
-                      {label}
-                    </Link>
-                  ))} */}
-
                   {links.map((link) => (
                     <NavItem
                       key={`${link.kind ?? 'auto'}-${link.href}`}

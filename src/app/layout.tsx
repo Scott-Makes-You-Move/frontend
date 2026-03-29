@@ -10,14 +10,14 @@ import SessionGuard from '@/components/SessionGuard';
 import ChatWidget from '@/components/ChatWidget';
 import { getNavConfig, resolveRouteMeta } from '@/lib/navigation/navigation';
 
-type NavbarConfig = {
+/* type NavbarConfig = {
   appearance: NavbarAppearance;
   links: NavbarLink[];
   cta?: NavbarCTA;
   showLogout: boolean;
-};
+}; */
 
-const getNavbarConfig = (pathname: string | null): NavbarConfig => {
+/* const getNavbarConfig = (pathname: string | null): NavbarConfig => {
   if (pathname === '/') {
     return {
       appearance: 'overlay',
@@ -45,7 +45,7 @@ const getNavbarConfig = (pathname: string | null): NavbarConfig => {
     ],
     showLogout: true,
   };
-};
+}; */
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const navbarRef = useRef<NavbarHandle>(null);
