@@ -23,6 +23,7 @@ env:
   KEYCLOAK_CLIENT_ID: 'frontend-client'
   KEYCLOAK_ISSUER: 'http://keycloak.keycloak.svc.cluster.local:8080/realms/smym-prod'
   NEXTAUTH_URL: 'https://scottmakesyoumove.com'
+  NEXT_PUBLIC_BACKEND_HOST: 'https://backend.scottmakesyoumove.com'
   NODE_ENV: 'development'
 
 envFrom:
