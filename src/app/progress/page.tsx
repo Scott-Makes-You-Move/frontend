@@ -12,14 +12,20 @@ export default async function ProgressPage() {
   };
 
   const [biometricsRes, mobilityRes] = await Promise.all([
-    fetch(`https://backend.scottmakesyoumove.com/api/v1/account/${accountId}/biometrics`, {
-      headers,
-      cache: 'no-store',
-    }),
-    fetch(`https://backend.scottmakesyoumove.com/api/v1/account/${accountId}/mobilities`, {
-      headers,
-      cache: 'no-store',
-    }),
+    fetch(
+      `http://smym-prod-backend.smym-prod.svc.cluster.local:8080/api/v1/account/${accountId}/biometrics`,
+      {
+        headers,
+        cache: 'no-store',
+      },
+    ),
+    fetch(
+      `http://smym-prod-backend.smym-prod.svc.cluster.local:8080/api/v1/account/${accountId}/mobilities`,
+      {
+        headers,
+        cache: 'no-store',
+      },
+    ),
   ]);
 
   if (!biometricsRes.ok || !mobilityRes.ok) {
