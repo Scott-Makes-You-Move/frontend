@@ -15,7 +15,7 @@ type SessionItem = {
   status: 'completed' | 'not-completed';
 };
 
-const BACKEND_HOST = process.env.BACKEND_HOST ?? 'http://localhost:8080';
+const BACKEND_HOST = process.env.NEXT_PUBLIC_BACKEND_HOST ?? 'http://localhost:8080';
 
 const SessionsPage = ({ accountId, accessToken }: SessionsPageProps) => {
   const [date, setDate] = useState<Date>(new Date());

@@ -23,6 +23,7 @@ env:
   KEYCLOAK_CLIENT_ID: 'frontend-client'
   KEYCLOAK_ISSUER: 'http://keycloak.local/realms/smym-local'
   NEXTAUTH_URL: 'http://frontend.local'
+  NEXT_PUBLIC_BACKEND_HOST: 'http://backend.local'
   NODE_ENV: 'development'
 
 envFrom:
