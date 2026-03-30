@@ -120,7 +120,7 @@
         try {
           // Fire the initial request
           const response = await fetch(
-            `https://backend.scottmakesyoumove.com/api/v1/chatbot/initiate`,
+            `http://smym-prod-backend.smym-prod.svc.cluster.local:8080/api/v1/chatbot/initiate`,
             {
               method: 'POST',
               credentials: 'include',
@@ -140,7 +140,7 @@
           while (!aiResponse && attempts < maxAttempts) {
             await new Promise((resolve) => setTimeout(resolve, 1000)); // 1s delay
             const check = await fetch(
-              `https://backend.scottmakesyoumove.com/api/v1/chatbot/initiate`, // same endpoint for polling
+              `http://smym-prod-backend.smym-prod.svc.cluster.local:8080/api/v1/chatbot/initiate`, // same endpoint for polling
               {
                 method: 'POST',
                 headers: {
@@ -225,7 +225,7 @@
 
             // Step 3: Send user message to Zapier via backend
             const response = await fetch(
-              `https://backend.scottmakesyoumove.com/api/v1/chatbot/initiate`,
+              `http://smym-prod-backend.smym-prod.svc.cluster.local:8080/api/v1/chatbot/initiate`,
               {
                 method: 'POST',
                 credentials: 'include',
@@ -242,7 +242,7 @@
 
             // Step 5: Re-fetch the same message to get the AI response
             const response = await fetch(
-              `https://backend.scottmakesyoumove.com/api/v1/chatbot/initiate`,
+              `http://smym-prod-backend.smym-prod.svc.cluster.local:8080/api/v1/chatbot/initiate`,
               {
                 method: 'POST',
                 headers: {

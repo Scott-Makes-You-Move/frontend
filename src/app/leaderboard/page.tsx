@@ -7,7 +7,7 @@ const LeaderboardPage = async () => {
 
   // Fetch leaderboard data (this month)
   const res = await fetch(
-    `https://backend.scottmakesyoumove.com/api/v1/leaderboard?page=0&size=10&direction=asc&sortBy=score`,
+    `http://smym-prod-backend.smym-prod.svc.cluster.local:8080/api/v1/leaderboard?page=0&size=10&direction=asc&sortBy=score`,
     {
       method: 'GET',
       headers: {
@@ -36,7 +36,7 @@ const LeaderboardPage = async () => {
 
   try {
     const winnerRes = await fetch(
-      `https://backend.scottmakesyoumove.com/api/v1/leaderboard/recent-winner`,
+      `http://smym-prod-backend.smym-prod.svc.cluster.local:8080/api/v1/leaderboard/recent-winner`,
       {
         method: 'GET',
         headers: {

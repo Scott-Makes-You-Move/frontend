@@ -68,7 +68,7 @@ export default async function WatchPage({ params }: PageProps) {
 
   try {
     const sessionRes = await fetch(
-      `https://backend.scottmakesyoumove.com/api/v1/account/${accountId}/sessions/${sessionId}`,
+      `http://smym-prod-backend.smym-prod.svc.cluster.local:8080/api/v1/account/${accountId}/sessions/${sessionId}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
