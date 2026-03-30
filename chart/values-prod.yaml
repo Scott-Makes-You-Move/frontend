@@ -18,10 +18,10 @@ resources:
     memory: 512Mi
 
 env:
+  BACKEND_HOST: 'https://backend.scottmakesyoumove.com'
   HOSTNAME: '0.0.0.0'
   KEYCLOAK_CLIENT_ID: 'frontend-client'
   KEYCLOAK_ISSUER: 'http://keycloak.keycloak.svc.cluster.local:8080/realms/smym-prod'
-  NEXT_PUBLIC_BACKEND_HOST: 'https://backend.scottmakesyoumove.com'
   NEXTAUTH_URL: 'https://scottmakesyoumove.com'
   NODE_ENV: 'development'
 
