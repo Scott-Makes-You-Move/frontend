@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: smymregistry.azurecr.io/frontend-service
-  tag: '2.0.0'
+  tag: "2.0.0"
   pullPolicy: IfNotPresent
 
 resources:
@@ -18,11 +18,11 @@ resources:
     memory: 512Mi
 
 env:
-  HOSTNAME: '0.0.0.0'
-  KEYCLOAK_CLIENT_ID: 'frontend-client'
-  KEYCLOAK_ISSUER: 'http://keycloak.local/realms/smym-local'
-  NEXTAUTH_URL: 'http://frontend.local'
-  NODE_ENV: 'development'
+  HOSTNAME: "0.0.0.0"
+  KEYCLOAK_CLIENT_ID: "frontend-client"
+  KEYCLOAK_ISSUER: "http://keycloak.local/realms/smym-local"
+  NEXTAUTH_URL: "http://frontend.local"
+  NODE_ENV: "development"
 
 envFrom:
   - secretRef:
