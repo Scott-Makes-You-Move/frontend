@@ -36,17 +36,14 @@ const LeaderboardPage = async () => {
   let lastMonthWinner = 'No winner selected yet';
 
   try {
-    const winnerRes = await fetch(
-      `${BACKEND_HOST}/api/v1/leaderboard/recent-winner`,
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${session.accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        cache: 'no-store',
+    const winnerRes = await fetch(`${BACKEND_HOST}/api/v1/leaderboard/recent-winner`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+        'Content-Type': 'application/json',
       },
-    );
+      cache: 'no-store',
+    });
 
     if (winnerRes.ok) {
       const winnerData = await winnerRes.json();
