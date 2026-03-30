@@ -15,8 +15,6 @@ type SessionItem = {
   status: 'completed' | 'not-completed';
 };
 
-const BACKEND_HOST = process.env.NEXT_PUBLIC_BACKEND_HOST ?? 'http://localhost:8080';
-
 const SessionsPage = ({ accountId, accessToken }: SessionsPageProps) => {
   const [date, setDate] = useState<Date>(new Date());
   const [sessionItems, setSessionItems] = useState<SessionItem[]>([]);
@@ -24,12 +22,15 @@ const SessionsPage = ({ accountId, accessToken }: SessionsPageProps) => {
   useEffect(() => {
     const fetchSessions = async () => {
       try {
-        const res = await fetch(`${BACKEND_HOST}/api/v1/account/${accountId}/sessions`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
+        const res = await fetch(
+          `https://backend.scottmakesyoumove.com/api/v1/account/${accountId}/sessions`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
           },
-        });
+        );
 
         if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
