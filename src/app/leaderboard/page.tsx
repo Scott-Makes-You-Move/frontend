@@ -2,13 +2,12 @@ import LeaderboardTable, { LeaderboardUser } from './LeaderboardTable';
 import WinnerDisplay from './WinnerDisplay';
 import requireAuth from '@/lib/auth/requireAuth';
 
-const BACKEND_HOST = process.env.BACKEND_HOST ?? 'http://localhost:8080';
 const LeaderboardPage = async () => {
   const session = await requireAuth({ callbackUrl: '/leaderboard' });
 
   // Fetch leaderboard data (this month)
   const res = await fetch(
-    `${BACKEND_HOST}/api/v1/leaderboard?page=0&size=10&direction=asc&sortBy=score`,
+    `https://backend.scottmakesyoumove.com/api/v1/leaderboard?page=0&size=10&direction=asc&sortBy=score`,
     {
       method: 'GET',
       headers: {
@@ -36,14 +35,17 @@ const LeaderboardPage = async () => {
   let lastMonthWinner = 'No winner selected yet';
 
   try {
-    const winnerRes = await fetch(`${BACKEND_HOST}/api/v1/leaderboard/recent-winner`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${session.accessToken}`,
-        'Content-Type': 'application/json',
+    const winnerRes = await fetch(
+      `https://backend.scottmakesyoumove.com/api/v1/leaderboard/recent-winner`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store',
       },
-      cache: 'no-store',
-    });
+    );
 
     if (winnerRes.ok) {
       const winnerData = await winnerRes.json();

@@ -53,7 +53,6 @@ export default async function WatchPage({ params }: PageProps) {
   const callbackUrl = `/watch/${sessionId}`;
   const session = await requireAuth({ callbackUrl });
   const { accountId, accessToken } = session;
-  const BACKEND_HOST = process.env.BACKEND_HOST ?? 'http://localhost:8080';
 
   let sessionData: {
     sessionStartTime: string | null;
@@ -69,7 +68,7 @@ export default async function WatchPage({ params }: PageProps) {
 
   try {
     const sessionRes = await fetch(
-      `${BACKEND_HOST}/api/v1/account/${accountId}/sessions/${sessionId}`,
+      `https://backend.scottmakesyoumove.com/api/v1/account/${accountId}/sessions/${sessionId}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
