@@ -18,12 +18,13 @@ type SessionItem = {
 const SessionsPage = ({ accountId, accessToken }: SessionsPageProps) => {
   const [date, setDate] = useState<Date>(new Date());
   const [sessionItems, setSessionItems] = useState<SessionItem[]>([]);
+  const BACKEND_HOST = process.env.BACKEND_HOST ?? 'http://localhost:8080';
 
   useEffect(() => {
     const fetchSessions = async () => {
       try {
         const res = await fetch(
-          `https://backend.scottmakesyoumove.com/api/v1/account/${accountId}/sessions`,
+          `${BACKEND_HOST}/api/v1/account/${accountId}/sessions`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,

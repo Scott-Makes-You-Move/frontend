@@ -2,12 +2,13 @@ import LeaderboardTable, { LeaderboardUser } from './LeaderboardTable';
 import WinnerDisplay from './WinnerDisplay';
 import requireAuth from '@/lib/auth/requireAuth';
 
+const BACKEND_HOST = process.env.BACKEND_HOST ?? 'http://localhost:8080';
 const LeaderboardPage = async () => {
   const session = await requireAuth({ callbackUrl: '/leaderboard' });
 
   // Fetch leaderboard data (this month)
   const res = await fetch(
-    'https://backend.scottmakesyoumove.com/api/v1/leaderboard?page=0&size=10&direction=asc&sortBy=score',
+    `${BACKEND_HOST}/api/v1/leaderboard?page=0&size=10&direction=asc&sortBy=score`,
     {
       method: 'GET',
       headers: {
@@ -36,7 +37,7 @@ const LeaderboardPage = async () => {
 
   try {
     const winnerRes = await fetch(
-      'https://backend.scottmakesyoumove.com/api/v1/leaderboard/recent-winner',
+      `${BACKEND_HOST}/api/v1/leaderboard/recent-winner`,
       {
         method: 'GET',
         headers: {

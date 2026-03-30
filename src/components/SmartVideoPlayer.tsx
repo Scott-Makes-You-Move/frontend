@@ -16,6 +16,8 @@ interface SmartVideoPlayerProps {
   sessionExecutionTime?: string | null;
 }
 
+const BACKEND_HOST = process.env.BACKEND_HOST ?? 'http://localhost:8080';
+
 const getBanner = (
   status?: string | null,
   sessionStartISO?: string | null,
@@ -107,7 +109,7 @@ const SmartVideoPlayer: React.FC<SmartVideoPlayerProps> = ({
     isMarkingWatched.current = true;
     try {
       const res = await fetch(
-        `https://backend.scottmakesyoumove.com/api/v1/account/${accountId}/sessions/${sessionId}`,
+        `${BACKEND_HOST}/api/v1/account/${accountId}/sessions/${sessionId}`,
         {
           method: 'PUT',
           headers: {
