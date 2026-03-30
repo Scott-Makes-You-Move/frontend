@@ -119,15 +119,18 @@
 
         try {
           // Fire the initial request
-          const response = await fetch(`https://backend.scottmakesyoumove.com/api/v1/chatbot/initiate`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${bearerToken}`,
+          const response = await fetch(
+            `https://backend.scottmakesyoumove.com/api/v1/chatbot/initiate`,
+            {
+              method: 'POST',
+              credentials: 'include',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${bearerToken}`,
+              },
+              body: JSON.stringify(initialPayload),
             },
-            body: JSON.stringify(initialPayload),
-          });
+          );
 
           // Wait until Zapier's response is ready — poll until ai_response arrives
           /* let aiResponse = null;
@@ -221,15 +224,18 @@
             };
 
             // Step 3: Send user message to Zapier via backend
-            const response = await fetch(`https://backend.scottmakesyoumove.com/api/v1/chatbot/initiate`, {
-              method: 'POST',
-              credentials: 'include',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${bearerToken}`,
+            const response = await fetch(
+              `https://backend.scottmakesyoumove.com/api/v1/chatbot/initiate`,
+              {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${bearerToken}`,
+                },
+                body: JSON.stringify(payload),
               },
-              body: JSON.stringify(payload),
-            });
+            );
             /*
             // Step 4: Wait for Zapier to process (~3-5 seconds)
             await new Promise((resolve) => setTimeout(resolve, 4000));

@@ -15,10 +15,11 @@ type SessionItem = {
   status: 'completed' | 'not-completed';
 };
 
+const BACKEND_HOST = process.env.BACKEND_HOST ?? 'http://localhost:8080';
+
 const SessionsPage = ({ accountId, accessToken }: SessionsPageProps) => {
   const [date, setDate] = useState<Date>(new Date());
   const [sessionItems, setSessionItems] = useState<SessionItem[]>([]);
-  const BACKEND_HOST = process.env.BACKEND_HOST ?? 'http://localhost:8080';
 
   useEffect(() => {
     const fetchSessions = async () => {
