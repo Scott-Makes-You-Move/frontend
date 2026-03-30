@@ -23,15 +23,12 @@ const SessionsPage = ({ accountId, accessToken }: SessionsPageProps) => {
   useEffect(() => {
     const fetchSessions = async () => {
       try {
-        const res = await fetch(
-          `${BACKEND_HOST}/api/v1/account/${accountId}/sessions`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-              'Content-Type': 'application/json',
-            },
+        const res = await fetch(`${BACKEND_HOST}/api/v1/account/${accountId}/sessions`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
           },
-        );
+        });
 
         if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
