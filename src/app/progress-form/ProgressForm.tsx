@@ -69,17 +69,14 @@ const ProgressForm: React.FC<Props> = ({ accessToken, accountId, type }) => {
       }),
     );
 
-    const res = await fetch(
-      `${BACKEND_HOST}/api/v1/account/${accountId}/${type}`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(normalizedFormData),
+    const res = await fetch(`${BACKEND_HOST}/api/v1/account/${accountId}/${type}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
       },
-    );
+      body: JSON.stringify(normalizedFormData),
+    });
 
     if (res.ok) {
       setStatus('success');

@@ -71,7 +71,7 @@ const query = graphql<string, never>(`
   }
 `);
 
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic';
 
 const AboutPage = async () => {
   await requireAuth({ callbackUrl: '/about' });

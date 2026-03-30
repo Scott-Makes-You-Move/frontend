@@ -117,22 +117,19 @@
           timestamp: new Date().toISOString(),
         };
 
-        const BACKEND_HOST = process.env.BACKEND_HOST ?? 'http://localhost:8080';
+        const BACKEND_HOST = process.env.NEXT_PUBLIC_BACKEND_HOST ?? 'http://localhost:8080';
 
         try {
           // Fire the initial request
-          const response = await fetch(
-            `${BACKEND_HOST}/api/v1/chatbot/initiate`,
-            {
-              method: 'POST',
-              credentials: 'include',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${bearerToken}`,
-              },
-              body: JSON.stringify(initialPayload),
+          const response = await fetch(`${BACKEND_HOST}/api/v1/chatbot/initiate`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${bearerToken}`,
             },
-          );
+            body: JSON.stringify(initialPayload),
+          });
 
           // Wait until Zapier's response is ready — poll until ai_response arrives
           /* let aiResponse = null;
@@ -226,18 +223,15 @@
             };
 
             // Step 3: Send user message to Zapier via backend
-            const response = await fetch(
-              `${BACKEND_HOST}/api/v1/chatbot/initiate`,
-              {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${bearerToken}`,
-                },
-                body: JSON.stringify(payload),
+            const response = await fetch(`${BACKEND_HOST}/api/v1/chatbot/initiate`, {
+              method: 'POST',
+              credentials: 'include',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${bearerToken}`,
               },
-            );
+              body: JSON.stringify(payload),
+            });
             /*
             // Step 4: Wait for Zapier to process (~3-5 seconds)
             await new Promise((resolve) => setTimeout(resolve, 4000));
